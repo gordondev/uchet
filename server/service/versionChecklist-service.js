@@ -45,10 +45,33 @@ class VersionChecklistService {
   }
 
   async deleteOne(id) {
-    const versionChecklists = await VersionChecklist.destroy({
+    await VersionChecklist.destroy({
       where: { id },
     });
-    return versionChecklists;
+  }
+
+  async updateOne(
+    id,
+    actual_key,
+    userId,
+    quanity_type,
+    reason_for_use,
+    comment
+  ) {
+    const versionChecklist = await VersionChecklist.update(
+      {
+        id: id,
+        actual_key: actual_key,
+        userId: userId,
+        quanity_type: quanity_type,
+        reason_for_use: reason_for_use,
+        comment: comment,
+      },
+      {
+        where: { id },
+      }
+    );
+    const versionChecklistDto = new VersionChecklistDto(versionChecklist);
   }
 }
 

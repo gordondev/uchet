@@ -41,8 +41,26 @@ class VersionChecklistController {
   async deleteOne(req, res) {
     try {
       const { id } = req.params;
-      const versionChecklistData = await versionChecklist.deleteOne(id);
-      return res.json(versionChecklistData);
+      await versionChecklist.deleteOne(id);
+      return res.json({ message: `Версия чек-листа - ${id} удалена` });
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+  async updateOne(req, res) {
+    try {
+      const { id, actual_key, userId, quanity_type, reason_for_use, comment } =
+        req.body;
+
+      await versionChecklist.updateOne(
+        id,
+        actual_key,
+        userId,
+        quanity_type,
+        reason_for_use,
+        comment
+      );
+      return res.json({ message: `Данные чек-листа - ${id} были обновленны` });
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
