@@ -6,5 +6,6 @@ const versionCheckListController = require("../controllers/versionChecklist-cont
 router.post("/", versionCheckListController.create);
 router.get("/", versionCheckListController.getAll);
 router.get("/:id", versionCheckListController.getOne);
+router.delete("/:id", versionCheckListController.deleteOne);
 
 module.exports = router;

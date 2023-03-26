@@ -38,10 +38,16 @@ class VersionChecklistService {
   }
 
   async getOne(id) {
-    const versionChecklists = await VersionChecklist.findOne({
+    const versionChecklist = await VersionChecklist.findOne({
       where: { id },
     });
-    console.log(`\n\n\n${versionChecklists}\n\n\n`);
+    return versionChecklist;
+  }
+
+  async deleteOne(id) {
+    const versionChecklists = await VersionChecklist.destroy({
+      where: { id },
+    });
     return versionChecklists;
   }
 }

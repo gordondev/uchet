@@ -38,6 +38,15 @@ class VersionChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
+  async deleteOne(req, res) {
+    try {
+      const { id } = req.params;
+      const versionChecklistData = await versionChecklist.deleteOne(id);
+      return res.json(versionChecklistData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
 }
 
 module.exports = new VersionChecklistController();
