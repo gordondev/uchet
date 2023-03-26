@@ -23,8 +23,8 @@ class VersionChecklistController {
   }
   async getAll(req, res) {
     try {
-      const versionChecklists = await versionChecklist.getAll();
-      return res.json(versionChecklists);
+      const versionChecklistsData = await versionChecklist.getAll();
+      return res.json(versionChecklistsData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
@@ -32,8 +32,8 @@ class VersionChecklistController {
   async getOne(req, res) {
     try {
       const { id } = req.params;
-      versionChecklist = await versionChecklist.getOne(id);
-      return res.json(versionChecklist);
+      const versionChecklistData = await versionChecklist.getOne(id);
+      return res.json(versionChecklistData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }

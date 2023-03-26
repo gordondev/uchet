@@ -41,7 +41,7 @@ class VersionChecklistService {
     const versionChecklists = await VersionChecklist.findOne({
       where: { id },
     });
-
+    console.log(`\n\n\n${versionChecklists}\n\n\n`);
     return versionChecklists;
   }
 }
