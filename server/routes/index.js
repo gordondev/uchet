@@ -1,7 +1,7 @@
 const Router = require("express");
 const router = new Router();
-const userRouter = require("./userRouter");
-const versionChecklistRouter = require("./versionChecklistRouter");
+const userRouter = require("./user-router");
+const versionChecklistRouter = require("./versionChecklist-router");
 
 router.use("/versionchecklist", versionChecklistRouter);
 router.use("/user", userRouter);
