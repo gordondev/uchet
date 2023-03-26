@@ -5,7 +5,7 @@ class VersionChecklistController {
 
     async create(req, res, next) {
         try {
-        	// const { id, actual_key, userId, quanity_type, reason_for_use, comment } = req.body;
+        	const { id, actual_key, userId, quanity_type, reason_for_use, comment } = req.body;
         } catch (e) {
             next(ApiError.BadRequest(e.message));
         }
