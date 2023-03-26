@@ -51,6 +51,7 @@ class VersionChecklistService {
   }
 
   async updateOne(
+    updateId,
     id,
     actual_key,
     userId,
@@ -58,9 +59,10 @@ class VersionChecklistService {
     reason_for_use,
     comment
   ) {
+    console.log(`\n\n\n${id}\n\n\n`);
     const versionChecklist = await VersionChecklist.update(
       {
-        id: id,
+        id: updateId,
         actual_key: actual_key,
         userId: userId,
         quanity_type: quanity_type,
@@ -71,7 +73,6 @@ class VersionChecklistService {
         where: { id },
       }
     );
-    const versionChecklistDto = new VersionChecklistDto(versionChecklist);
   }
 }
 

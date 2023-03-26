@@ -49,10 +49,11 @@ class VersionChecklistController {
   }
   async updateOne(req, res) {
     try {
-      const { id, actual_key, userId, quanity_type, reason_for_use, comment } =
+      const { updateId, id, actual_key, userId, quanity_type, reason_for_use, comment } =
         req.body;
 
       await versionChecklist.updateOne(
+        updateId,
         id,
         actual_key,
         userId,

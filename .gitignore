@@ -19,6 +19,3 @@
 
 /server/node_modules
 /server/.env
-
-gpg-key.asc
-gpg-key.pub
