@@ -1,12 +1,15 @@
-import React from 'react';
-import Registration from './components/registration';
-import Login from './components/login';
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import AppRouter from "./components/AppRouter";
+import { observer } from "mobx-react-lite";
 
-const App = () => {
-    return (
-      <div className="container">
-        <Registration />
-      </div>
-    )
-};
+const App = observer(() => {
+  return (
+    <BrowserRouter>
+      <p>WORKED</p>
+      <AppRouter />
+    </BrowserRouter>
+  );
+});
+
 export default App;

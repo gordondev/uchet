@@ -8,7 +8,6 @@ import {
   VERSION_CHECKLIST_ROUTE,
   CHECKLIST_ROUTE,
 } from "../utils/consts";
-import { useNavigate } from "react-router-dom";
 const { Option } = Select;
 
 const formItemLayout = {
@@ -47,7 +46,6 @@ const Registration = () => {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
-  // const navigate = useNavigate();
 
   return (
     <Form
@@ -176,9 +174,7 @@ const Registration = () => {
         <Button type="primary" htmlType="submit">
           Создать аккаунт
         </Button>
-        <p className="createAccount">
-          {/*<a href={LOGIN_ROUTE}>Войти</a>*/}
-        </p>
+        <p className="createAccount"></p>
       </Form.Item>
     </Form>
   );
