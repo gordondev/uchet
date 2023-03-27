@@ -1,6 +1,14 @@
 import React from "react";
 import { Button, Form, Input, Select } from "antd";
-
+import { observer } from "mobx-react-lite";
+import {
+  LOGIN_ROUTE,
+  ADMIN_ROUTE,
+  MAIN_ROUTE,
+  VERSION_CHECKLIST_ROUTE,
+  CHECKLIST_ROUTE,
+} from "../utils/consts";
+import { useNavigate } from "react-router-dom";
 const { Option } = Select;
 
 const formItemLayout = {
@@ -39,6 +47,7 @@ const Registration = () => {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
+  // const navigate = useNavigate();
 
   return (
     <Form
@@ -168,7 +177,7 @@ const Registration = () => {
           Создать аккаунт
         </Button>
         <p className="createAccount">
-          Или <a href="http://localhost:3000/">Войдите</a>
+          {/*<a href={LOGIN_ROUTE}>Войти</a>*/}
         </p>
       </Form.Item>
     </Form>
