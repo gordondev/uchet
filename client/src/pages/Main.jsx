@@ -3,7 +3,7 @@ import girl from "../images/welcome.png";
 import { Button } from "antd";
 import { Typography } from "antd";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const Main = () => {
   return (
     <section className="mainSection">

@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Layout, Menu } from "antd";
 import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Dropdown, Space } from "antd";
-import { MAIN_ROUTE } from "../utils/consts";
+import { MAIN_ROUTE, PROFILE_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 const { Header } = Layout;
 
@@ -12,7 +12,7 @@ const items = [
   {
     key: "1",
     label: (
-      <a target="_blank" rel="noopener noreferrer" href="#">
+      <a target="_blank" rel="noopener noreferrer" href={PROFILE_ROUTE}>
         Профиль
       </a>
     ),
