@@ -115,7 +115,7 @@ const Registration = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <Form.Item
             name="sername"
             label="Фамилия"
@@ -204,6 +204,9 @@ const Registration = () => {
             <Button type="primary" htmlType="submit">
               Создать аккаунт
             </Button>
+            <a href={LOGIN_ROUTE} className="linkFom">
+              Уже есть аккаунт? Войдите
+            </a>
             <p className="createAccount"></p>
           </Form.Item>
         </Form>
