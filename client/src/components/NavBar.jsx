@@ -4,6 +4,8 @@ import { observer } from "mobx-react-lite";
 import { Layout, Menu } from "antd";
 import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Dropdown, Space } from "antd";
+import { MAIN_ROUTE } from "../utils/consts";
+import { useNavigate } from "react-router-dom";
 const { Header } = Layout;
 
 const items = [
@@ -38,9 +40,10 @@ const navItems = [
 ];
 
 const NavBar = observer(() => {
+  const navigate = useNavigate();
   return (
     <Header className="header">
-      <div className="logo">
+      <div className="logo" onClick={() => navigate(MAIN_ROUTE)}>
         <img src={logo} alt="LOGO" />
         <p>
           Учет и анализ <br /> работы персонала

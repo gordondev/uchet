@@ -137,6 +137,14 @@ ul {
   justify-content: center;
 }
 
+.mainSection {
+  height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -160,4 +168,25 @@ ul {
 
 .linkFom {
   margin-left: 20px;
+}
+
+.blockWelcome {
+  display: flex;
+  align-items: center;
+}
+
+.blockWelcome>img {
+  width: 260px;
+  height: 260px;
+}
+
+.blockWelcome__title {
+  color: #0e78ff;
+}
+
+.blockWelcome__information {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  max-width: 470px;
 }

@@ -1,5 +1,6 @@
 import Login from "./pages/Login";
 import Registration from "./pages/Registration";
+import Main from "./pages/Main";
 
 import {
   LOGIN_ROUTE,
@@ -18,5 +19,9 @@ export const publicRoutes = [
   {
     path: REGISTRATION_ROUTE,
     Component: Registration,
+  },
+  {
+    path: MAIN_ROUTE,
+    Component: Main,
   },
 ];
