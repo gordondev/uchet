@@ -1,17 +1,36 @@
-*{
+* {
   padding: 0;
   margin: 0;
   border: 0;
 }
-*,*:before,*:after{
+
+*,
+*:before,
+*:after {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-:focus,:active{outline: none;}
-a:focus,a:active{outline: none;}
-nav,footer,header,aside{display: block;}
-html,body{
+
+:focus,
+:active {
+  outline: none;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+nav,
+footer,
+header,
+aside {
+  display: block;
+}
+
+html,
+body {
   height: 100%;
   width: 100%;
   font-size: 100%;
@@ -21,26 +40,60 @@ html,body{
   -moz-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
-input,button,textarea{font-family:inherit;}
-input::-ms-clear{display: none;}
-button{cursor: pointer;}
-button::-moz-focus-inner {padding:0;border:0;}
-a, a:visited{text-decoration: none;}
-a:hover{text-decoration: none;}
-ul li{list-style: none;}
-img{vertical-align: top;}
-h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+}
+
+input::-ms-clear {
+  display: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+ul li {
+  list-style: none;
+}
+
+img {
+  vertical-align: top;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: 400;
+}
 
 body {
   margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .container {
-/*  border: 1px solid red;*/
-  width: 900px;
+  margin: 0 auto;
+  max-width: 93%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +102,7 @@ body {
 .formWindow {
   width: 900px;
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 16px;
   border: 1px solid #f0f0f0;
   box-shadow: 0px 4px 10px #d9d9d9;
 }
@@ -62,4 +115,45 @@ body {
 
 .dropDown {
   margin-left: 60px;
+}
+
+.header {
+  background-color: white;
+  border: 1px solid #f0f0f0;
+  display: flex;
+}
+
+.header,
+ul {
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.auth {
+  height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo>p {
+  color: #0e78ff;
+  margin-left: 10px;
+  line-height: 16px;
+}
+
+.navmenu {
+  border-bottom: 0px;
+}
+
+.mainnav {
+  display: flex;
 }
