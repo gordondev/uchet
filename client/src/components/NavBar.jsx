@@ -61,7 +61,7 @@ const NavBar = observer(() => {
         >
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              Иванов Иван Иванович
+              Иван
               <DownOutlined />
             </Space>
           </a>

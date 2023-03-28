@@ -65,7 +65,7 @@ const Login = () => {
               span: 16,
             }}
           >
-            <Checkbox>Remember me</Checkbox>
+            <Checkbox>Запомнить меня</Checkbox>
           </Form.Item>
 
           <Form.Item
@@ -75,7 +75,7 @@ const Login = () => {
             }}
           >
             <Button type="primary" htmlType="submit">
-              Submit
+              Войти
             </Button>
           </Form.Item>
         </Form>

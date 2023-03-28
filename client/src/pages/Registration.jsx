@@ -103,12 +103,40 @@ const Registration = () => {
           </Form.Item>
 
           <Form.Item
-            name="nickname"
-            label="ФИО"
+            name="firstName"
+            label="Имя"
             rules={[
               {
                 required: true,
-                message: "Введите ФИО",
+                message: "Введите имя",
+                whitespace: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          
+          <Form.Item
+            name="sername"
+            label="Фамилия"
+            rules={[
+              {
+                required: true,
+                message: "Введите фамилию",
+                whitespace: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="secondName"
+            label="Отчество"
+            rules={[
+              {
+                required: true,
+                message: "Введите отчество",
                 whitespace: true,
               },
             ]}
