@@ -4,7 +4,11 @@ import { observer } from "mobx-react-lite";
 import { Layout, Menu } from "antd";
 import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Dropdown, Space } from "antd";
-import { MAIN_ROUTE, PROFILE_ROUTE } from "../utils/consts";
+import {
+  MAIN_ROUTE,
+  PROFILE_ROUTE,
+  VERSION_CHECKLIST_ROUTE,
+} from "../utils/consts";
 import { useNavigate, Link } from "react-router-dom";
 const { Header } = Layout;
 
@@ -21,13 +25,6 @@ const items = [
     danger: true,
   },
 ];
-
-// const navItems = [
-//   <Menu.Item key="1" icon=""><Link href="/"><a>Home</a></Link></Menu.Item>
-//                 <Menu.Item key="2" icon=""><Link href="/about"><a>About me</a></Link></Menu.Item>
-//                 <Menu.Item key="3" icon=""><Link href="/team"><a>Team</a></Link></Menu.Item>
-//                 <Menu.Item key="4" icon=""><Link href="/blog"><a>Blog</a></Link></Menu.Item>
-// ];
 
 const NavBar = observer(() => {
   const navigate = useNavigate();
@@ -50,7 +47,7 @@ const NavBar = observer(() => {
             <Link to={PROFILE_ROUTE}>Результаты наблюдения</Link>
           </Menu.Item>
           <Menu.Item key="2" icon="">
-            <Link to={PROFILE_ROUTE}>Версии</Link>
+            <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
           </Menu.Item>
           <Menu.Item key="3" icon="">
             <Link to={PROFILE_ROUTE}>Чек-листы</Link>
