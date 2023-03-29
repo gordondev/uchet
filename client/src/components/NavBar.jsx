@@ -22,14 +22,12 @@ const items = [
   },
 ];
 
-const navItems = [
-  { label: "Результаты наблюдения", link: "#" },
-  { label: "Версии", link: "#" },
-  { label: "Чек-листы", link: "#" },
-  { label: "Графики", link: "#" },
-  { label: "Статистика", link: "#" },
-  { label: "Админ", link: "#" },
-];
+// const navItems = [
+//   <Menu.Item key="1" icon=""><Link href="/"><a>Home</a></Link></Menu.Item>
+//                 <Menu.Item key="2" icon=""><Link href="/about"><a>About me</a></Link></Menu.Item>
+//                 <Menu.Item key="3" icon=""><Link href="/team"><a>Team</a></Link></Menu.Item>
+//                 <Menu.Item key="4" icon=""><Link href="/blog"><a>Blog</a></Link></Menu.Item>
+// ];
 
 const NavBar = observer(() => {
   const navigate = useNavigate();
@@ -47,8 +45,26 @@ const NavBar = observer(() => {
           mode="horizontal"
           defaultSelectedKeys={["2"]}
           className="navmenu"
-          items={navItems}
-        />
+        >
+          <Menu.Item key="1" icon="">
+            <Link to={PROFILE_ROUTE}>Результаты наблюдения</Link>
+          </Menu.Item>
+          <Menu.Item key="2" icon="">
+            <Link to={PROFILE_ROUTE}>Версии</Link>
+          </Menu.Item>
+          <Menu.Item key="3" icon="">
+            <Link to={PROFILE_ROUTE}>Чек-листы</Link>
+          </Menu.Item>
+          <Menu.Item key="4" icon="">
+            <Link to={PROFILE_ROUTE}>Графики</Link>
+          </Menu.Item>
+          <Menu.Item key="5" icon="">
+            <Link to={PROFILE_ROUTE}>Статистика</Link>
+          </Menu.Item>
+          <Menu.Item key="6" icon="">
+            <Link to={PROFILE_ROUTE}>Админ</Link>
+          </Menu.Item>
+        </Menu>
         <Dropdown
           menu={{
             items,
