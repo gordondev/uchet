@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Checkbox, Form, Input } from "antd";
-import { REGISTRATION_ROUTE } from "../utils/consts";
+import { REGISTRATION_ROUTE, MAIN_ROUTE } from "../utils/consts";
+import { Link } from "react-router-dom";
 const onFinish = (values) => {
   console.log("Success:", values);
 };
@@ -78,9 +79,9 @@ const Login = () => {
             <Button type="primary" htmlType="submit">
               Войти
             </Button>
-            <a href={REGISTRATION_ROUTE} className="linkFom">
-              Создать аккаунт
-            </a>
+            <Link to={REGISTRATION_ROUTE} style={{ marginLeft: "20px" }}>
+              Создать учетную запись
+            </Link>
           </Form.Item>
         </Form>
       </div>

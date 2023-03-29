@@ -14,7 +14,7 @@ const Main = () => {
             <Title className="blockWelcome__title" style={{ color: "#0e78ff" }}>
               Добро пожаловать, Иван!
             </Title>
-            <Title level={5} style={{ margin: "0px 0px 20px 0px" }}>
+            <Title level={5} style={{ marginBottom: "20px" }}>
               Заполняйте результаты наблюдений и их события. Просматривайте
               статистики итоговых значений по результатам наблюдений. Формируйте
               графики и выводите результаты на печать.

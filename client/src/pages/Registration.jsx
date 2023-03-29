@@ -1,13 +1,7 @@
 import React from "react";
 import { Button, Form, Input, Select } from "antd";
-import { observer } from "mobx-react-lite";
-import {
-  LOGIN_ROUTE,
-  ADMIN_ROUTE,
-  MAIN_ROUTE,
-  VERSION_CHECKLIST_ROUTE,
-  CHECKLIST_ROUTE,
-} from "../utils/consts";
+import { Link } from "react-router-dom";
+import { LOGIN_ROUTE, MAIN_ROUTE } from "../utils/consts";
 const { Option } = Select;
 
 const formItemLayout = {
@@ -204,9 +198,9 @@ const Registration = () => {
             <Button type="primary" htmlType="submit">
               Создать аккаунт
             </Button>
-            <a href={LOGIN_ROUTE} className="linkFom">
-              Уже есть аккаунт? Войдите
-            </a>
+            <Link to={LOGIN_ROUTE} style={{ marginLeft: "20px" }}>
+              Уже есть аккаунт есть? Войдите
+            </Link>
             <p className="createAccount"></p>
           </Form.Item>
         </Form>

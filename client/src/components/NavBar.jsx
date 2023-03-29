@@ -5,26 +5,18 @@ import { Layout, Menu } from "antd";
 import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Dropdown, Space } from "antd";
 import { MAIN_ROUTE, PROFILE_ROUTE } from "../utils/consts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 const { Header } = Layout;
 
 const items = [
   {
     key: "1",
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href={PROFILE_ROUTE}>
-        Профиль
-      </a>
-    ),
+    label: <Link to={PROFILE_ROUTE}>Профиль</Link>,
     icon: <UserOutlined />,
   },
   {
     key: "2",
-    label: (
-      <a target="_blank" href="#">
-        Выйти
-      </a>
-    ),
+    label: <Link to={PROFILE_ROUTE}>Выйти</Link>,
     icon: <LogoutOutlined />,
     danger: true,
   },
