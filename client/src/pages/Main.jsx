@@ -11,7 +11,10 @@ const Main = () => {
         <div className="blockWelcome">
           <img src={girl} alt="girl" />
           <div className="blockWelcome__information">
-            <Title className="blockWelcome__title" style={{ color: "#0e78ff" }}>
+            <Title
+              className="blockWelcome__title"
+              style={{ color: "#0e78ff", marginBottom: "0px" }}
+            >
               Добро пожаловать, Иван!
             </Title>
             <Title level={5} style={{ marginBottom: "20px" }}>
@@ -20,7 +23,7 @@ const Main = () => {
               графики и выводите результаты на печать.
             </Title>
             <Button type="primary" htmlType="submit">
-              Приступить
+              Начать
             </Button>
           </div>
         </div>
