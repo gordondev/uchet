@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Checkbox, Form, Input } from "antd";
 import { REGISTRATION_ROUTE, MAIN_ROUTE } from "../utils/consts";
 import { Link } from "react-router-dom";
+
 const onFinish = (values) => {
   console.log("Success:", values);
 };

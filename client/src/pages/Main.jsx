@@ -1,7 +1,6 @@
 import React from "react";
 import girl from "../images/welcome.png";
-import { Button } from "antd";
-import { Typography } from "antd";
+import { Button, Typography } from "antd";
 
 const { Title } = Typography;
 const Main = () => {

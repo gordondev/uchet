@@ -2,8 +2,8 @@ import React from "react";
 import { Button, Form, Input, Select } from "antd";
 import { Link } from "react-router-dom";
 import { LOGIN_ROUTE, MAIN_ROUTE } from "../utils/consts";
-const { Option } = Select;
 
+const { Option } = Select;
 const formItemLayout = {
   labelCol: {
     xs: {

@@ -3,6 +3,7 @@ import Registration from "./pages/Registration";
 import Main from "./pages/Main";
 import Profile from "./pages/Profile";
 import VersionChecklist from "./pages/VersionChecklist";
+import VersionChecklistCreate from "./pages/VersionChecklistCreate";
 
 import {
   LOGIN_ROUTE,
@@ -12,6 +13,7 @@ import {
   PROFILE_ROUTE,
   VERSION_CHECKLIST_ROUTE,
   CHECKLIST_ROUTE,
+  VERSION_CHECKLIST_CREATE_ROUTE,
 } from "./utils/consts";
 
 export const publicRoutes = [
@@ -34,5 +36,9 @@ export const publicRoutes = [
   {
     path: VERSION_CHECKLIST_ROUTE,
     Component: VersionChecklist,
+  },
+  {
+    path: VERSION_CHECKLIST_CREATE_ROUTE,
+    Component: VersionChecklistCreate,
   },
 ];

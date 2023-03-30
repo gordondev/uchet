@@ -1,7 +1,15 @@
 import React from "react";
-import { Typography } from "antd";
 import { useState } from "react";
-import { Form, Input, Button, Checkbox, Modal, message } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Checkbox,
+  Modal,
+  message,
+  Typography,
+} from "antd";
+
 const { Title } = Typography;
 const { Paragraph } = Typography;
 
@@ -34,7 +42,7 @@ const Profile = () => {
   return (
     <section className="mainSection">
       <div className="container">
-        <div className="profileForm">
+        <div className="userForm">
           <Title
             level={4}
             style={{ margin: "0px 0px 20px 0px", textAlign: "center" }}

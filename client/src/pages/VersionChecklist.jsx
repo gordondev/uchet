@@ -1,16 +1,15 @@
 import React from "react";
-import { Input } from "antd";
-import { Col, Row } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { FloatButton } from "antd";
-import { EditOutlined } from "@ant-design/icons";
-import { Avatar, Card, Skeleton, Switch } from "antd";
-const { Meta } = Card;
+import { Input, Col, Row, FloatButton, Card, Skeleton } from "antd";
+import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { VERSION_CHECKLIST_CREATE_ROUTE } from "../utils/consts";
 
+const { Meta } = Card;
 const { Search } = Input;
 
 const VersionChecklist = () => {
   const loading = false;
+  const navigate = useNavigate();
   return (
     <section className="searchSection">
       <div className="container">
@@ -297,6 +296,7 @@ const VersionChecklist = () => {
           style={{
             right: 20,
           }}
+          onClick={() => navigate(VERSION_CHECKLIST_CREATE_ROUTE)}
         />
       </div>
     </section>
