@@ -7,7 +7,9 @@ const User = sequelize.define("user", {
   password: { type: DataTypes.STRING(500) },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
   division: { type: DataTypes.ENUM('ТЦ-3', 'РЦ-2', 'РЦ-3', 'ЦЦР', 'ЦОРО', 'ЭЦ', 'ЦТАИ', 'ЦВ', 'ОРБ', 'ХЦ', 'ТЦ-2', 'РТЦ-1', 'ЦОС', 'ОПБ', 'ОЯБиН', 'Управление', 'ОТИиПБ', 'ОИиКОБ', 'ООТ', 'УТП') },
-  fullname: { type: DataTypes.STRING(600) },
+  name: { type: DataTypes.STRING(600) },
+  surname: { type: DataTypes.STRING(600) },
+  patronymic: { type: DataTypes.STRING(600) },
   isActivated: {type: DataTypes.BOOLEAN, defaultValue: false},
   activationLink: { type: DataTypes.STRING(500) },
 });
