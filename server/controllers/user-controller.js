@@ -71,6 +71,15 @@ class UserController {
         }
     }
 
+    async check(req, res, next) {
+        try {
+            return res.json({message: "all right"});
+            // const token = userService.check(email, password, role, division, name, surname, patronymic);
+            // return res.json({token});
+        } catch (e) {
+            next(e);
+        }
+    }
 }
 
 

@@ -1,7 +1,11 @@
-import React from "react";
-import { Button, Form, Input, Select } from "antd";
+import React, {useState, useContext} from "react";
+import { Button, Form, Input, Select, message } from "antd";
 import { Link } from "react-router-dom";
 import { LOGIN_ROUTE, MAIN_ROUTE } from "../utils/consts";
+import { registration } from '../http/userAPI';
+import { observer } from 'mobx-react-lite';
+import { Context } from "../index";
+import {useLocation, useNavigate} from 'react-router-dom';
 
 const { Option } = Select;
 const formItemLayout = {
@@ -35,8 +39,31 @@ const tailFormItemLayout = {
   },
 };
 
-const Registration = () => {
+const Registration = observer(() => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isLogin = location.pathname === LOGIN_ROUTE;
+  const {user} = useContext(Context);
   const [form] = Form.useForm();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [division, setDivision] = useState('');
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [patronymic, setPatronymic] = useState('');
+
+  const click = async () => {
+    try {
+      let data = await registration(email, password, division, name, surname, patronymic);
+      console.log(data);
+      // user.setUser(data);
+      // user.setIsAuth(true);
+      // navigate(MAIN_ROUTE);
+    } catch(e) {
+      message.error(e.response.data.message);
+    }
+  };
+
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
@@ -62,9 +89,10 @@ const Registration = () => {
           <h1 className="formWindowTitle">Регистрация</h1>
 
           <Form.Item
-            name="select"
+            name="division"
             label="Подразделение"
             hasFeedback
+            onChange={e => setDivision(e.target.value)}
             rules={[
               {
                 required: true,
@@ -72,33 +100,34 @@ const Registration = () => {
               },
             ]}
           >
-            <Select>
-              <Option value="value1">ТЦ-3</Option>
-              <Option value="value2">РЦ-2</Option>
-              <Option value="value3">РЦ-3</Option>
-              <Option value="value4">ЦЦР</Option>
-              <Option value="value5">ЦОРО</Option>
-              <Option value="value6">ЭЦ</Option>
-              <Option value="value7">ЦТАИ</Option>
-              <Option value="value8">ЦВ</Option>
-              <Option value="value9">ОРБ</Option>
-              <Option value="value10">ХЦ</Option>
-              <Option value="value11">ТЦ-2</Option>
-              <Option value="value12">РТЦ-1</Option>
-              <Option value="value13">ЦОС</Option>
-              <Option value="value14">ОПБ</Option>
-              <Option value="value15">ОЯБиН</Option>
-              <Option value="value16">Управление</Option>
-              <Option value="value17">ОТИиПБ</Option>
-              <Option value="value18">ОИиКОБ</Option>
-              <Option value="value19">ООТ</Option>
-              <Option value="value20">УТП</Option>
+            <Select defaultValue={division} onChange={(value) => {setDivision(value); console.log(value);}}>
+              <Option value="ТЦ-3">ТЦ-3</Option>
+              <Option value="РЦ-2">РЦ-2</Option>
+              <Option value="РЦ-3">РЦ-3</Option>
+              <Option value="ЦЦР">ЦЦР</Option>
+              <Option value="ЦОРО">ЦОРО</Option>
+              <Option value="ЭЦ">ЭЦ</Option>
+              <Option value="ЦТАИ">ЦТАИ</Option>
+              <Option value="ЦВ">ЦВ</Option>
+              <Option value="ОРБ">ОРБ</Option>
+              <Option value="ХЦ">ХЦ</Option>
+              <Option value="ТЦ-2">ТЦ-2</Option>
+              <Option value="РТЦ-1">РТЦ-1</Option>
+              <Option value="ЦОС">ЦОС</Option>
+              <Option value="ОПБ">ОПБ</Option>
+              <Option value="ОЯБиН">ОЯБиН</Option>
+              <Option value="Управление">Управление</Option>
+              <Option value="ОТИиПБ">ОТИиПБ</Option>
+              <Option value="ОИиКОБ">ОИиКОБ</Option>
+              <Option value="ООТ">ООТ</Option>
+              <Option value="УТП">УТП</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
-            name="firstName"
+            name="name"
             label="Имя"
+            onChange={e => setName(e.target.value)}
             rules={[
               {
                 required: true,
@@ -107,12 +136,13 @@ const Registration = () => {
               },
             ]}
           >
-            <Input />
+            <Input defaultValue={name}/>
           </Form.Item>
 
           <Form.Item
-            name="sername"
+            name="surname"
             label="Фамилия"
+            onChange={e => setSurname(e.target.value)}
             rules={[
               {
                 required: true,
@@ -121,12 +151,13 @@ const Registration = () => {
               },
             ]}
           >
-            <Input />
+            <Input defaultValue={surname}/>
           </Form.Item>
 
           <Form.Item
-            name="secondName"
+            name="patronymic"
             label="Отчество"
+            onChange={e => setPatronymic(e.target.value)}
             rules={[
               {
                 required: true,
@@ -135,12 +166,13 @@ const Registration = () => {
               },
             ]}
           >
-            <Input />
+            <Input defaultValue={patronymic}/>
           </Form.Item>
 
           <Form.Item
             name="email"
             label="Почта"
+            onChange={e => setEmail(e.target.value)}
             rules={[
               {
                 type: "email",
@@ -152,12 +184,13 @@ const Registration = () => {
               },
             ]}
           >
-            <Input />
+            <Input defaultValue={email}/>
           </Form.Item>
 
           <Form.Item
             name="password"
             label="Пароль"
+            onChange={e => setPassword(e.target.value)}
             rules={[
               {
                 required: true,
@@ -166,7 +199,7 @@ const Registration = () => {
             ]}
             hasFeedback
           >
-            <Input.Password />
+            <Input.Password defaultValue={password}/>
           </Form.Item>
 
           <Form.Item
@@ -191,11 +224,11 @@ const Registration = () => {
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password defaultValue={password}/>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" onClick={click}>
               Создать аккаунт
             </Button>
             <Link to={LOGIN_ROUTE} style={{ marginLeft: "20px" }}>
@@ -207,6 +240,6 @@ const Registration = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Registration;

@@ -16,15 +16,8 @@ import {
   VERSION_CHECKLIST_CREATE_ROUTE,
 } from "./utils/consts";
 
-export const publicRoutes = [
-  {
-    path: LOGIN_ROUTE,
-    Component: Login,
-  },
-  {
-    path: REGISTRATION_ROUTE,
-    Component: Registration,
-  },
+
+export const authRoutes = [
   {
     path: MAIN_ROUTE,
     Component: Main,
@@ -40,5 +33,16 @@ export const publicRoutes = [
   {
     path: VERSION_CHECKLIST_CREATE_ROUTE,
     Component: VersionChecklistCreate,
+  },
+];
+
+export const publicRoutes = [
+  {
+    path: LOGIN_ROUTE,
+    Component: Login,
+  },
+  {
+    path: REGISTRATION_ROUTE,
+    Component: Registration,
   },
 ];

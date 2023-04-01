@@ -77,6 +77,11 @@ class UserService {
 		const users = await User.findAll();
 		return users;
 	}
+
+	// async check() {
+	// 	return 
+	// 	// return tokenService.generateTokens({ ...userDto });
+	// }
 }
 
 module.exports = new UserService();
