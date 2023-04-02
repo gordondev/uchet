@@ -1,11 +1,10 @@
 import React, {useState, useContext} from "react";
 import { Button, Form, Input, Select, message } from "antd";
-import { Link } from "react-router-dom";
 import { LOGIN_ROUTE, MAIN_ROUTE } from "../utils/consts";
 import { registration } from '../http/userAPI';
 import { observer } from 'mobx-react-lite';
 import { Context } from "../index";
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate, Link} from 'react-router-dom';
 
 const { Option } = Select;
 const formItemLayout = {
@@ -56,7 +55,6 @@ const Registration = observer(() => {
 
     try {
       let data = await registration(email, password, division, name, surname, patronymic);
-      console.log(data);
       user.setUser(data.user);
       user.setIsAuth(true);
       message.success(`Мы отправили письмо вам на почту`);

@@ -1,18 +1,34 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, message, Dropdown, Space } from "antd";
 import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
-import { Dropdown, Space } from "antd";
 import {
   MAIN_ROUTE,
   PROFILE_ROUTE,
   VERSION_CHECKLIST_ROUTE,
 } from "../utils/consts";
 import { useNavigate, Link } from "react-router-dom";
+import { Context } from "../index";
+import { logout } from '../http/userAPI';
 const { Header } = Layout;
 
-const items = [
+const NavBar = observer(() => {
+  const navigate = useNavigate();
+  const {user} = useContext(Context);
+
+  const logOut = async () => {
+    try {
+      const response = await logout();
+      user.setUser({});
+      user.setIsAuth(false);
+      localStorage.removeItem('token');
+    } catch(e) {
+      message.error(e.response?.data?.message);
+    }
+  };
+
+  const items = [
   {
     key: "1",
     label: <Link to={PROFILE_ROUTE}>Профиль</Link>,
@@ -20,14 +36,12 @@ const items = [
   },
   {
     key: "2",
-    label: <Link to={PROFILE_ROUTE}>Выйти</Link>,
+    label: <Link onClick={logOut}>Выйти</Link>,
     icon: <LogoutOutlined />,
     danger: true,
   },
 ];
 
-const NavBar = observer(() => {
-  const navigate = useNavigate();
   return (
     <Header className="header">
       <div className="logo" onClick={() => navigate(MAIN_ROUTE)}>

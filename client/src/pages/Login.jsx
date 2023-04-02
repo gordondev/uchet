@@ -1,18 +1,30 @@
-import React from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import React, { useState, useContext } from "react";
+import { Button, Checkbox, Form, Input, message } from "antd";
 import { REGISTRATION_ROUTE, MAIN_ROUTE } from "../utils/consts";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { Context } from "../index";
+import { observer } from "mobx-react-lite";
+import { login } from '../http/userAPI';
 
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
-const onFinishFailed = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
+const Login = observer(() => {
+    const { user } = useContext(Context);
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-const Login = () => {
-  return (
-    <section className="auth">
+    const onFinish = async (values) => {
+        try {
+            const data = await login(values.email, values.password);
+            user.setIsAuth(true);
+            user.setUser(data);
+            navigate(MAIN_ROUTE);
+        } catch (e) {
+            message.error(e.response?.data?.message);
+        }
+    };
+
+    return (
+        <section className="auth">
       <div className="container">
         <Form
           name="basic"
@@ -30,34 +42,35 @@ const Login = () => {
             remember: true,
           }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <h1 className="formWindowTitle">Вход</h1>
           <Form.Item
-            label="Username"
-            name="username"
+            label="Почта"
+            name="email"
+            onChange={(e) => setEmail(e.target.value)}
             rules={[
               {
                 required: true,
-                message: "Please input your username!",
+                message: "Введите почту",
               },
             ]}
           >
-            <Input />
+            <Input defaultValue={email} />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label="Пароль"
             name="password"
+            onChange={(e) => setPassword(e.target.value)}
             rules={[
               {
                 required: true,
-                message: "Please input your password!",
+                message: "Введите пароль",
               },
             ]}
           >
-            <Input.Password />
+            <Input.Password defaultValue={password} />
           </Form.Item>
 
           <Form.Item
@@ -77,7 +90,10 @@ const Login = () => {
               span: 16,
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+            >
               Войти
             </Button>
             <Link to={REGISTRATION_ROUTE} style={{ marginLeft: "20px" }}>
@@ -87,6 +103,6 @@ const Login = () => {
         </Form>
       </div>
     </section>
-  );
-};
+    );
+});
 export default Login;
