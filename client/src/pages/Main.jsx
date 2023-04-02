@@ -1,9 +1,10 @@
 import React from "react";
 import girl from "../images/welcome.png";
 import { Button, Typography } from "antd";
+import { observer } from "mobx-react-lite";
 
 const { Title } = Typography;
-const Main = () => {
+const Main = observer(() => {
   return (
     <section className="mainSection">
       <div className="container">
@@ -29,6 +30,6 @@ const Main = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Main;

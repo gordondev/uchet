@@ -53,19 +53,21 @@ const Registration = observer(() => {
   const [patronymic, setPatronymic] = useState('');
 
   const click = async () => {
+
     try {
       let data = await registration(email, password, division, name, surname, patronymic);
       console.log(data);
-      // user.setUser(data);
-      // user.setIsAuth(true);
-      // navigate(MAIN_ROUTE);
+      user.setUser(data.user);
+      user.setIsAuth(true);
+      message.success(`Мы отправили письмо вам на почту`);
+      navigate(MAIN_ROUTE);
     } catch(e) {
-      message.error(e.response.data.message);
+      message.error(e.response?.data?.message);
     }
   };
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
   };
 
   return (
