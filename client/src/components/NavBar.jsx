@@ -54,17 +54,17 @@ const NavBar = observer(() => {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["2"]}
+          defaultSelectedKeys={["1"]}
           className="navmenu"
         >
           <Menu.Item key="1" icon="">
-            <Link to={PROFILE_ROUTE}>Результаты наблюдения</Link>
-          </Menu.Item>
-          <Menu.Item key="2" icon="">
             <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
           </Menu.Item>
-          <Menu.Item key="3" icon="">
+          <Menu.Item key="2" icon="">
             <Link to={PROFILE_ROUTE}>Чек-листы</Link>
+          </Menu.Item>
+          <Menu.Item key="3" icon="">
+            <Link to={PROFILE_ROUTE}>Результаты</Link>
           </Menu.Item>
           <Menu.Item key="4" icon="">
             <Link to={PROFILE_ROUTE}>Графики</Link>
@@ -75,19 +75,33 @@ const NavBar = observer(() => {
           <Menu.Item key="6" icon="">
             <Link to={PROFILE_ROUTE}>Админ</Link>
           </Menu.Item>
+          <Menu.Item>
+            <Dropdown
+                menu={{
+                  items,
+                }}
+              >
+            <Link onClick={(e) => e.preventDefault()}>
+              <Space>
+                {user?.user?.name}
+                <DownOutlined />
+              </Space>
+            </Link>
+          </Dropdown>
+          </Menu.Item>
         </Menu>
-        <Dropdown
+        {/*<Dropdown
           menu={{
             items,
           }}
         >
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              Иван
+              {user?.user?.name}
               <DownOutlined />
             </Space>
           </a>
-        </Dropdown>
+        </Dropdown>*/}
       </div>
     </Header>
   );

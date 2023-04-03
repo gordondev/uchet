@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import { useState } from "react";
 import {
   Form,
@@ -9,18 +9,21 @@ import {
   message,
   Typography,
 } from "antd";
+import { Context } from "../index";
 
 const { Title } = Typography;
 const { Paragraph } = Typography;
 
 const Profile = () => {
-  const [editableStrSerName, setEditableSerName] = useState("Иванов");
-  const [editableStrFirstName, setEditableFirstName] = useState("Иван");
-  const [editableStrSecondName, setEditableSecondName] = useState("Иванович");
+  const {user} = useContext(Context);
+  const [editableStrSerName, setEditableSerName] = useState(`${user?.user?.surname}`);
+  const [editableStrFirstName, setEditableFirstName] = useState(`${user?.user?.name}`);
+  const [editableStrSecondName, setEditableSecondName] = useState(`${user?.user?.patronymic}`);
 
   const [componentDisabled, setComponentDisabled] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const showModal = () => {
     setIsModalOpen(true);
   };
