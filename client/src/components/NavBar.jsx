@@ -55,7 +55,7 @@ const NavBar = observer(() => {
         <Menu
           theme="light"
           mode="horizontal"
-          selectedKeys={window.location.pathname}
+          selectedKeys={window.location.pathname.includes(VERSION_CHECKLIST_ROUTE) ? VERSION_CHECKLIST_ROUTE : window.location.pathna}
           className="navmenu"
         >
           <Menu.Item key={VERSION_CHECKLIST_ROUTE}>
