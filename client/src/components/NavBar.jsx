@@ -20,7 +20,7 @@ const NavBar = observer(() => {
 
   const logOut = async () => {
     try {
-      const response = await logout();
+      await logout();
       user.setUser({});
       user.setIsAuth(false);
       localStorage.removeItem('token');

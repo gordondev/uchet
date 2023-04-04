@@ -4,10 +4,14 @@ import { Button, Typography, Skeleton } from "antd";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
 import { check } from "../http/userAPI";
+import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
+import { useNavigate } from "react-router-dom";
+
 const { Title } = Typography;
 
 const Main = observer(() => {
   const {user} = useContext(Context);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
         check().then(data => {
@@ -21,13 +25,13 @@ const Main = observer(() => {
         {
             loading ?
               <div className="blockWelcome">
-              <Skeleton.Image active style={{ width: "260px", height: "260px" }}/>
+              <Skeleton.Image active style={{ width: "220px", height: "220px" }}/>
                 <div className="blockWelcome__information">
-                  <Skeleton.Input active size="large" style={{ marginBottom: "20px", width: "300px"}}/>
-                  <Skeleton.Input active style={{ marginBottom: "20px", width: "300px"}}/>
-                  <Skeleton.Input active style={{ marginBottom: "20px", width: "300px"}}/>
-                  <Skeleton.Input active style={{ marginBottom: "20px", width: "300px"}}/>
-                  <Skeleton.Input active style={{ width: "300px"}}/>
+                  <Skeleton.Input active size="default" style={{ marginBottom: "20px", width: "500px"}}/>
+                  <Skeleton.Input active size="small" style={{ marginBottom: "20px", width: "500px"}}/>
+                  <Skeleton.Input active size="small" style={{ marginBottom: "20px", width: "500px"}}/>
+                  <Skeleton.Input active size="small" style={{ marginBottom: "20px", width: "500px"}}/>
+                  <Skeleton.Input active size="small" style={{ width: "300px"}}/>
                 </div>
               </div>
             :
@@ -45,7 +49,7 @@ const Main = observer(() => {
                   статистики итоговых значений по результатам наблюдений. <br />Формируйте
                   графики и выводите результаты на печать.
                 </Title>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" onClick={() => navigate(VERSION_CHECKLIST_ROUTE)}>
                   Начать
                 </Button>
               </div>
