@@ -11,6 +11,7 @@ import {
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../index";
 import { logout } from '../http/userAPI';
+
 const { Header } = Layout;
 
 const NavBar = observer(() => {
@@ -54,54 +55,42 @@ const NavBar = observer(() => {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={[window.location.pathname]}
           className="navmenu"
         >
-          <Menu.Item key="1" icon="">
+          <Menu.Item key={VERSION_CHECKLIST_ROUTE}>
             <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
           </Menu.Item>
-          <Menu.Item key="2" icon="">
+          <Menu.Item>
             <Link to={PROFILE_ROUTE}>Чек-листы</Link>
           </Menu.Item>
-          <Menu.Item key="3" icon="">
+          <Menu.Item>
             <Link to={PROFILE_ROUTE}>Результаты</Link>
           </Menu.Item>
-          <Menu.Item key="4" icon="">
+          <Menu.Item>
             <Link to={PROFILE_ROUTE}>Графики</Link>
           </Menu.Item>
-          <Menu.Item key="5" icon="">
+          <Menu.Item>
             <Link to={PROFILE_ROUTE}>Статистика</Link>
           </Menu.Item>
-          <Menu.Item key="6" icon="">
+          <Menu.Item>
             <Link to={PROFILE_ROUTE}>Админ</Link>
           </Menu.Item>
-          <Menu.Item>
+          <Menu.Item key={PROFILE_ROUTE}>
             <Dropdown
                 menu={{
                   items,
                 }}
               >
-            <Link onClick={(e) => e.preventDefault()}>
-              <Space>
-                {user?.user?.name}
-                <DownOutlined />
-              </Space>
-            </Link>
-          </Dropdown>
+              <Link>
+                <Space>
+                  {user?.user?.name}
+                  <DownOutlined />
+                </Space>
+              </Link>
+            </Dropdown>
           </Menu.Item>
         </Menu>
-        {/*<Dropdown
-          menu={{
-            items,
-          }}
-        >
-          <a onClick={(e) => e.preventDefault()}>
-            <Space>
-              {user?.user?.name}
-              <DownOutlined />
-            </Space>
-          </a>
-        </Dropdown>*/}
       </div>
     </Header>
   );

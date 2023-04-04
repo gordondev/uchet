@@ -95,7 +95,7 @@ const Profile = () => {
               <Input.Password />
             </Form.Item>
             <Form.Item
-              name="password"
+              name="newPassword"
               label="Новый пароль"
               rules={[
                 {
