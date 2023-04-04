@@ -55,7 +55,7 @@ const NavBar = observer(() => {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={[window.location.pathname]}
+          selectedKeys={window.location.pathname}
           className="navmenu"
         >
           <Menu.Item key={VERSION_CHECKLIST_ROUTE}>
@@ -84,7 +84,7 @@ const NavBar = observer(() => {
               >
               <Link>
                 <Space>
-                  {user?.user?.name}
+                  Пользователь
                   <DownOutlined />
                 </Space>
               </Link>
