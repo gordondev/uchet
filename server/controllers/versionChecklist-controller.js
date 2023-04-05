@@ -7,6 +7,9 @@ class VersionChecklistController {
       const { id, actual_key, userId, quanity_type, reason_for_use, comment } =
         req.body;
 
+      const { header_file } = req.files;
+      const { comment_file } = req.files;
+
       const versionChecklistData =
         await versionChecklist.createVersionChecklist(
           id,
@@ -14,8 +17,11 @@ class VersionChecklistController {
           userId,
           quanity_type,
           reason_for_use,
-          comment
+          comment,
+          header_file,
+          comment_file
         );
+
       return res.json(versionChecklistData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));

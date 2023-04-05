@@ -1,6 +1,8 @@
 const { VersionChecklist } = require("../models/models");
 const VersionChecklistDto = require("../dtos/versionChecklist-dto");
 const ApiError = require("../exceptions/api-error");
+const path = require('path');
+const uuid = require("uuid");
 
 class VersionChecklistService {
   async createVersionChecklist(
@@ -9,7 +11,9 @@ class VersionChecklistService {
     userId,
     quanity_type,
     reason_for_use,
-    comment
+    comment,
+    header_file,
+    comment_file
   ) {
     const candidate = await VersionChecklist.findOne({ where: { id } });
     if (candidate) {
@@ -17,6 +21,9 @@ class VersionChecklistService {
         `Версия чек-листа с номером ${email} уже существует`
       );
     }
+    let fileName = uuid.v4() + ".docx";
+    header_file.mv(path.resolve(__dirname, '..', 'static/versionChecklist/headerFiles', fileName));
+    comment_file.mv(path.resolve(__dirname, '..', 'static/versionChecklist/commentFiles', fileName));
 
     const versionChecklist = await VersionChecklist.create({
       id,
@@ -25,6 +32,8 @@ class VersionChecklistService {
       quanity_type,
       reason_for_use,
       comment,
+      header_file: fileName,
+      comment_file: fileName
     });
 
     const versionChecklistDto = new VersionChecklistDto(versionChecklist);
