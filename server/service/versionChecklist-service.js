@@ -16,11 +16,16 @@ class VersionChecklistService {
     comment_file
   ) {
     const candidate = await VersionChecklist.findOne({ where: { id } });
+
     if (candidate) {
       throw ApiError.BadRequest(
-        `Версия чек-листа с номером ${email} уже существует`
+        `Версия чек-листа с номером ${id} уже существует`
       );
     }
+    if (actual_key == "Актуально") {
+      VersionChecklist.update( { actual_key: "Не актуально" }, { where: { actual_key: "Актуально" } } );
+    }
+
     let fileName = uuid.v4() + ".docx";
     header_file.mv(path.resolve(__dirname, '..', 'static/versionChecklist/headerFiles', fileName));
     comment_file.mv(path.resolve(__dirname, '..', 'static/versionChecklist/commentFiles', fileName));
