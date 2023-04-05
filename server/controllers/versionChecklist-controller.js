@@ -4,7 +4,7 @@ const ApiError = require("../exceptions/api-error");
 class VersionChecklistController {
   async create(req, res, next) {
     try {
-      const { id, actual_key, userId, quanity_type, reason_for_use, comment } =
+      const { id, actual_key, userId, quanity_type, reason_for_use, comment, themes } =
         req.body;
 
       const { header_file } = req.files;
@@ -19,7 +19,8 @@ class VersionChecklistController {
           reason_for_use,
           comment,
           header_file,
-          comment_file
+          comment_file,
+          themes
         );
 
       return res.json(versionChecklistData);

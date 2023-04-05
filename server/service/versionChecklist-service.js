@@ -1,4 +1,4 @@
-const { VersionChecklist } = require("../models/models");
+const { VersionChecklist, Themes } = require("../models/models");
 const VersionChecklistDto = require("../dtos/versionChecklist-dto");
 const ApiError = require("../exceptions/api-error");
 const path = require('path');
@@ -13,7 +13,8 @@ class VersionChecklistService {
     reason_for_use,
     comment,
     header_file,
-    comment_file
+    comment_file,
+    themes
   ) {
     const candidate = await VersionChecklist.findOne({ where: { id } });
 
@@ -29,6 +30,14 @@ class VersionChecklistService {
     let fileName = uuid.v4() + ".docx";
     header_file.mv(path.resolve(__dirname, '..', 'static/versionChecklist/headerFiles', fileName));
     comment_file.mv(path.resolve(__dirname, '..', 'static/versionChecklist/commentFiles', fileName));
+
+    if (themes) {
+      themes = JSON.parse(themes);
+      themes.forEach(i => Themes.create({
+        title: i.title,
+        versionChecklistId: id,
+      }));
+    }
 
     const versionChecklist = await VersionChecklist.create({
       id,
