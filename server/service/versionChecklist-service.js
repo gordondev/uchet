@@ -33,7 +33,7 @@ class VersionChecklistService {
 
     let fileName = uuid.v4() + ".docx";
 
-    if (headerFile) {
+    if (headerFile != null) {
       headerFile.mv(
         path.resolve(
           __dirname,
@@ -43,7 +43,7 @@ class VersionChecklistService {
         )
       );
     }
-    if (commentFile) {
+    if (commentFile != null) {
       commentFile.mv(
         path.resolve(
           __dirname,
@@ -62,8 +62,8 @@ class VersionChecklistService {
       reasonForUse,
       acceptanceDate,
       comment,
-      headerFile: headerFile ? fileName : undefined,
-      commentFile: commentFile ? fileName : undefined,
+      headerFile: headerFile ? fileName : headerFile,
+      commentFile: commentFile ? fileName : commentFile,
     });
 
     if (theme) {
@@ -79,19 +79,6 @@ class VersionChecklistService {
     const versionChecklistDto = new VersionChecklistDto(versionChecklist);
 
     return { versionChecklist: versionChecklistDto };
-  }
-
-  async uploadFile(header_file) {
-    let fileName = uuid.v4() + ".docx";
-    header_file.mv(
-      path.resolve(
-        __dirname,
-        "..",
-        "static/versionChecklist/headerFiles",
-        fileName
-      )
-    );
-    return `${fileName} успешно загружен`;
   }
 
   async getAll() {

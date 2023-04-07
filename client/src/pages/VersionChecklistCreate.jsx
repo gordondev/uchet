@@ -9,6 +9,7 @@ import {
     InputNumber,
     DatePicker,
     Input,
+    message,
     Modal,
 } from "antd";
 import {
@@ -50,6 +51,7 @@ const VersionChecklistCreate = () => {
     const [headerFile, setHeaderFile] = useState('');
     const [commentFile, setCommentFile] = useState('');
     const [theme, setTheme] = useState([]);
+    const [form] = Form.useForm();
 
     const addTheme = () => {
         setCount(count + 1);
@@ -65,8 +67,8 @@ const VersionChecklistCreate = () => {
         setTheme(theme.map(i => i.number === number ? { ...i, ['theme']: value } : i));
     };
 
-    const addVersion = () => {
-        const formData = new FormData()
+    const addVersion = async () => { 
+      const formData = new FormData()
         formData.append('id', id)
         formData.append('actualKey', actualKey)
         formData.append('userId', user.user.id)
@@ -77,7 +79,12 @@ const VersionChecklistCreate = () => {
         formData.append('theme', JSON.stringify(theme))
         formData.append('headerFile', headerFile)
         formData.append('commentFile', commentFile)
-        console.log(createVersion(formData))
+      try {
+        await createVersion(formData);
+        message.success(`Версия успешно добавлена`);
+      } catch(e) {
+        message.error(e.response?.data?.message);
+      }
     }
 
     const selectHeaderFile = e => {
@@ -94,7 +101,7 @@ const VersionChecklistCreate = () => {
         <ReachableContext.Provider value="Light">
       <section className="searchSection">
         <div className="container">
-        <Form>
+        <Form onFinish={addVersion}>
           <div className="defaultForm">
             <div className="defaultForm__tile">
               <Form.Item label="Номер версии" style={{ marginBottom: "20px" }}>
@@ -158,7 +165,6 @@ const VersionChecklistCreate = () => {
                   <Button
                     type="primary"
                     danger
-                    htmlType="submit"
                     style={{ marginLeft: "20px" }}
                     icon={<DeleteOutlined />}
                     onClick={() => removeTheme(i.number)}
@@ -179,9 +185,11 @@ const VersionChecklistCreate = () => {
             </Button>
             <div className="defaultForm__dragBlock">
 
-              <input type="file" className="inputUpload" onChange={selectHeaderFile}/> //file
+              <input type="file" className="inputUpload" onChange={selectHeaderFile} accept=".doc, .docx"/> Выбор шапки
 
-              <input type="file" className="inputUpload" onChange={selectCommentFile}/> //file
+              <br/>
+
+              <input type="file" className="inputUpload" onChange={selectCommentFile} accept=".doc, .docx"/> Выбор комментария
 
             </div>
             <Form.Item
@@ -198,11 +206,16 @@ const VersionChecklistCreate = () => {
             </Form.Item>
             <Form.Item 
             label="Дата принятия" 
-            name="date-picker" 
-            trigger={(value) => console.log(value) }
+            name="date-picker"
+            rules={[
+                    {
+                      required: true,
+                      message: "Выберите дату",
+                    },
+                  ]}
             >
               <DatePicker 
-              placeholder="Выберите дату" 
+              placeholder="Выберите дату"
               style={{ width: "100%" }} 
               onChange = { (date, dateString) => { setAcceptanceDate(dateString) } } />
             </Form.Item>
@@ -218,7 +231,7 @@ const VersionChecklistCreate = () => {
                 htmlType="submit"
                 icon={<SaveOutlined />}
                 style={{ width: "100%", marginBottom: "20px" }}
-                onClick={addVersion}
+                // onClick={addVersion}
               >
                 Сохранить
               </Button>

@@ -1,17 +1,17 @@
 module.exports = class VersionChecklistDto {
 	id;
-	actual_key;
+	actualKey;
 	userId;
-	quanity_type;
-	reason_for_use;
+	quanityType;
+	reasonForUse;
 	comment;
 
 	constructor(model) {
 		this.id = model.id;
-		this.actual_key = model.actual_key;
+		this.actualKey = model.actualKey;
 		this.userId = model.userId;
-		this.quanity_type = model.quanity_type;
-		this.reason_for_use = model.reason_for_use;
+		this.quanityType = model.quanityType;
+		this.reasonForUse = model.reasonForUse;
 		this.comment = model.comment;
 	}
 }
