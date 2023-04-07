@@ -1,10 +1,10 @@
-import React, {useState, useContext} from "react";
+import React, { useState, useContext } from "react";
 import { Button, Form, Input, Select, message } from "antd";
 import { LOGIN_ROUTE, MAIN_ROUTE } from "../utils/consts";
-import { registration } from '../http/userAPI';
-import { observer } from 'mobx-react-lite';
+import { registration } from "../http/userAPI";
+import { observer } from "mobx-react-lite";
 import { Context } from "../index";
-import {useLocation, useNavigate, Link} from 'react-router-dom';
+import { useLocation, useNavigate, Link } from "react-router-dom";
 
 const { Option } = Select;
 const formItemLayout = {
@@ -42,24 +42,30 @@ const Registration = observer(() => {
   const location = useLocation();
   const navigate = useNavigate();
   const isLogin = location.pathname === LOGIN_ROUTE;
-  const {user} = useContext(Context);
+  const { user } = useContext(Context);
   const [form] = Form.useForm();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [division, setDivision] = useState('');
-  const [name, setName] = useState('');
-  const [surname, setSurname] = useState('');
-  const [patronymic, setPatronymic] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [division, setDivision] = useState("");
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [patronymic, setPatronymic] = useState("");
 
   const click = async () => {
-
     try {
-      let data = await registration(email, password, division, name, surname, patronymic);
+      let data = await registration(
+        email,
+        password,
+        division,
+        name,
+        surname,
+        patronymic
+      );
       user.setUser(data.user);
       user.setIsAuth(true);
       message.success(`Мы отправили письмо вам на почту`);
       navigate(MAIN_ROUTE);
-    } catch(e) {
+    } catch (e) {
       message.error(e.response?.data?.message);
     }
   };
@@ -92,7 +98,7 @@ const Registration = observer(() => {
             name="division"
             label="Подразделение"
             hasFeedback
-            onChange={e => setDivision(e.target.value)}
+            onChange={(e) => setDivision(e.target.value)}
             rules={[
               {
                 required: true,
@@ -100,7 +106,13 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Select defaultValue={division} onChange={(value) => {setDivision(value); console.log(value);}}>
+            <Select
+              defaultValue={division}
+              onChange={(value) => {
+                setDivision(value);
+                console.log(value);
+              }}
+            >
               <Option value="ТЦ-3">ТЦ-3</Option>
               <Option value="РЦ-2">РЦ-2</Option>
               <Option value="РЦ-3">РЦ-3</Option>
@@ -127,7 +139,7 @@ const Registration = observer(() => {
           <Form.Item
             name="name"
             label="Имя"
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             rules={[
               {
                 required: true,
@@ -136,13 +148,13 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={name}/>
+            <Input defaultValue={name} />
           </Form.Item>
 
           <Form.Item
             name="surname"
             label="Фамилия"
-            onChange={e => setSurname(e.target.value)}
+            onChange={(e) => setSurname(e.target.value)}
             rules={[
               {
                 required: true,
@@ -151,13 +163,13 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={surname}/>
+            <Input defaultValue={surname} />
           </Form.Item>
 
           <Form.Item
             name="patronymic"
             label="Отчество"
-            onChange={e => setPatronymic(e.target.value)}
+            onChange={(e) => setPatronymic(e.target.value)}
             rules={[
               {
                 required: true,
@@ -166,13 +178,13 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={patronymic}/>
+            <Input defaultValue={patronymic} />
           </Form.Item>
 
           <Form.Item
             name="email"
             label="Почта"
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             rules={[
               {
                 type: "email",
@@ -184,13 +196,13 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={email}/>
+            <Input defaultValue={email} />
           </Form.Item>
 
           <Form.Item
             name="password"
             label="Пароль"
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             rules={[
               {
                 required: true,
@@ -199,7 +211,7 @@ const Registration = observer(() => {
             ]}
             hasFeedback
           >
-            <Input.Password defaultValue={password}/>
+            <Input.Password defaultValue={password} />
           </Form.Item>
 
           <Form.Item
@@ -224,7 +236,7 @@ const Registration = observer(() => {
               }),
             ]}
           >
-            <Input.Password defaultValue={password}/>
+            <Input.Password defaultValue={password} />
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>

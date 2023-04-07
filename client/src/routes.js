@@ -16,7 +16,6 @@ import {
   VERSION_CHECKLIST_CREATE_ROUTE,
 } from "./utils/consts";
 
-
 export const authRoutes = [
   {
     path: MAIN_ROUTE,

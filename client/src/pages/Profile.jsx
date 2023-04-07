@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import {
   Form,
@@ -15,10 +15,16 @@ const { Title } = Typography;
 const { Paragraph } = Typography;
 
 const Profile = () => {
-  const {user} = useContext(Context);
-  const [editableStrSerName, setEditableSerName] = useState(`${user?.user?.surname}`);
-  const [editableStrFirstName, setEditableFirstName] = useState(`${user?.user?.name}`);
-  const [editableStrSecondName, setEditableSecondName] = useState(`${user?.user?.patronymic}`);
+  const { user } = useContext(Context);
+  const [editableStrSerName, setEditableSerName] = useState(
+    `${user?.user?.surname}`
+  );
+  const [editableStrFirstName, setEditableFirstName] = useState(
+    `${user?.user?.name}`
+  );
+  const [editableStrSecondName, setEditableSecondName] = useState(
+    `${user?.user?.patronymic}`
+  );
 
   const [componentDisabled, setComponentDisabled] = useState(true);
 

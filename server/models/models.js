@@ -6,11 +6,34 @@ const User = sequelize.define("user", {
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING(500) },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
-  division: { type: DataTypes.ENUM('ТЦ-3', 'РЦ-2', 'РЦ-3', 'ЦЦР', 'ЦОРО', 'ЭЦ', 'ЦТАИ', 'ЦВ', 'ОРБ', 'ХЦ', 'ТЦ-2', 'РТЦ-1', 'ЦОС', 'ОПБ', 'ОЯБиН', 'Управление', 'ОТИиПБ', 'ОИиКОБ', 'ООТ', 'УТП') },
+  division: {
+    type: DataTypes.ENUM(
+      "ТЦ-3",
+      "РЦ-2",
+      "РЦ-3",
+      "ЦЦР",
+      "ЦОРО",
+      "ЭЦ",
+      "ЦТАИ",
+      "ЦВ",
+      "ОРБ",
+      "ХЦ",
+      "ТЦ-2",
+      "РТЦ-1",
+      "ЦОС",
+      "ОПБ",
+      "ОЯБиН",
+      "Управление",
+      "ОТИиПБ",
+      "ОИиКОБ",
+      "ООТ",
+      "УТП"
+    ),
+  },
   name: { type: DataTypes.STRING(600) },
   surname: { type: DataTypes.STRING(600) },
   patronymic: { type: DataTypes.STRING(600) },
-  isActivated: {type: DataTypes.BOOLEAN, defaultValue: false},
+  isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
   activationLink: { type: DataTypes.STRING(500) },
 });
 
@@ -21,13 +44,13 @@ const Tokens = sequelize.define("tokens", {
 
 const VersionChecklist = sequelize.define("version_checklist", {
   id: { type: DataTypes.INTEGER, primaryKey: true, unique: true },
-  actual_key: { type: DataTypes.ENUM('Актуально', 'Не актуально') },
+  actualKey: { type: DataTypes.ENUM("Актуально", "Не актуально") },
   userId: { type: DataTypes.INTEGER },
-  header_file: { type: DataTypes.STRING(500) },
-  comment_file: { type: DataTypes.STRING(500) },
-  quanity_type: { type: DataTypes.INTEGER },
-  acceptance_date: { type: 'TIMESTAMP' },
-  reason_for_use: { type: DataTypes.STRING(500) },
+  headerFile: { type: DataTypes.STRING(500) },
+  commentFile: { type: DataTypes.STRING(500) },
+  quanityType: { type: DataTypes.INTEGER },
+  acceptanceDate: { type: DataTypes.DATEONLY },
+  reasonForUse: { type: DataTypes.STRING(500) },
   comment: { type: DataTypes.STRING(500) },
 });
 
@@ -50,8 +73,14 @@ const ObservationResults = sequelize.define("observation_results", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   userId: { type: DataTypes.INTEGER },
   division: { type: DataTypes.STRING },
-  impact_on_save: { type: DataTypes.ENUM('Нет', 'Да') },
-  final_grade: { type: DataTypes.ENUM('Ниже требований', 'Соответствуют требованиям', 'Выше требований') },
+  impact_on_save: { type: DataTypes.ENUM("Нет", "Да") },
+  final_grade: {
+    type: DataTypes.ENUM(
+      "Ниже требований",
+      "Соответствуют требованиям",
+      "Выше требований"
+    ),
+  },
   file: { type: DataTypes.STRING(500) },
   comment: { type: DataTypes.STRING(500) },
 });
@@ -79,7 +108,14 @@ const GradeObservationResults = sequelize.define("gradeObservationResults", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   themeId: { type: DataTypes.INTEGER },
   checklistId: { type: DataTypes.INTEGER },
-  grade: { type: DataTypes.ENUM('Ниже требований', 'Соответствуют требованиям', 'Выше требований', 'Не наблюдалось') },
+  grade: {
+    type: DataTypes.ENUM(
+      "Ниже требований",
+      "Соответствуют требованиям",
+      "Выше требований",
+      "Не наблюдалось"
+    ),
+  },
 });
 
 User.hasMany(Tokens);

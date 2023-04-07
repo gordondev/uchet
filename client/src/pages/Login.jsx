@@ -4,27 +4,27 @@ import { REGISTRATION_ROUTE, MAIN_ROUTE } from "../utils/consts";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../index";
 import { observer } from "mobx-react-lite";
-import { login } from '../http/userAPI';
+import { login } from "../http/userAPI";
 
 const Login = observer(() => {
-    const { user } = useContext(Context);
-    const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const { user } = useContext(Context);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const onFinish = async (values) => {
-        try {
-            const data = await login(values.email, values.password);
-            user.setIsAuth(true);
-            user.setUser(data);
-            navigate(MAIN_ROUTE);
-        } catch (e) {
-            message.error(e.response?.data?.message);
-        }
-    };
+  const onFinish = async (values) => {
+    try {
+      const data = await login(values.email, values.password);
+      user.setIsAuth(true);
+      user.setUser(data);
+      navigate(MAIN_ROUTE);
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+  };
 
-    return (
-        <section className="auth">
+  return (
+    <section className="auth">
       <div className="container">
         <Form
           name="basic"
@@ -90,10 +90,7 @@ const Login = observer(() => {
               span: 16,
             }}
           >
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               Войти
             </Button>
             <Link to={REGISTRATION_ROUTE} style={{ marginLeft: "20px" }}>
@@ -103,6 +100,6 @@ const Login = observer(() => {
         </Form>
       </div>
     </section>
-    );
+  );
 });
 export default Login;

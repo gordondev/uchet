@@ -2,25 +2,36 @@ const versionChecklist = require("../service/versionChecklist-service");
 const ApiError = require("../exceptions/api-error");
 
 class VersionChecklistController {
+
+  async uploadFile(req, res, next) {
+    try {
+      let file = req.files.file;
+      return res.json("access");
+    } catch(e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
   async create(req, res, next) {
     try {
-      const { id, actual_key, userId, quanity_type, reason_for_use, comment, themes } =
+      const { id, actualKey, userId, quanityType, reasonForUse, acceptanceDate, comment, theme } =
         req.body;
 
-      const { header_file } = req.files;
-      const { comment_file } = req.files;
+      const { headerFile } = req.files;
+      const { commentFile } = req.files;
 
       const versionChecklistData =
         await versionChecklist.createVersionChecklist(
           id,
-          actual_key,
+          actualKey,
           userId,
-          quanity_type,
-          reason_for_use,
+          quanityType,
+          reasonForUse,
+          acceptanceDate,
           comment,
-          header_file,
-          comment_file,
-          themes
+          headerFile,
+          commentFile,
+          theme
         );
 
       return res.json(versionChecklistData);
@@ -28,7 +39,7 @@ class VersionChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
       const versionChecklistsData = await versionChecklist.getAll();
       return res.json(versionChecklistsData);
@@ -36,7 +47,7 @@ class VersionChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
-  async getOne(req, res) {
+  async getOne(req, res, next) {
     try {
       const { id } = req.params;
       const versionChecklistData = await versionChecklist.getOne(id);
@@ -45,7 +56,7 @@ class VersionChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
-  async deleteOne(req, res) {
+  async deleteOne(req, res, next) {
     try {
       const { id } = req.params;
       await versionChecklist.deleteOne(id);
@@ -54,18 +65,18 @@ class VersionChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
-  async updateOne(req, res) {
+  async updateOne(req, res, next) {
     try {
-      const { updateId, id, actual_key, userId, quanity_type, reason_for_use, comment } =
+      const { updateId, id, actualKey, userId, quanityType, reasonForUse, comment } =
         req.body;
 
       await versionChecklist.updateOne(
         updateId,
         id,
-        actual_key,
+        actualKey,
         userId,
-        quanity_type,
-        reason_for_use,
+        quanityType,
+        reasonForUse,
         comment
       );
       return res.json({ message: `Данные чек-листа - ${id} были обновленны` });

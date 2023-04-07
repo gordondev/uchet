@@ -1,58 +1,28 @@
-import React from "react";
-import { useState } from "react";
-import { createContext } from "react";
+import React, { useContext, useState, createContext } from "react";
+import { createVersion } from "../http/versionChecklistAPI";
+import { Context } from "../index";
 import {
     Typography,
     Form,
     Select,
     Button,
-    message,
-    Upload,
     InputNumber,
     DatePicker,
     Input,
     Modal,
 } from "antd";
 import {
-    InboxOutlined,
     PlusOutlined,
     DeleteOutlined,
     SaveOutlined,
 } from "@ant-design/icons";
 
-const { Dragger } = Upload;
 const { TextArea } = Input;
 const { Option } = Select;
 const { Title } = Typography;
 
 const ReachableContext = createContext(null);
 const UnreachableContext = createContext(null);
-
-const props = {
-  beforeUpload: (file) => {
-    const isDoc = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    if (!isDoc) {
-      message.error(`${file.name} это не docx файл`);
-    }
-    return isDoc || Upload.LIST_IGNORE;
-  },
-    multiple: false,
-    action: "http://localhost:3000/versionchecklist/create",
-    onChange(info) {
-        const { status } = info.file;
-        if (status !== "uploading") {
-            console.log(info.file, info.fileList);
-        }
-        if (status === "done") {
-            message.success(`${info.file.name} файл успешно загружен`);
-        } else if (status === "error") {
-            message.error(`${info.file.name} ошибка загрузки файла`);
-        }
-    },
-    onDrop(e) {
-        console.log("Dropped files", e.dataTransfer.files);
-    },
-};
 
 const config = {
     title: "Предупреждение!",
@@ -64,27 +34,61 @@ const config = {
         />
     ),
 };
-let countTheme = 0;
+
 const VersionChecklistCreate = () => {
+
     const [modal, contextHolder] = Modal.useModal();
-    const [info, setInfo] = useState([]);
     const [count, setCount] = useState(1);
+    const {user} = useContext(Context);
 
-    const addInfo = () => {
+    const [id, setId] = useState(1);
+    const [actualKey, setActualKey] = useState('');
+    const [quanityType, setQuanityType] = useState(1);
+    const [acceptanceDate, setAcceptanceDate] = useState('');
+    const [reasonForUse, setReasonForUse] = useState('');
+    const [comment, setComment] = useState('');
+    const [headerFile, setHeaderFile] = useState('');
+    const [commentFile, setCommentFile] = useState('');
+    const [theme, setTheme] = useState([]);
+
+    const addTheme = () => {
         setCount(count + 1);
-        setInfo([...info, { theme: "", number: Date.now() }]);
+        setTheme([...theme, { theme: "", number: Date.now() }]);
     };
 
-    const removeInfo = (number) => {
+    const removeTheme = (number) => {
         setCount(count - 1);
-        setInfo(info.filter((i) => i.number !== number));
+        setTheme(theme.filter((i) => i.number !== number));
     };
 
-    const changeInfo = (value, number) => {
-        setInfo(
-            info.map((i) => (i.number === number ? { ...i, theme: value } : i))
-        );
+    const changeTheme = (value, number) => {
+        setTheme(theme.map(i => i.number === number ? { ...i, ['theme']: value } : i));
     };
+
+    const addVersion = () => {
+        const formData = new FormData()
+        formData.append('id', id)
+        formData.append('actualKey', actualKey)
+        formData.append('userId', user.user.id)
+        formData.append('quanityType', quanityType)
+        formData.append('reasonForUse', reasonForUse)
+        formData.append('acceptanceDate', acceptanceDate)
+        formData.append('comment', comment)
+        formData.append('theme', JSON.stringify(theme))
+        formData.append('headerFile', headerFile)
+        formData.append('commentFile', commentFile)
+        console.log(createVersion(formData))
+    }
+
+    const selectHeaderFile = e => {
+      setHeaderFile(e.target.files[0]);
+      console.log("HEADER FILE", e.target.files[0]);
+    }
+
+    const selectCommentFile = e => {
+      setCommentFile(e.target.files[0]);
+      console.log("COMMENT FILE", e.target.files[0]);
+    }
 
     return (
         <ReachableContext.Provider value="Light">
@@ -94,7 +98,7 @@ const VersionChecklistCreate = () => {
           <div className="defaultForm">
             <div className="defaultForm__tile">
               <Form.Item label="Номер версии" style={{ marginBottom: "20px" }}>
-                <InputNumber min={1} defaultValue={1} prefix="№" 
+                <InputNumber min={1} defaultValue={1} prefix="№" onChange={(value) => setId(value)}
                   rules={[
                   {
                     required: true,
@@ -117,13 +121,15 @@ const VersionChecklistCreate = () => {
               >
                 <Select
                   onChange={(value) => {
-                    if (value == "topical") {
+                    setActualKey(value);
+                    if (value == "Актуально") {
                       modal.warning(config);
                     }
-                  }}
+                  }
+                }
                 >
-                  <Option value="topical">Актуально</Option>
-                  <Option value="notRelevant">Не актуально</Option>
+                  <Option value="Актуально">Актуально</Option>
+                  <Option value="Не актуально">Не актуально</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -133,12 +139,13 @@ const VersionChecklistCreate = () => {
             >
               Темы
             </Title>
-            {info.map((i) => (
+            {theme.map((i) => (
               <div className="theme_item">
                 <Form.Item
                   name={i.number}
                   label="Название темы"
                   style={{ marginTop: "23px", width: "100%"}}
+                  onChange={(e) => changeTheme(e.target.value, i.number)}
                   rules={[
                     {
                       required: true,
@@ -154,7 +161,7 @@ const VersionChecklistCreate = () => {
                     htmlType="submit"
                     style={{ marginLeft: "20px" }}
                     icon={<DeleteOutlined />}
-                    onClick={() => removeInfo(i.number)}
+                    onClick={() => removeTheme(i.number)}
                   >
                     Удалить
                   </Button>
@@ -165,34 +172,17 @@ const VersionChecklistCreate = () => {
               type="primary"
               style={{ width: "100%", marginBottom: "20px" }}
               icon={<PlusOutlined />}
-              onClick={addInfo}
+              onClick={addTheme}
               disabled={count >= 7}
             >
               Добавить, осталось: {6 - (count - 1)}
             </Button>
             <div className="defaultForm__dragBlock">
-              <Dragger {...props} maxCount={1} style={{ marginBottom: "20px" }}>
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Кликните или перетащите файл в область загрузки
-                </p>
-                <p className="ant-upload-hint">
-                  Прикрепите файл шапки чек-листа
-                </p>
-              </Dragger>
-              <Dragger {...props} maxCount={1}>
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Кликните или перетащите файл в область загрузки
-                </p>
-                <p className="ant-upload-hint">
-                  Прикрепите файл комментариев чек-листа
-                </p>
-              </Dragger>
+
+              <input type="file" className="inputUpload" onChange={selectHeaderFile}/> //file
+
+              <input type="file" className="inputUpload" onChange={selectCommentFile}/> //file
+
             </div>
             <Form.Item
               label="Количество типов"
@@ -202,22 +192,25 @@ const VersionChecklistCreate = () => {
                 min={1}
                 max={10}
                 defaultValue={1}
+                onChange={(value) => setQuanityType(value)}
                 style={{ width: "100%" }}
               />
             </Form.Item>
-            <Form.Item label="Дата принятия" name="date-picker" rules={[
-                    {
-                      required: true,
-                      message: 'Выберите дату принятия',
-                    },
-                  ]}>
-              <DatePicker style={{ width: "100%" }} />
+            <Form.Item 
+            label="Дата принятия" 
+            name="date-picker" 
+            trigger={(value) => console.log(value) }
+            >
+              <DatePicker 
+              placeholder="Выберите дату" 
+              style={{ width: "100%" }} 
+              onChange = { (date, dateString) => { setAcceptanceDate(dateString) } } />
             </Form.Item>
             <Form.Item label="Основание использования">
-              <TextArea rows={4} />
+              <TextArea rows={4} onChange={e => setReasonForUse(e.target.value)}/>
             </Form.Item>
             <Form.Item label="Примечание">
-              <TextArea rows={4} />
+              <TextArea rows={4} onChange={e => setComment(e.target.value)}/>
             </Form.Item>
               <Form.Item style={{ width: "100%" }}>
                 <Button
@@ -225,10 +218,11 @@ const VersionChecklistCreate = () => {
                 htmlType="submit"
                 icon={<SaveOutlined />}
                 style={{ width: "100%", marginBottom: "20px" }}
+                onClick={addVersion}
               >
                 Сохранить
               </Button>
-              </Form.Item>
+            </Form.Item>
           </div>
         </Form>
           

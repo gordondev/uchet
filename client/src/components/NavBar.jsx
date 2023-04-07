@@ -10,38 +10,38 @@ import {
 } from "../utils/consts";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../index";
-import { logout } from '../http/userAPI';
+import { logout } from "../http/userAPI";
 
 const { Header } = Layout;
 
 const NavBar = observer(() => {
   const navigate = useNavigate();
-  const {user} = useContext(Context);
+  const { user } = useContext(Context);
 
   const logOut = async () => {
     try {
       await logout();
       user.setUser({});
       user.setIsAuth(false);
-      localStorage.removeItem('token');
-    } catch(e) {
+      localStorage.removeItem("token");
+    } catch (e) {
       message.error(e.response?.data?.message);
     }
   };
 
   const items = [
-  {
-    key: "PROFILE_ROUTE",
-    label: <Link to={PROFILE_ROUTE}>Профиль</Link>,
-    icon: <UserOutlined />,
-  },
-  {
-    key: "2",
-    label: <Link onClick={logOut}>Выйти</Link>,
-    icon: <LogoutOutlined />,
-    danger: true,
-  },
-];
+    {
+      key: "PROFILE_ROUTE",
+      label: <Link to={PROFILE_ROUTE}>Профиль</Link>,
+      icon: <UserOutlined />,
+    },
+    {
+      key: "2",
+      label: <Link onClick={logOut}>Выйти</Link>,
+      icon: <LogoutOutlined />,
+      danger: true,
+    },
+  ];
 
   return (
     <Header className="header">
@@ -55,7 +55,11 @@ const NavBar = observer(() => {
         <Menu
           theme="light"
           mode="horizontal"
-          selectedKeys={window.location.pathname.includes(VERSION_CHECKLIST_ROUTE) ? VERSION_CHECKLIST_ROUTE : window.location.pathname}
+          selectedKeys={
+            window.location.pathname.includes(VERSION_CHECKLIST_ROUTE)
+              ? VERSION_CHECKLIST_ROUTE
+              : window.location.pathname
+          }
           className="navmenu"
         >
           <Menu.Item key={VERSION_CHECKLIST_ROUTE}>
@@ -78,10 +82,10 @@ const NavBar = observer(() => {
           </Menu.Item>
           <Menu.Item key={PROFILE_ROUTE}>
             <Dropdown
-                menu={{
-                  items,
-                }}
-              >
+              menu={{
+                items,
+              }}
+            >
               <Link>
                 <Space>
                   Пользователь
