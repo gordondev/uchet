@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Input, Col, Row, FloatButton, Card, Empty } from "antd";
+import { Input, Col, Row, FloatButton, Card, Empty, Spin } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -10,6 +10,7 @@ const { Meta } = Card;
 const { Search } = Input;
 
 const VersionChecklist = observer(() => {
+  const [versionIsLoadind, setVersionIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
   const [fetching, setFetching] = useState(true);
@@ -28,6 +29,7 @@ const VersionChecklist = observer(() => {
 
   useEffect(() => {
     if (fetching) {
+      setVersionIsLoading(true);
       fetchVersionChecklist(24, currentPage)
         .then((response) => {
           setData([...data, ...response.rows]);
@@ -35,6 +37,7 @@ const VersionChecklist = observer(() => {
           setTotalCount(response.count);
         })
         .finally(() => setFetching(false));
+        setVersionIsLoading(false);
     }
   }, [fetching]);
 
@@ -73,7 +76,7 @@ const VersionChecklist = observer(() => {
           style={{ width: "100%" }}
         />
           <Row gutter={[40, 16]} justify="left">
-          {sortedAndSearchedVersions.length ? sortedAndSearchedVersions.map((data) => (
+          {versionIsLoadind ? <Spin style={{marginTop: "20px"}}/> : sortedAndSearchedVersions.length ? sortedAndSearchedVersions.map((data) => (
             <Col className="gutter-row" span={sortedAndSearchedVersions.length == 2 ? 12 : 8}
               key={data.id}>
               {
