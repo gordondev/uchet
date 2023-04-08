@@ -81,8 +81,8 @@ class VersionChecklistService {
     return { versionChecklist: versionChecklistDto };
   }
 
-  async getAll() {
-    const versionChecklists = await VersionChecklist.findAll();
+  async getAll(limit, offset) {
+    const versionChecklists = await VersionChecklist.findAndCountAll({ limit, offset });
     return versionChecklists;
   }
 

@@ -5,7 +5,7 @@ export const createVersion = async (version) => {
   return data;
 };
 
-export const fetchVersionChecklist = async () => {
-    const {data} = await $authHost.get('api/versionchecklist/');
+export const fetchVersionChecklist = async (limit, page) => {
+    const {data} = await $authHost.get('api/versionchecklist/', { params: { limit, page } });
     return data;
 }

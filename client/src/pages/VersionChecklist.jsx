@@ -10,14 +10,39 @@ const { Meta } = Card;
 const { Search } = Input;
 
 const VersionChecklist = observer(() => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
+  const [fetching, setFetching] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect( () => {
-    fetchVersionChecklist().then(response => setData(response))
-  }, []);
+    if (fetching) {
+      console.log('fetching');
+      fetchVersionChecklist(24, currentPage).then(response => { 
+        setData([...data, ...response.rows]);
+        console.log("USE EFFECT", data.length, totalCount);
+        setCurrentPage(prevState => prevState + 1);
+        setTotalCount(response.count);
+      }).finally(() => setFetching(false));
+    }
+  }, [fetching]);
 
-  console.log(data);
+  useEffect( () => {
+    document.addEventListener('scroll', scrollHendler)
+    return () => {
+      document.removeEventListener('scroll', scrollHendler)
+    };
+
+  }, [totalCount]);
+
+  const scrollHendler = (e) => {
+    console.log("EVENT SCROLL", data.length, totalCount);
+    if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100 && data.length <totalCount) {
+      setFetching(true);
+    }
+  }
+
   return (
     <section className="searchSection">
       <div className="container">
@@ -31,7 +56,7 @@ const VersionChecklist = observer(() => {
 
         <Row gutter={[40, 16]}>
           {data.map(data =>
-            <Col className="gutter-row" span={6}>
+            <Col className="gutter-row" span={6} key={data.id}>
               <Card
                 style={{
                   minWidth: 270,

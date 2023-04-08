@@ -50,7 +50,11 @@ class VersionChecklistController {
 
   async getAll(req, res, next) {
     try {
-      const versionChecklistsData = await versionChecklist.getAll();
+      let {limit, page} = req.query;
+      page = page || 1;
+      limit = limit || 24;
+      let offset = page * limit - limit;
+      const versionChecklistsData = await versionChecklist.getAll(limit, offset);
       return res.json(versionChecklistsData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
