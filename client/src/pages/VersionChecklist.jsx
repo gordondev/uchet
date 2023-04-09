@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { Input, Row, FloatButton, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -6,64 +6,54 @@ import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_CREATE_ROUTE } from "../utils/consts";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import VersionsList from "../components/VersionsList";
-// import lastElement = useRef();
-// console.log(lastElement);
 
 const { Search } = Input;
 
-const VersionChecklist = observer(() => {
+const VersionChecklist = () => {
   const [versionIsLoadind, setVersionIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = useRef(1);
+  // const setCurrentPage = (value) => {
+  //   currentPage = value;
+  // }
   const [data, setData] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
-
-  // const [selectedSort, setSelectedSort] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-
-  // const sortedVersions = useMemo( () => {
-  //   if (selectedSort) {
-  //     return [...data].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
-  //   }
-  // }, [selectedSort, data] );
-
+  const lastElement = useRef();
+  const observer = useRef();  
+  
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (fetching) {
-      setVersionIsLoading(true);
-      fetchVersionChecklist(24, currentPage)
-        .then((response) => {
+    if (versionIsLoadind) return;
+    if (observer.current) observer.current.disconnect();
+    var callback = function(entries, observer) {
+      if (entries[0].isIntersecting && data.length < totalCount) {
+        currentPage.current += 1;
+        fetchVersionChecklist(24, currentPage.current).then((response) => {
           setData([...data, ...response.rows]);
-          setCurrentPage((prevState) => prevState + 1);
-          setTotalCount(response.count);
-        })
-        .finally(() => setFetching(false));
-        setVersionIsLoading(false);
-    }
-  }, [fetching]);
+        });
+      }
+    };
+
+    observer.current = new IntersectionObserver(callback);
+    observer.current.observe(lastElement.current);
+  }, [versionIsLoadind, lastElement.current, data.length])
 
   useEffect(() => {
-    document.addEventListener("scroll", scrollHendler);
-    return () => {
-      document.removeEventListener("scroll", scrollHendler);
-    };
-  }, [totalCount]);
+    setVersionIsLoading(true);
+    fetchVersionChecklist(24, currentPage.current).then((response) => {
+      setData([...data, ...response.rows]);
+      setTotalCount(response.count);
+    });
 
-  const scrollHendler = (e) => {
-    if (
-      e.target.documentElement.scrollHeight -
-        (e.target.documentElement.scrollTop + window.innerHeight) <
-        100 &&
-      data.length < totalCount
-    ) {
-      setFetching(true);
-    }
-  };
+    setVersionIsLoading(false);
+  }, []);
 
-  const sortedAndSearchedVersions = useMemo(() => {
-    return data.filter((data) => String(data.id).includes(searchQuery));
-  }, [searchQuery, data]);
+  // const sortedAndSearchedVersions = useMemo(() => {
+  //   return data.filter((data) => String(data.id).includes(searchQuery));
+  // }, [searchQuery, data]);
 
   return (
     <section className="searchSection">
@@ -80,8 +70,10 @@ const VersionChecklist = observer(() => {
         <Row gutter={[40, 16]} justify="left">
           {
             versionIsLoadind ? <Spin size="large" style={{marginTop: "20px"}}/> : 
-
-            <VersionsList versions={sortedAndSearchedVersions}/>
+            <>
+              <VersionsList versions={data}/>
+              <div ref={lastElement} style={{ height: "1px", width: "100%" }}></div>
+            </>
           }
         </Row>
         
@@ -97,6 +89,6 @@ const VersionChecklist = observer(() => {
       </div>
     </section>
   );
-});
+};
 
 export default VersionChecklist;
