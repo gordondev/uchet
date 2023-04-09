@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_CREATE_ROUTE } from "../utils/consts";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
+import { useObserver } from "../hooks/useObserver";
 import VersionsList from "../components/VersionsList";
 
 const { Search } = Input;
@@ -25,21 +26,12 @@ const VersionChecklist = () => {
   
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (versionIsLoadind) return;
-    if (observer.current) observer.current.disconnect();
-    var callback = function(entries, observer) {
-      if (entries[0].isIntersecting && data.length < totalCount) {
-        currentPage.current += 1;
-        fetchVersionChecklist(24, currentPage.current).then((response) => {
-          setData([...data, ...response.rows]);
-        });
-      }
-    };
-
-    observer.current = new IntersectionObserver(callback);
-    observer.current.observe(lastElement.current);
-  }, [versionIsLoadind, lastElement.current, data.length])
+  useObserver(lastElement, data.length < totalCount, versionIsLoadind, () => {
+    currentPage.current += 1;
+    fetchVersionChecklist(24, currentPage.current).then((response) => {
+      setData([...data, ...response.rows]);
+    });
+  })
 
   useEffect(() => {
     setVersionIsLoading(true);
