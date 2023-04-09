@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Input, Row, FloatButton, Empty, Spin } from "antd";
+import { Input, Row, FloatButton, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -77,13 +77,11 @@ const VersionChecklist = observer(() => {
           size="large"
           style={{ width: "100%" }}
         />
-          <Row gutter={[40, 16]} justify="left">
+        <Row gutter={[40, 16]} justify="left">
           {
-            versionIsLoadind ? <Spin style={{marginTop: "20px"}}/> : sortedAndSearchedVersions.length ? 
+            versionIsLoadind ? <Spin size="large" style={{marginTop: "20px"}}/> : 
 
             <VersionsList versions={sortedAndSearchedVersions}/>
-
-            : <Empty style={{ marginTop: "20px" }}/>
           }
         </Row>
         
