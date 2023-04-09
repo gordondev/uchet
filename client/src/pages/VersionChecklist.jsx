@@ -12,11 +12,7 @@ const { Search } = Input;
 
 const VersionChecklist = () => {
   const [versionIsLoadind, setVersionIsLoading] = useState(true);
-  // const [currentPage, setCurrentPage] = useState(1);
   const currentPage = useRef(1);
-  // const setCurrentPage = (value) => {
-  //   currentPage = value;
-  // }
   const [data, setData] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
@@ -43,9 +39,7 @@ const VersionChecklist = () => {
     setVersionIsLoading(false);
   }, []);
 
-  // const sortedAndSearchedVersions = useMemo(() => {
-  //   return data.filter((data) => String(data.id).includes(searchQuery));
-  // }, [searchQuery, data]);
+  let sortedAndSearchedVersions = data.filter((data) => String(data.id).includes(searchQuery));
 
   return (
     <section className="searchSection">
@@ -59,16 +53,16 @@ const VersionChecklist = () => {
           size="large"
           style={{ width: "100%" }}
         />
+        <p style={{ height: "20px", marginTop: "20px" }}>{searchQuery}</p>
         <Row gutter={[40, 16]} justify="left">
           {
             versionIsLoadind ? <Spin size="large" style={{marginTop: "20px"}}/> : 
             <>
-              <VersionsList versions={data}/>
+              <VersionsList versions={sortedAndSearchedVersions}/>
               <div ref={lastElement} style={{ height: "1px", width: "100%" }}></div>
             </>
           }
         </Row>
-        
         
         <FloatButton
           icon={<PlusOutlined />}
