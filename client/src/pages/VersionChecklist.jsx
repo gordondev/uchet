@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Input, Col, Row, FloatButton, Card, Empty, Spin } from "antd";
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import { Input, Row, FloatButton, Empty, Spin } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_CREATE_ROUTE } from "../utils/consts";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
+import VersionsList from "../components/VersionsList";
+// import lastElement = useRef();
+// console.log(lastElement);
 
-const { Meta } = Card;
 const { Search } = Input;
 
 const VersionChecklist = observer(() => {
@@ -76,37 +78,13 @@ const VersionChecklist = observer(() => {
           style={{ width: "100%" }}
         />
           <Row gutter={[40, 16]} justify="left">
-          {versionIsLoadind ? <Spin style={{marginTop: "20px"}}/> : sortedAndSearchedVersions.length ? sortedAndSearchedVersions.map((data) => (
-            <Col className="gutter-row" span={sortedAndSearchedVersions.length == 2 ? 12 : 8}
-              key={data.id}>
-              {
-                data.actualKey == "Не актуально" ?
-                  <Card
-                  hoverable
-                  style={{
-                    minWidth: 270,
-                    marginTop: 16
-                  }}
-                  actions={[<EditOutlined key="edit" />]}
-                >
-                  <Meta title={"Версия №" + data.id} description={data.actualKey} />
-                </Card>
-                :
-                <Card
-                hoverable
-                style={{
-                  minWidth: 270,
-                  marginTop: 16,
-                  backgroundColor: "#52c41a"
-                }}
-                actions={[<EditOutlined key="edit" />]}
-              >
-                <Meta title={"Версия №" + data.id} description={data.actualKey} />
-              </Card>
-              }
-              
-            </Col>
-          )) : <Empty style={{ marginTop: "20px" }}/>}
+          {
+            versionIsLoadind ? <Spin style={{marginTop: "20px"}}/> : sortedAndSearchedVersions.length ? 
+
+            <VersionsList versions={sortedAndSearchedVersions}/>
+
+            : <Empty style={{ marginTop: "20px" }}/>
+          }
         </Row>
         
         
