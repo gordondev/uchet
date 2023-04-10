@@ -1,10 +1,14 @@
 import React from 'react'
 import { Col, Card, Empty } from "antd";
 import { EditOutlined, CheckOutlined } from "@ant-design/icons";
+import { VERSION_CHECKLIST_ROUTE, VERSION_CHECKLIST_EDIT_ROUTE } from "../utils/consts";
+import { useNavigate } from "react-router-dom";
 
 const { Meta } = Card;
 
 const VersionsList = ({ versions }) => {
+
+	const navigate = useNavigate();
 
 	if (!versions.length) {
 		return (
@@ -24,16 +28,19 @@ const VersionsList = ({ versions }) => {
 		            minWidth: 270,
 		            marginTop: 16,
 		            }}
-		            actions={[<EditOutlined key="edit" />]}
+		            
+		            actions={[<EditOutlined key="edit" onClick={() => navigate(VERSION_CHECKLIST_EDIT_ROUTE + "/" + data.id)}/>]}
 		            >
 		              {
 		              	data.actualKey == "Не актуально" ?
 
-		              	<Meta title={"Версия №" + data.id} description={data.actualKey} /> :
+		              	<Meta title={"Версия №" + data.id} description={data.actualKey} onClick={() => navigate(VERSION_CHECKLIST_ROUTE + "/" + data.id)}/> :
 
-			            <>	 
-			            	<p className="titleVersion">{"Версия №" + data.id}</p>
-			              	<p className="keyActual">Актуально <CheckOutlined /> </p>
+			            <>
+			            	<div onClick={() => navigate(VERSION_CHECKLIST_ROUTE + "/" + data.id)}>
+			            		<p className="titleVersion">{"Версия №" + data.id}</p>
+			              		<p className="keyActual">Актуально <CheckOutlined /> </p>
+			            	</div>	 
 			            </>	              	
 		              }
 		              	

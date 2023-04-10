@@ -41,6 +41,10 @@ const VersionChecklist = () => {
 
   let sortedAndSearchedVersions = data.filter((data) => String(data.id).includes(searchQuery));
 
+  const searchVersion = (e) => {
+    setSearchQuery(e.target.value);
+  }
+
   return (
     <section className="searchSection">
       <div className="container">
@@ -49,11 +53,10 @@ const VersionChecklist = () => {
           allowClear
           enterButton="Поиск"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={searchVersion}
           size="large"
           style={{ width: "100%" }}
         />
-        <p style={{ height: "20px", marginTop: "20px" }}>{searchQuery}</p>
         <Row gutter={[40, 16]} justify="left">
           {
             versionIsLoadind ? <Spin size="large" style={{marginTop: "20px"}}/> : 

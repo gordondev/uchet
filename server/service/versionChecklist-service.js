@@ -1,4 +1,4 @@
-const { VersionChecklist, Themes } = require("../models/models");
+const { VersionChecklist, Themes, User } = require("../models/models");
 const VersionChecklistDto = require("../dtos/versionChecklist-dto");
 const ApiError = require("../exceptions/api-error");
 const path = require("path");
@@ -89,6 +89,7 @@ class VersionChecklistService {
   async getOne(id) {
     const versionChecklist = await VersionChecklist.findOne({
       where: { id },
+      include: [{model: Themes, as: 'themes'}, {model: User, as: 'user'}],
     });
     return versionChecklist;
   }

@@ -220,10 +220,10 @@ const VersionChecklistCreate = () => {
               onChange = { (date, dateString) => { setAcceptanceDate(dateString) } } />
             </Form.Item>
             <Form.Item label="Основание использования">
-              <TextArea rows={4} onChange={e => setReasonForUse(e.target.value)}/>
+              <TextArea rows={4} onChange={e => setReasonForUse(e.target.value)} showCount maxLength={500}/>
             </Form.Item>
             <Form.Item label="Примечание">
-              <TextArea rows={4} onChange={e => setComment(e.target.value)}/>
+              <TextArea rows={4} onChange={e => setComment(e.target.value)} showCount maxLength={500}/>
             </Form.Item>
               <Form.Item style={{ width: "100%" }}>
                 <Button
