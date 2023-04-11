@@ -16,10 +16,10 @@ const VersionChecklist = () => {
   const [data, setData] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const lastElement = useRef();
-  const observer = useRef();  
-  
+  const observer = useRef();
+
   const navigate = useNavigate();
 
   useObserver(lastElement, data.length < totalCount, versionIsLoadind, () => {
@@ -27,7 +27,7 @@ const VersionChecklist = () => {
     fetchVersionChecklist(24, currentPage.current).then((response) => {
       setData([...data, ...response.rows]);
     });
-  })
+  });
 
   useEffect(() => {
     setVersionIsLoading(true);
@@ -39,11 +39,13 @@ const VersionChecklist = () => {
     setVersionIsLoading(false);
   }, []);
 
-  let sortedAndSearchedVersions = data.filter((data) => String(data.id).includes(searchQuery));
+  let sortedAndSearchedVersions = data.filter((data) =>
+    String(data.id).includes(searchQuery)
+  );
 
   const searchVersion = (e) => {
     setSearchQuery(e.target.value);
-  }
+  };
 
   return (
     <section className="searchSection">
@@ -58,15 +60,19 @@ const VersionChecklist = () => {
           style={{ width: "100%" }}
         />
         <Row gutter={[40, 16]} justify="left">
-          {
-            versionIsLoadind ? <Spin size="large" style={{marginTop: "20px"}}/> : 
+          {versionIsLoadind ? (
+            <Spin size="large" style={{ marginTop: "20px" }} />
+          ) : (
             <>
-              <VersionsList versions={sortedAndSearchedVersions}/>
-              <div ref={lastElement} style={{ height: "1px", width: "100%" }}></div>
+              <VersionsList versions={sortedAndSearchedVersions} />
+              <div
+                ref={lastElement}
+                style={{ height: "1px", width: "100%" }}
+              ></div>
             </>
-          }
+          )}
         </Row>
-        
+
         <FloatButton
           icon={<PlusOutlined />}
           type="primary"

@@ -40,7 +40,7 @@ const VersionsList = ({ versions }) => {
 			            	<div onClick={() => navigate(VERSION_CHECKLIST_ROUTE + "/" + data.id)}>
 			            		<p className="titleVersion">{"Версия №" + data.id}</p>
 			              		<p className="keyActual">Актуально <CheckOutlined /> </p>
-			            	</div>	 
+			            	</div>
 			            </>	              	
 		              }
 		              	
