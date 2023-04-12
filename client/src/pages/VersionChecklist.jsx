@@ -56,7 +56,7 @@ const VersionChecklist = () => {
           enterButton="Поиск"
           value={searchQuery}
           onChange={searchVersion}
-          size="large"
+          size="default"
           style={{ width: "100%" }}
         />
         <Row gutter={[40, 16]} justify="left">

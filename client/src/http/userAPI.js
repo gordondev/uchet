@@ -32,8 +32,6 @@ export const check = async () => {
     `${process.env.REACT_APP_API_URL}/api/user/refresh`,
     { withCredentials: true }
   );
-  console.log("check data");
-  console.log(data);
   localStorage.setItem("token", data.accessToken);
   return jwt_decode(data.accessToken);
 };

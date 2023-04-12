@@ -13,9 +13,6 @@ import {
   Divider,
 } from "antd";
 import {
-  FileWordOutlined,
-  DownloadOutlined,
-  CheckOutlined,
   DeleteOutlined,
   PlusOutlined,
   SaveOutlined,
@@ -24,8 +21,8 @@ import { useParams } from "react-router-dom";
 import { fetchOneVersion } from "../http/versionChecklistAPI";
 import { observer } from "mobx-react-lite";
 
-const { TextArea } = Input;
 const { Option } = Select;
+const { Paragraph } = Typography;
 
 const ReachableContext = createContext(null);
 const UnreachableContext = createContext(null);
@@ -65,11 +62,11 @@ const VersionChecklistEdit = observer(() => {
       setTheme(data.themes);
       setQuanityType(data.quanityType);
       setCount(data.themes.length);
+      setReasonForUse(data.reasonForUse);
+      setComment(data.comment);
     });
     setIsLoading(false);
   }, []);
-
-  console.log(version);
 
   const addTheme = () => {
     setCount(count + 1);
@@ -179,7 +176,7 @@ const VersionChecklistEdit = observer(() => {
                           },
                         ]}
                       >
-                        <Input placeholder={`${i.title}`} />
+                        <Input defaultValue={`${i.title}`} />
                       </Form.Item>
                       <Button
                         type="primary"
@@ -248,24 +245,37 @@ const VersionChecklistEdit = observer(() => {
                       }}
                     />
                   </Form.Item>
-                  <Form.Item label="Основание использования">
-                    <TextArea
-                      rows={4}
-                      placeholder={version.reasonForUse}
-                      onChange={(e) => setReasonForUse(e.target.value)}
-                      showCount
-                      maxLength={500}
-                    />
-                  </Form.Item>
-                  <Form.Item label="Примечание">
-                    <TextArea
-                      rows={4}
-                      placeholder={version.comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      showCount
-                      maxLength={500}
-                    />
-                  </Form.Item>
+
+                  <Divider orientation="center">Основание использования</Divider>
+
+                  <Paragraph
+                    editable={{
+                      onChange: setReasonForUse,
+                      maxLength: 500,
+                      autoSize: {
+                        maxRows: 5,
+                        minRows: 4,
+                      },
+                    }}
+                  >
+                    {reasonForUse}
+                  </Paragraph>
+
+                  <Divider orientation="center">Примечание</Divider>
+
+                  <Paragraph
+                    editable={{
+                      onChange: setComment,
+                      maxLength: 500,
+                      autoSize: {
+                        maxRows: 5,
+                        minRows: 4,
+                      },
+                    }}
+                  >
+                    {comment}
+                  </Paragraph>
+                 
                   <Form.Item style={{ width: "100%" }}>
                     <Button
                       type="primary"

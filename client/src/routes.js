@@ -6,6 +6,8 @@ import VersionChecklist from "./pages/VersionChecklist";
 import VersionChecklistCreate from "./pages/VersionChecklistCreate";
 import VersionChecklistPage from "./pages/VersionChecklistPage";
 import VersionChecklistEdit from "./pages/VersionChecklistEdit";
+import Checklist from "./pages/Checklist";
+import Result from "./pages/Result";
 
 import {
   LOGIN_ROUTE,
@@ -17,6 +19,7 @@ import {
   CHECKLIST_ROUTE,
   VERSION_CHECKLIST_CREATE_ROUTE,
   VERSION_CHECKLIST_EDIT_ROUTE,
+  RESULT_ROUTE,
 } from "./utils/consts";
 
 export const authRoutes = [
@@ -43,6 +46,14 @@ export const authRoutes = [
   {
     path: VERSION_CHECKLIST_EDIT_ROUTE + "/:id",
     Component: VersionChecklistEdit
+  },
+  {
+    path: CHECKLIST_ROUTE,
+    Component: Checklist
+  },
+  {
+    path: RESULT_ROUTE,
+    Component: Result
   },
 ];
 

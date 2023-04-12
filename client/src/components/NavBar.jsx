@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
 import { Layout, Menu, message, Dropdown, Space } from "antd";
@@ -7,6 +7,8 @@ import {
   MAIN_ROUTE,
   PROFILE_ROUTE,
   VERSION_CHECKLIST_ROUTE,
+  CHECKLIST_ROUTE,
+  RESULT_ROUTE,
 } from "../utils/consts";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../index";
@@ -17,6 +19,7 @@ const { Header } = Layout;
 const NavBar = observer(() => {
   const navigate = useNavigate();
   const { user } = useContext(Context);
+  const [currentPage, setCurrentPage] = useState('');
 
   const logOut = async () => {
     try {
@@ -55,27 +58,23 @@ const NavBar = observer(() => {
         <Menu
           theme="light"
           mode="horizontal"
-          selectedKeys={
-            window.location.pathname.includes(VERSION_CHECKLIST_ROUTE)
-              ? VERSION_CHECKLIST_ROUTE
-              : window.location.pathname
-          }
+          selectedKeys={window.location.pathname}
           className="navmenu"
         >
           <Menu.Item key={VERSION_CHECKLIST_ROUTE}>
             <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
           </Menu.Item>
-          <Menu.Item>
-            <Link to={PROFILE_ROUTE}>Чек-листы</Link>
+          <Menu.Item key={CHECKLIST_ROUTE}>
+            <Link to={CHECKLIST_ROUTE}>Чек-листы</Link>
           </Menu.Item>
-          <Menu.Item>
-            <Link to={PROFILE_ROUTE}>Результаты</Link>
+          <Menu.Item key={RESULT_ROUTE}>
+            <Link to={RESULT_ROUTE}>Результаты</Link>
           </Menu.Item>
-          <Menu.Item>
-            <Link to={PROFILE_ROUTE}>Графики</Link>
+          <Menu.Item disabled={true}>
+            <Link>Графики</Link>
           </Menu.Item>
-          <Menu.Item>
-            <Link to={PROFILE_ROUTE}>Статистика</Link>
+          <Menu.Item disabled={true}>
+            <Link>Статистика</Link>
           </Menu.Item>
           <Menu.Item>
             <Link to={PROFILE_ROUTE}>Админ</Link>

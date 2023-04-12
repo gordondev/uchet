@@ -7,3 +7,4 @@ export const VERSION_CHECKLIST_ROUTE = "/versionchecklist";
 export const VERSION_CHECKLIST_CREATE_ROUTE = "/versionchecklist/create";
 export const VERSION_CHECKLIST_EDIT_ROUTE = "/versionchecklist/edit";
 export const CHECKLIST_ROUTE = "/checklist";
+export const RESULT_ROUTE = "/result";
