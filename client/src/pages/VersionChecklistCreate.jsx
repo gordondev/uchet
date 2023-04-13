@@ -18,7 +18,6 @@ import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 const { Option } = Select;
-const { Title } = Typography;
 
 const ReachableContext = createContext(null);
 const UnreachableContext = createContext(null);
@@ -48,7 +47,6 @@ const VersionChecklistCreate = () => {
   const [headerFile, setHeaderFile] = useState("");
   const [commentFile, setCommentFile] = useState("");
   const [theme, setTheme] = useState([]);
-  const [form] = Form.useForm();
 
   const addTheme = () => {
     setCount(count + 1);
@@ -135,7 +133,7 @@ const VersionChecklistCreate = () => {
                   <Select
                     onChange={(value) => {
                       setActualKey(value);
-                      if (value == "Актуально") {
+                      if (value === "Актуально") {
                         modal.warning(config);
                       }
                     }}
@@ -147,7 +145,7 @@ const VersionChecklistCreate = () => {
               </div>
               <Divider orientation="center">Темы</Divider>
               {
-                  theme.length == 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  theme.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
               }
               {theme.map((i) => (
                 <div className="theme_item">

@@ -11,6 +11,7 @@ import {
   Modal,
   Skeleton,
   Divider,
+  Empty
 } from "antd";
 import {
   DeleteOutlined,
@@ -179,7 +180,7 @@ const VersionChecklistEdit = observer(() => {
                         placeholder={`${actualKey}`}
                         onChange={(value) => {
                           setActualKey(value);
-                          if (value == "Актуально") {
+                          if (value === "Актуально") {
                             modal.warning(config);
                           }
                         }}
@@ -200,6 +201,9 @@ const VersionChecklistEdit = observer(() => {
               ) : (
                 <>
                   <Divider orientation="center">Темы</Divider>
+                  {
+                    theme.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  }
                   {theme.map((i) => (
                     <div className="theme_item">
                       <Form.Item

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
 import { Layout, Menu, message, Dropdown, Space } from "antd";
@@ -20,7 +20,6 @@ const { Header } = Layout;
 const NavBar = observer(() => {
   const navigate = useNavigate();
   const { user } = useContext(Context);
-  const [currentPage, setCurrentPage] = useState('');
 
   const logOut = async () => {
     try {

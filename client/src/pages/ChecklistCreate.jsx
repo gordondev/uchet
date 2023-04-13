@@ -75,7 +75,7 @@ const ChecklistCreate = () => {
                   >
                     <Select 
                       onChange={(value) => {
-                        setCount(version.find(item => item.id == value).quanityType);
+                        setCount(version.find(item => item.id === value).quanityType);
                         setShowRecondCounter(true);
                       }}
                     >
@@ -111,7 +111,7 @@ const ChecklistCreate = () => {
                 <Divider orientation="center">Содержния</Divider>
 
                 {
-                  content.length == 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  content.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 }
 
                 {content.map((i) => (
