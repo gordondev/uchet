@@ -12,6 +12,7 @@ import {
   message,
   Modal,
   Divider,
+  Empty
 } from "antd";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 
@@ -145,6 +146,9 @@ const VersionChecklistCreate = () => {
                 </Form.Item>
               </div>
               <Divider orientation="center">Темы</Divider>
+              {
+                  theme.length == 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              }
               {theme.map((i) => (
                 <div className="theme_item">
                   <Form.Item
@@ -250,8 +254,7 @@ const VersionChecklistCreate = () => {
                   type="primary"
                   htmlType="submit"
                   icon={<SaveOutlined />}
-                  style={{ width: "100%", marginBottom: "20px" }}
-                  // onClick={addVersion}
+                  style={{ width: "100%"}}
                 >
                   Сохранить
                 </Button>
