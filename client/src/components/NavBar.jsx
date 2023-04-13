@@ -9,6 +9,7 @@ import {
   VERSION_CHECKLIST_ROUTE,
   CHECKLIST_ROUTE,
   RESULT_ROUTE,
+  ADMIN_ROUTE,
 } from "../utils/consts";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../index";
@@ -76,8 +77,8 @@ const NavBar = observer(() => {
           <Menu.Item disabled={true}>
             <Link>Статистика</Link>
           </Menu.Item>
-          <Menu.Item>
-            <Link to={PROFILE_ROUTE}>Админ</Link>
+          <Menu.Item key={ADMIN_ROUTE}>
+            <Link to={ADMIN_ROUTE}>Админ</Link>
           </Menu.Item>
           <Menu.Item key={PROFILE_ROUTE}>
             <Dropdown
