@@ -19,3 +19,7 @@ export const fetchOneVersion = async (id) => {
     const {data} = await $host.get('api/versionchecklist/' + id)
     return data
 }
+
+export const deleteOne = async (id) => {
+  await $host.delete('api/versionchecklist/edit/' + id);
+}

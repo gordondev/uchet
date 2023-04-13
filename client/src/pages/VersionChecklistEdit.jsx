@@ -17,9 +17,10 @@ import {
   PlusOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
-import { fetchOneVersion } from "../http/versionChecklistAPI";
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchOneVersion, deleteOne } from "../http/versionChecklistAPI";
 import { observer } from "mobx-react-lite";
+import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
 
 const { Option } = Select;
 const { Paragraph } = Typography;
@@ -38,6 +39,7 @@ const config = {
   ),
 };
 
+
 const VersionChecklistEdit = observer(() => {
   const [modal, contextHolder] = Modal.useModal();
   const { id } = useParams();
@@ -53,6 +55,36 @@ const VersionChecklistEdit = observer(() => {
   const [acceptanceDate, setAcceptanceDate] = useState("");
   const [reasonForUse, setReasonForUse] = useState("");
   const [comment, setComment] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+    deleteVersion();
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const deleteVersion = async () => {
+    try {
+      await deleteOne(id);
+      navigate(VERSION_CHECKLIST_ROUTE);
+    } catch(e) {
+      message.error(e.response?.data?.message);
+    }
+  }
+
+  const updateVersion = async () => {
+    try {
+
+    } catch (e) {
+      
+    }
+  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -264,6 +296,7 @@ const VersionChecklistEdit = observer(() => {
                   <Divider orientation="center">Примечание</Divider>
 
                   <Paragraph
+                    style={{ marginBottom: "20px" }}
                     editable={{
                       onChange: setComment,
                       maxLength: 500,
@@ -286,6 +319,25 @@ const VersionChecklistEdit = observer(() => {
                       Сохранить
                     </Button>
                   </Form.Item>
+                  <Form.Item style={{ width: "100%" }}>
+                    <Button
+                      type="primary"
+                      danger
+                      style={{ width: "100%" }}
+                      icon={<DeleteOutlined />}
+                      onClick={showModal}
+                    >
+                      Удалить
+                    </Button>
+                  </Form.Item>
+                  <Modal
+                    title="Удаление версии чек-листа!"
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                  >
+                    <p>Данные будут удалены безвозвратно, продолжить?</p>
+                  </Modal>
                 </>
               )}
             </div>
