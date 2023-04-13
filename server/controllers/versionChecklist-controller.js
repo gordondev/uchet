@@ -83,7 +83,7 @@ class VersionChecklistController {
 
   async updateOne(req, res, next) {
     try {
-      const { updateId, id, actualKey, userId, quanityType, reasonForUse, comment } =
+      const { updateId, id, actualKey, userId, quanityType, reasonForUse, acceptanceDate, comment, theme } =
         req.body;
 
       await versionChecklist.updateOne(
@@ -93,7 +93,9 @@ class VersionChecklistController {
         userId,
         quanityType,
         reasonForUse,
-        comment
+        acceptanceDate,
+        comment,
+        theme
       );
       return res.json({ message: `Данные чек-листа - ${id} были обновленны` });
     } catch (e) {

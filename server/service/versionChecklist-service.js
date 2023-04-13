@@ -108,9 +108,30 @@ class VersionChecklistService {
     quanityType,
     reasonForUse,
     acceptanceDate,
-    comment
+    comment,
+    theme
   ) {
-    console.log(`\n\n\n${id}\n\n\n`);
+
+    console.log("T H E M E S", theme);
+
+    const candidate = false;
+
+    if (updateId != id) {
+      const candidate = await VersionChecklist.findOne({ where: { id: updateId } });      
+    }
+
+    if (candidate) {
+      throw ApiError.BadRequest(
+        `Версия чек-листа с номером ${id} уже существует`
+      );
+    }
+    if (actualKey == "Актуально") {
+      VersionChecklist.update(
+        { actualKey: "Не актуально" },
+        { where: { actualKey: "Актуально" } }
+      );
+    }
+
     const versionChecklist = await VersionChecklist.update(
       {
         id: updateId,
@@ -118,12 +139,41 @@ class VersionChecklistService {
         userId: userId,
         quanityType: quanityType,
         reasonForUse: reasonForUse,
+        acceptanceDate : acceptanceDate,
         comment: comment,
       },
       {
         where: { id },
       }
     );
+
+    console.log("U P D A T E ID", updateId);
+
+    const candidateTheme = await Themes.findOne({ where: { versionChecklistId: updateId } });
+
+    if (candidateTheme) {
+      if (theme) {
+        theme = JSON.parse(theme);
+        theme.forEach((i) =>
+          Themes.update({
+            title: i.theme,
+            versionChecklistId: updateId,
+          },
+          {
+            where: { id },
+          })
+        );
+      }
+    } else if (theme) {
+      theme = JSON.parse(theme);
+      theme.forEach((i) =>
+        Themes.create({
+          title: i.theme,
+          versionChecklistId: updateId,
+        })
+      );
+    }
+
   }
 }
 

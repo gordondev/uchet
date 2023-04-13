@@ -18,7 +18,7 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchOneVersion, deleteOne } from "../http/versionChecklistAPI";
+import { fetchOneVersion, deleteOne, updateOne } from "../http/versionChecklistAPI";
 import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
 
@@ -43,7 +43,7 @@ const config = {
 const VersionChecklistEdit = observer(() => {
   const [modal, contextHolder] = Modal.useModal();
   const { id } = useParams();
-  const [currentId, setCurrentId] = useState(id);
+  const [updateId, setUpdateId] = useState(id);
   const [version, setVersion] = useState({ themes: [], user: [] });
   const [actualKey, setActualKey] = useState("");
   const [loading, setIsLoading] = useState(true);
@@ -79,12 +79,24 @@ const VersionChecklistEdit = observer(() => {
   }
 
   const updateVersion = async () => {
+    const formData = new FormData();
+    formData.append("updateId", updateId);
+    formData.append("id", id);
+    formData.append("actualKey", actualKey);
+    formData.append("quanityType", quanityType);
+    formData.append("reasonForUse", reasonForUse);
+    formData.append("acceptanceDate", acceptanceDate);
+    formData.append("comment", comment);
+    formData.append("theme", JSON.stringify(theme));
     try {
-
+      await updateOne(id, formData);
+      message.success(`Данные были обновленны`);
     } catch (e) {
-      
+      message.error(e.response?.data?.message);
     }
   }
+
+  console.log(version.comment);
 
   useEffect(() => {
     setIsLoading(true);
@@ -95,6 +107,7 @@ const VersionChecklistEdit = observer(() => {
       setQuanityType(data.quanityType);
       setCount(data.themes.length);
       setReasonForUse(data.reasonForUse);
+      setAcceptanceDate(data.acceptanceDate);
       setComment(data.comment);
     });
     setIsLoading(false);
@@ -111,7 +124,7 @@ const VersionChecklistEdit = observer(() => {
   };
 
   const changeTheme = (value, id) => {
-    setTheme(theme.map((i) => (i.id === id ? { ...i, ["theme"]: id } : i)));
+    setTheme(theme.map((i) => (i.id === id ? { ...i, ["theme"]: value } : i)));
   };
 
   const selectHeaderFile = (e) => {
@@ -128,7 +141,7 @@ const VersionChecklistEdit = observer(() => {
     <ReachableContext.Provider value="Light">
       <section className="searchSection">
         <div className="container">
-          <Form>
+          <Form onFinish={updateVersion}>
             <div className="defaultForm">
               <div className="defaultForm__tile">
                 {loading ? (
@@ -144,9 +157,9 @@ const VersionChecklistEdit = observer(() => {
                     >
                       <InputNumber
                         min={1}
-                        placeholder={currentId}
+                        placeholder={updateId}
                         prefix="№"
-                        onChange={(value) => setCurrentId(value)}
+                        onChange={(value) => setUpdateId(value)}
                         rules={[
                           {
                             required: true,
@@ -160,12 +173,6 @@ const VersionChecklistEdit = observer(() => {
                       label="Ключ актуальности"
                       hasFeedback
                       style={{ width: "400px" }}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Выберите ключ-актуальности",
-                        },
-                      ]}
                     >
                       <Select
                         name="selectActualKey"
@@ -208,7 +215,7 @@ const VersionChecklistEdit = observer(() => {
                           },
                         ]}
                       >
-                        <Input defaultValue={`${i.title}`} />
+                        <Input defaultValue={`${i.title ? i.title : ''}`} />
                       </Form.Item>
                       <Button
                         type="primary"
@@ -262,12 +269,6 @@ const VersionChecklistEdit = observer(() => {
                   <Form.Item
                     label="Дата принятия"
                     name="date-picker"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Выберите дату",
-                      },
-                    ]}
                   >
                     <DatePicker
                       placeholder={version.acceptanceDate}

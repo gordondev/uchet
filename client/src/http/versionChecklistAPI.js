@@ -23,3 +23,7 @@ export const fetchOneVersion = async (id) => {
 export const deleteOne = async (id) => {
   await $host.delete('api/versionchecklist/edit/' + id);
 }
+
+export const updateOne = async (id, newVersion) => {
+  await $host.put('api/versionchecklist/edit/' + id, newVersion);
+}
