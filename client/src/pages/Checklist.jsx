@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
-import { Input, Row, FloatButton, Spin, Select } from "antd";
+import { Input, Row, FloatButton, Spin, Select, Col, Card } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -8,6 +8,7 @@ import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { useObserver } from "../hooks/useObserver";
 import VersionsList from "../components/VersionsList";
 import { Collapse } from 'antd';
+import girl from "../images/welcome.png";
 
 const { Panel } = Collapse;
 
@@ -58,6 +59,66 @@ const Checklist = () => {
             />
           </Panel>
         </Collapse>
+
+        <Row gutter={[40, 16]} justify="left">
+          <Col className="gutter-row" span={8} key={1} >
+            <Card
+                hoverable
+                style={{
+                minWidth: 270,
+                marginTop: 16,
+                }} >
+              <div className="checklist__item-content">
+                <img src={girl} alt="girl"/>
+                <p className="titleChecklist">TITLE</p>
+              </div>
+              
+            </Card>
+          </Col>
+          <Col className="gutter-row" span={8} key={1} >
+            <Card
+                hoverable
+                style={{
+                minWidth: 270,
+                marginTop: 16,
+                }} >
+              <div className="checklist__item-content">
+                <img src={girl} alt="girl"/>
+                <p className="titleChecklist">TITLE</p>
+              </div>
+              
+            </Card>
+          </Col>
+          <Col className="gutter-row" span={8} key={1} >
+            <Card
+                hoverable
+                style={{
+                minWidth: 270,
+                marginTop: 16,
+                }} >
+              <div className="checklist__item-content">
+                <img src={girl} alt="girl"/>
+                <p className="titleChecklist">TITLE</p>
+              </div>
+              
+            </Card>
+          </Col>
+          <Col className="gutter-row" span={8} key={1} >
+            <Card
+                hoverable
+                style={{
+                minWidth: 270,
+                marginTop: 16,
+                }} >
+              <div className="checklist__item-content">
+                <img src={girl} alt="girl"/>
+                <p className="titleChecklist">TITLE</p>
+              </div>
+              
+            </Card>
+          </Col>
+        </Row>
+
       </div>
     </section>
   );
