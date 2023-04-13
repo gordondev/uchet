@@ -3,7 +3,7 @@ import { Input, Row, FloatButton, Spin, Select, Col, Card } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { VERSION_CHECKLIST_CREATE_ROUTE } from "../utils/consts";
+import { CHECKLIST_CREATE_ROUTE } from "../utils/consts";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { useObserver } from "../hooks/useObserver";
 import VersionsList from "../components/VersionsList";
@@ -118,7 +118,14 @@ const Checklist = () => {
             </Card>
           </Col>
         </Row>
-
+        <FloatButton
+          icon={<PlusOutlined />}
+          type="primary"
+          style={{
+            right: 20,
+          }}
+          onClick={() => navigate(CHECKLIST_CREATE_ROUTE)}
+        />
       </div>
     </section>
   );
