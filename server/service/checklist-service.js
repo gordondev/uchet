@@ -12,7 +12,8 @@ class ChecklistService {
     versionChecklistId,
     description,
     file,
-    userId
+    userId,
+    contents
   ) {
     const candidate = await Checklist.findOne({ where: { id } });
 
@@ -43,6 +44,16 @@ class ChecklistService {
       file: file ? fileName : file,
       userId,
     });
+
+    if (contents) {
+      contents = JSON.parse(contents);
+      contents.forEach((i) =>
+        ChecklistContent.create({
+          name: i.name,
+          checklistId: id,
+        })
+      );
+    }
 
     const checklistDto = new ChecklistDto(checklist);
 

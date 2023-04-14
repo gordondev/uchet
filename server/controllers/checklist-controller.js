@@ -5,7 +5,7 @@ class ChecklistController {
 
 	async create(req, res, next) {
     try {
-      const { id, name, versionChecklistId, description, file, userId } =
+      const { id, name, versionChecklistId, description, file, userId, contents } =
         req.body;
 
         const checklistData =
@@ -15,7 +15,8 @@ class ChecklistController {
           versionChecklistId,
           description,
           file,
-          userId
+          userId,
+          contents
         );
         return res.json(checklistData);
         
