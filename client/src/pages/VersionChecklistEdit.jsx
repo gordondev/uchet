@@ -97,8 +97,6 @@ const VersionChecklistEdit = observer(() => {
     }
   }
 
-  console.log(version.comment);
-
   useEffect(() => {
     setIsLoading(true);
     fetchOneVersion(id).then((data) => {
@@ -226,7 +224,7 @@ const VersionChecklistEdit = observer(() => {
                         danger
                         style={{ marginLeft: "20px" }}
                         icon={<DeleteOutlined />}
-                        onClick={() => removeTheme(i.number)}
+                        onClick={() => removeTheme(i.id)}
                       >
                         Удалить
                       </Button>
