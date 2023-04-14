@@ -24,6 +24,29 @@ class ChecklistController {
     }
   }
 
+  async getAll(req, res, next) {
+    try {
+      let {limit, page} = req.query;
+      page = page || 1;
+      limit = limit || 24;
+      let offset = page * limit - limit;
+      const checklistData = await checklist.getAll(limit, offset);
+      return res.json(checklistData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
+  async getOne(req, res, next) {
+    try {
+      const { id } = req.params;
+      const checklistData = await checklist.getOne(id);
+      return res.json(checklistData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
 }
 
 module.exports = new ChecklistController();

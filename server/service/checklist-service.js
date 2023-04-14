@@ -1,4 +1,4 @@
-const { Checklist } = require("../models/models");
+const { Checklist, ChecklistContent, User } = require("../models/models");
 const ApiError = require("../exceptions/api-error");
 const ChecklistDto = require("../dtos/checklist-dto");
 const path = require("path");
@@ -48,6 +48,20 @@ class ChecklistService {
 
     return { checklist: checklistDto };
   }
+
+  async getAll(limit, offset) {
+    const checklist = await Checklist.findAndCountAll({ limit, offset });
+    return checklist;
+  }
+
+  async getOne(id) {
+    const checklist = await Checklist.findOne({
+      where: { id },
+      include: [{model: ChecklistContent, as: 'checklist_contents'}, {model: User, as: 'user'}],
+    });
+    return checklist;
+  }
+
 }
 
 module.exports = new ChecklistService();
