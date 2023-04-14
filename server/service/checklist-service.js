@@ -7,7 +7,6 @@ const uuid = require("uuid");
 
 class ChecklistService {
   async createChecklist(
-    id,
     name,
     versionChecklistId,
     description,
@@ -24,7 +23,7 @@ class ChecklistService {
           __dirname,
           "..",
           "static/checklist/contents",
-          file
+          fileName
         )
       );
     }
@@ -41,8 +40,8 @@ class ChecklistService {
       contents = JSON.parse(contents);
       contents.forEach((i) =>
         ChecklistContent.create({
-          name: i.name,
-          checklistId: id,
+          content: i.content,
+          checklistId: checklist.id,
         })
       );
     }
@@ -99,7 +98,7 @@ class ChecklistService {
         contents = JSON.parse(contents);
         contents.forEach((i) =>
           ChecklistContent.update({
-            name: i.name,
+            content: i.content,
             checklistId: id,
           },
           {
@@ -111,7 +110,7 @@ class ChecklistService {
       contents = JSON.parse(contents);
       contents.forEach((i) =>
         ChecklistContent.create({
-          name: i.name,
+          content: i.content,
           checklistId: id,
         })
       );

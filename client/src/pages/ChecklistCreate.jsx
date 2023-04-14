@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { Context } from "../index";
 import {
   Typography,
   Form,
@@ -7,26 +8,34 @@ import {
   Divider,
   Button,
   Empty,
-  Skeleton
+  Skeleton,
+  message
 } from "antd";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
-import { createChecklist } from "../http/checklistAPI";
+import { createChecklist, fetchChecklist } from "../http/checklistAPI";
 
 const { TextArea } = Input;
 const { Text } = Typography;
 const { Option } = Select;
 
 const ChecklistCreate = () => {
+  const { user } = useContext(Context);
   const [description, setDescription] = useState('');
   const [showRecondCounter, setShowRecondCounter] = useState(false);
-  const [countVersion, setCount] = useState(0);
+  const [countVersion, setCountVersion] = useState(0);
+  const [countRowsChecklist, setCountRowsChecklist] = useState(0);
   const [isLoadind, setIsLoading] = useState(true);
   const [version, setVersion] = useState([]);
   const [content, setContent] = useState([]);
+  const [name, setName] = useState('');
+  const [versionChecklist, setVersionChecklist] = useState(null);
+  const [file, setFile] = useState("");
+  const [checklists, setChecklists] = useState([]);
 
   useEffect( () => {
     setIsLoading(true);
+    fetchChecklist().then(response => setChecklists(response.rows));
     fetchVersionChecklist().then(response => setVersion(response.rows));
     setIsLoading(false);
   }, []);
@@ -39,10 +48,37 @@ const ChecklistCreate = () => {
     setContent(content.filter((i) => i.id !== id));
   };
 
+  const changeContent = (value, id) => {
+    setContent(
+      content.map((i) => (i.id === id ? { ...i, ["content"]: value } : i))
+    );
+  };
+
+  const selectFile = (e) => {
+    setFile(e.target.files[0]);
+    console.log("FILE", e.target.files[0]);
+  };
+
+  const addChecklist = async () => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("versionChecklistId", versionChecklist);
+    formData.append("description", description);
+    formData.append("file", file);
+    formData.append("userId", user.user.id);
+    formData.append("contents", JSON.stringify(content));
+    try {
+      await createChecklist(formData);
+      message.success(`Чек-лист был добавлен`);
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+  };
+
   return (
       <section className="searchSection">
         <div className="container">
-          <Form>
+          <Form onFinish={addChecklist}>
             <div className="defaultForm">
               {isLoadind ? ( <Skeleton active /> ) : (
                 <>
@@ -51,6 +87,7 @@ const ChecklistCreate = () => {
                     name="title"
                     label="Название темы"
                     style={{ width: "100%" }}
+                    onChange={(e) => setName(e.target.value)}
                     rules={[
                       {
                         required: true,
@@ -76,7 +113,9 @@ const ChecklistCreate = () => {
                   >
                     <Select 
                       onChange={(value) => {
-                        setCount(version.find(item => item.id === value).quanityType);
+                        setCountVersion(version.find(item => item.id === value).quanityType);
+                        setCountRowsChecklist(checklists.filter((i) => i.versionChecklistId === value).length);
+                        setVersionChecklist(value);
                         setShowRecondCounter(true);
                       }}
                     >
@@ -89,7 +128,9 @@ const ChecklistCreate = () => {
                 </Form.Item>
 
                 {
-                  showRecondCounter && <Text type="secondary">Осталось 0/{countVersion} записей</Text>
+                  showRecondCounter && <Text type="secondary">
+                  <p className="counter">{countRowsChecklist}/{countVersion} записей</p>
+                  </Text>
                 }
 
                 <Form.Item label="Описание">
@@ -104,7 +145,7 @@ const ChecklistCreate = () => {
                 <input
                   type="file"
                   className="inputUpload"
-                  // onChange={selectHeaderFile}
+                  onChange={selectFile}
                   accept=".doc, .docx"
                 />
                 Прикрепите файл содержния чек-листа
@@ -121,10 +162,11 @@ const ChecklistCreate = () => {
 
                   <div className="theme_item">
                     <Form.Item
-                      name="intro"
+                      name={i.id}
                       label="Содержние"
                       rows={4}
                       style={{ marginTop: "23px", width: "100%" }}
+                      onChange={(e) => changeContent(e.target.value, i.id)}
                       rules={[
                         {
                           required: true,
@@ -132,7 +174,7 @@ const ChecklistCreate = () => {
                         },
                       ]}
                     >
-                      <Input.TextArea showCount maxLength={500} />
+                      <Input.TextArea showCount maxLength={500}/>
                     </Form.Item>
 
                     <Button
@@ -155,6 +197,7 @@ const ChecklistCreate = () => {
                   style={{ width: "100%", marginBottom: "20px" }}
                   icon={<PlusOutlined />}
                   onClick={addContent}
+                  disabled={countRowsChecklist >= countVersion}
                 >
                   Добавить
                 </Button>

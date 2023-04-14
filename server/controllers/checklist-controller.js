@@ -5,21 +5,35 @@ class ChecklistController {
 
 	async create(req, res, next) {
     try {
-      const { id, name, versionChecklistId, description, file, userId, contents } =
+      const { name, versionChecklistId, description, userId, contents } =
         req.body;
 
-        const checklistData =
-        await checklist.createChecklist(
-          id,
-          name,
-          versionChecklistId,
-          description,
-          file,
-          userId,
-          contents
-        );
-        return res.json(checklistData);
-        
+        if (!req.files) {
+          const checklistData =
+          await checklist.createChecklist(
+            name,
+            versionChecklistId,
+            description,
+            null,
+            userId,
+            contents
+          );
+          return res.json(checklistData);
+        } else {
+
+          const { file } = req.files;
+          const checklistData =
+          await checklist.createChecklist(
+            name,
+            versionChecklistId,
+            description,
+            file,
+            userId,
+            contents
+          );
+          return res.json(checklistData);
+        }
+
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
