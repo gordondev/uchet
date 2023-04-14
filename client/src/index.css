@@ -266,3 +266,12 @@ ul {
 .counter {
   padding-bottom: 20px;
 }
+
+.btnEdit {
+  position: absolute;
+  top: 20px;
+  left: 300px;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+}
