@@ -62,6 +62,12 @@ class ChecklistService {
     return checklist;
   }
 
+  async deleteOne(id) {
+    await Checklist.destroy({
+      where: { id },
+    });
+  }
+
 }
 
 module.exports = new ChecklistService();

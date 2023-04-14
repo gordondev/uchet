@@ -47,6 +47,16 @@ class ChecklistController {
     }
   }
 
+  async deleteOne(req, res, next) {
+    try {
+      const { id } = req.params;
+      await checklist.deleteOne(id);
+      return res.json({ message: `Чек-лист - ${id} удален` });
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
 }
 
 module.exports = new ChecklistController();

@@ -112,8 +112,6 @@ class VersionChecklistService {
     theme
   ) {
 
-    console.log("T H E M E S", theme);
-
     const candidate = false;
 
     if (updateId != id) {
@@ -146,8 +144,6 @@ class VersionChecklistService {
         where: { id },
       }
     );
-
-    console.log("U P D A T E ID", updateId);
 
     const candidateTheme = await Themes.findOne({ where: { versionChecklistId: updateId } });
 
