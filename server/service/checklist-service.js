@@ -15,13 +15,6 @@ class ChecklistService {
     userId,
     contents
   ) {
-    const candidate = await Checklist.findOne({ where: { id } });
-
-    if (candidate) {
-      throw ApiError.BadRequest(
-        `чек-лист с номером ${id} уже существует`
-      );
-    }
 
     let fileName = uuid.v4() + ".docx";
 
@@ -37,7 +30,6 @@ class ChecklistService {
     }
 
     const checklist = await Checklist.create({
-      id,
       name,
       versionChecklistId,
       description,
@@ -80,7 +72,6 @@ class ChecklistService {
   }
 
   async updateOne(
-    updateId,
     id,
     name,
     versionChecklistId,
@@ -90,21 +81,8 @@ class ChecklistService {
     contents
   ) {
 
-    const candidate = false;
-
-    if (updateId != id) {
-      const candidate = await Checklist.findOne({ where: { id: updateId } });      
-    }
-
-    if (candidate) {
-      throw ApiError.BadRequest(
-        `Чек-лист с номером ${id} уже существует`
-      );
-    }
-
     const checklist = await Checklist.update(
       {
-        id: updateId,
         name: name,
         versionChecklistId: versionChecklistId,
         description: description,
@@ -114,7 +92,7 @@ class ChecklistService {
       }
     );
 
-    const candidateContent = await ChecklistContent.findOne({ where: { checklistId: updateId } });
+    const candidateContent = await ChecklistContent.findOne({ where: { checklistId: id } });
 
     if (candidateContent) {
       if (contents) {
@@ -122,7 +100,7 @@ class ChecklistService {
         contents.forEach((i) =>
           ChecklistContent.update({
             name: i.name,
-            checklistId: updateId,
+            checklistId: id,
           },
           {
             where: { id },
@@ -134,7 +112,7 @@ class ChecklistService {
       contents.forEach((i) =>
         ChecklistContent.create({
           name: i.name,
-          checklistId: updateId,
+          checklistId: id,
         })
       );
     }

@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
+import { createChecklist } from "../http/checklistAPI";
 
 const { TextArea } = Input;
 const { Text } = Typography;

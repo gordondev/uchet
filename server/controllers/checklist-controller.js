@@ -60,11 +60,10 @@ class ChecklistController {
 
   async updateOne(req, res, next) {
     try {
-      const { updateId, id, name, versionChecklistId, description, file, userId, contents } =
+      const { id, name, versionChecklistId, description, file, userId, contents } =
         req.body;
 
       await checklist.updateOne(
-        updateId,
         id,
         name,
         versionChecklistId,
