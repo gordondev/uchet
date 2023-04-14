@@ -12,14 +12,15 @@ const { Search } = Input;
 
 const VersionChecklist = () => {
   const [versionIsLoadind, setVersionIsLoading] = useState(true);
-  const currentPage = useRef(1);
   const [data, setData] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const currentPage = useRef(1);
   const lastElement = useRef();
   const observer = useRef();
-
+  
   const navigate = useNavigate();
 
   useObserver(lastElement, data.length < totalCount, versionIsLoadind, () => {

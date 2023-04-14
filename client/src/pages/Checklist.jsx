@@ -8,23 +8,51 @@ import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { useObserver } from "../hooks/useObserver";
 import VersionsList from "../components/VersionsList";
 import { Collapse } from 'antd';
-import girl from "../images/welcome.png";
+import { fetchChecklist } from "../http/checklistAPI";
+import Checklists from "../components/Checklists";
 
 const { Panel } = Collapse;
-
+const { Option } = Select;
 const { Search } = Input;
 
 const Checklist = () => {
-  const [versionIsLoadind, setVersionIsLoading] = useState(true);
-  const currentPage = useRef(1);
   const [data, setData] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [checklists, setChecklists] = useState([]);
+  const [version, setVersion] = useState([]);
+  const [isLoadind, setIsLoading] = useState(true);
+
+  const currentPage = useRef(1);
   const lastElement = useRef();
   const observer = useRef();
 
   const navigate = useNavigate();
+
+  useObserver(lastElement, data.length < totalCount, isLoadind, () => {
+    currentPage.current += 1;
+    fetchChecklist(24, currentPage.current).then((response) => {
+      setData([...data, ...response.rows]);
+    });
+  });
+
+  useEffect( () => {
+    setIsLoading(true);
+    fetchChecklist(24, currentPage.current).then((response) => {
+      setData([...data, ...response.rows]);
+    });
+    fetchVersionChecklist().then(response => setVersion(response.rows));
+    setIsLoading(false);
+  }, []);
+
+  let sortedAndSearchedChecklist = data.filter((data) =>
+    String(data.name).includes(searchQuery)
+  );
+
+  const searchChecklist = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <section className="searchSection">
@@ -36,6 +64,8 @@ const Checklist = () => {
               allowClear
               enterButton="Поиск"
               size="default"
+              value={searchQuery}
+              onChange={searchChecklist}
               style={{ width: "100%" }}
             />
             <Select
@@ -46,77 +76,28 @@ const Checklist = () => {
               filterOption={(input, option) =>
                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
-              options={[
-                {
-                  value: 'Да',
-                  label: 'Да',
-                },
-                {
-                  value: 'Нет',
-                  label: 'Нет',
-                },
-              ]}
-            />
+            >
+            {
+              version.map(item => (
+                <Option value={item.id}>{item.id}</Option>    
+              ))
+            }
+            </Select>
           </Panel>
         </Collapse>
 
         <Row gutter={[40, 16]} justify="left">
-          <Col className="gutter-row" span={8} key={1} >
-            <Card
-                hoverable
-                style={{
-                minWidth: 270,
-                marginTop: 16,
-                }} >
-              <div className="checklist__item-content">
-                <img src={girl} alt="girl"/>
-                <p className="titleChecklist">TITLE</p>
-              </div>
-              
-            </Card>
-          </Col>
-          <Col className="gutter-row" span={8} key={1} >
-            <Card
-                hoverable
-                style={{
-                minWidth: 270,
-                marginTop: 16,
-                }} >
-              <div className="checklist__item-content">
-                <img src={girl} alt="girl"/>
-                <p className="titleChecklist">TITLE</p>
-              </div>
-              
-            </Card>
-          </Col>
-          <Col className="gutter-row" span={8} key={1} >
-            <Card
-                hoverable
-                style={{
-                minWidth: 270,
-                marginTop: 16,
-                }} >
-              <div className="checklist__item-content">
-                <img src={girl} alt="girl"/>
-                <p className="titleChecklist">TITLE</p>
-              </div>
-              
-            </Card>
-          </Col>
-          <Col className="gutter-row" span={8} key={1} >
-            <Card
-                hoverable
-                style={{
-                minWidth: 270,
-                marginTop: 16,
-                }} >
-              <div className="checklist__item-content">
-                <img src={girl} alt="girl"/>
-                <p className="titleChecklist">TITLE</p>
-              </div>
-              
-            </Card>
-          </Col>
+          {isLoadind ? (
+            <Spin size="large" style={{ marginTop: "20px" }} />
+          ) : (
+            <>
+              <Checklists checklists={sortedAndSearchedChecklist} />
+              <div
+                ref={lastElement}
+                style={{ height: "1px", width: "100%" }}
+              ></div>
+            </>
+          )}
         </Row>
         <FloatButton
           icon={<PlusOutlined />}
