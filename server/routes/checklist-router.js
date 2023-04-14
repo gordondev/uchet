@@ -7,6 +7,6 @@ router.post("/create/", checkListController.create);
 router.get("/", checkListController.getAll);
 router.get("/:id", checkListController.getOne);
 router.delete("/edit/:id", checkListController.deleteOne);
-// router.put("/edit/:id", versionCheckListController.updateOne);
+router.put("/edit/:id", checkListController.updateOne);
 
 module.exports = router;

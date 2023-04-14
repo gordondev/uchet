@@ -68,6 +68,68 @@ class ChecklistService {
     });
   }
 
+  async updateOne(
+    updateId,
+    id,
+    name,
+    versionChecklistId,
+    description,
+    file,
+    userId,
+    contents
+  ) {
+
+    const candidate = false;
+
+    if (updateId != id) {
+      const candidate = await Checklist.findOne({ where: { id: updateId } });      
+    }
+
+    if (candidate) {
+      throw ApiError.BadRequest(
+        `Чек-лист с номером ${id} уже существует`
+      );
+    }
+
+    const checklist = await Checklist.update(
+      {
+        id: updateId,
+        name: name,
+        versionChecklistId: versionChecklistId,
+        description: description,
+      },
+      {
+        where: { id },
+      }
+    );
+
+    const candidateContent = await ChecklistContent.findOne({ where: { checklistId: updateId } });
+
+    if (candidateContent) {
+      if (contents) {
+        contents = JSON.parse(contents);
+        contents.forEach((i) =>
+          ChecklistContent.update({
+            name: i.name,
+            checklistId: updateId,
+          },
+          {
+            where: { id },
+          })
+        );
+      }
+    } else if (contents) {
+      contents = JSON.parse(contents);
+      contents.forEach((i) =>
+        ChecklistContent.create({
+          name: i.name,
+          checklistId: updateId,
+        })
+      );
+    }
+
+  }
+
 }
 
 module.exports = new ChecklistService();

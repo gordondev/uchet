@@ -57,6 +57,27 @@ class ChecklistController {
     }
   }
 
+  async updateOne(req, res, next) {
+    try {
+      const { updateId, id, name, versionChecklistId, description, file, userId, contents } =
+        req.body;
+
+      await checklist.updateOne(
+        updateId,
+        id,
+        name,
+        versionChecklistId,
+        description,
+        file,
+        userId,
+        contents
+      );
+      return res.json({ message: `Данные чек-листа - ${id} были обновленны` });
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
 }
 
 module.exports = new ChecklistController();
