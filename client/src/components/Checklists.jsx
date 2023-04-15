@@ -1,7 +1,7 @@
 import React from 'react'
 import { Col, Card, Empty, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-// import { VERSION_CHECKLIST_ROUTE, VERSION_CHECKLIST_EDIT_ROUTE } from "../utils/consts";
+import { CHECKLIST_ROUTE, CHECKLIST_EDIT_ROUTE} from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 import girl from "../images/welcome.png";
 
@@ -24,6 +24,15 @@ const Checklists = ({ checklists }) => {
             <Col className="gutter-row" span={8} key={data.id}>
 		       	<Card
 	                hoverable
+	                onClick={(event) => {
+		                if (event.target.tagName === "BUTTON" || 
+							event.target.tagName === "svg" || 
+							event.target.tagName === "path") {
+							navigate(CHECKLIST_EDIT_ROUTE + "/" + data.id);
+						} else {
+							navigate(CHECKLIST_ROUTE + "/" + data.id);
+						}
+	                }}
 	                style={{
 	                minWidth: 270,
 	                marginTop: 16,

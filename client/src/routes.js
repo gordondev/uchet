@@ -10,6 +10,8 @@ import Checklist from "./pages/Checklist";
 import Result from "./pages/Result";
 import Admin from "./pages/Admin";
 import ChecklistCreate from "./pages/ChecklistCreate";
+import ChecklistPage from "./pages/ChecklistPage";
+import ChecklistEdit from "./pages/ChecklistEdit";
 
 import {
   LOGIN_ROUTE,
@@ -23,6 +25,7 @@ import {
   VERSION_CHECKLIST_EDIT_ROUTE,
   RESULT_ROUTE,
   CHECKLIST_CREATE_ROUTE,
+  CHECKLIST_EDIT_ROUTE
 } from "./utils/consts";
 
 export const authRoutes = [
@@ -65,6 +68,14 @@ export const authRoutes = [
   {
     path: CHECKLIST_CREATE_ROUTE,
     Component: ChecklistCreate
+  },
+  {
+    path: CHECKLIST_ROUTE + "/:id",
+    Component: ChecklistPage
+  },
+  {
+    path: CHECKLIST_EDIT_ROUTE + "/:id",
+    Component: ChecklistEdit
   },
 ];
 

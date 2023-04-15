@@ -47,8 +47,10 @@ const Checklist = () => {
   }, []);
 
   let sortedAndSearchedChecklist = data.filter((data) =>
-    String(data.name).includes(searchQuery)
+    String(data.name.toLowerCase()).includes(searchQuery.toLowerCase())
   );
+
+  // console.log(sortedAndSearchedChecklist.filter((i) => i.versionChecklistId === 3));
 
   const searchChecklist = (e) => {
     setSearchQuery(e.target.value);
@@ -71,11 +73,8 @@ const Checklist = () => {
             <Select
               showSearch
               placeholder="Версия"
-              optionFilterProp="children"
               style={{ width: "100%", marginTop: "20px" }}
-              filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-              }
+              // onChange={ (value) => { sortedAndSearchedChecklist.filter((i) => i.versionChecklistId === value) } }
             >
             {
               version.map(item => (

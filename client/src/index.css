@@ -275,3 +275,22 @@ ul {
   height: 40px;
   border-radius: 100%;
 }
+
+@media print{
+  .header {display:none;}
+  .ant-btn {display:none;}
+  .block-file {display:none;}
+
+  @page { margin: 0; }
+
+  .searchSection {
+    height: 100vh;
+    margin-top: 0px;
+  }
+
+  .defaultForm {
+    width: 780px;
+    border: none;
+    box-shadow: none;
+  }
+}
