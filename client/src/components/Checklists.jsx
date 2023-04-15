@@ -21,7 +21,7 @@ const Checklists = ({ checklists }) => {
 
         checklists.map(( data ) => (
 
-            <Col className="gutter-row" span={8} key={data.id}>
+            <Col className="gutter-row" span={checklists.length == 2 ? 12 : 8} key={data.id}>
 		       	<Card
 	                hoverable
 	                onClick={(event) => {

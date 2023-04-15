@@ -10,3 +10,4 @@ export const CHECKLIST_ROUTE = "/checklist";
 export const CHECKLIST_CREATE_ROUTE = "/checklist/create";
 export const CHECKLIST_EDIT_ROUTE = "/checklist/edit";
 export const RESULT_ROUTE = "/result";
+export const RESULT_CREATE_ROUTE = "/result/create";
