@@ -81,6 +81,7 @@ const VersionChecklistEdit = observer(() => {
 
   const updateVersion = async () => {
     const formData = new FormData();
+    console.log(theme);
     formData.append("updateId", updateId);
     formData.append("id", id);
     formData.append("actualKey", actualKey);
@@ -114,7 +115,7 @@ const VersionChecklistEdit = observer(() => {
 
   const addTheme = () => {
     setCount(count + 1);
-    setTheme([...theme, { theme: "", id: Date.now() }]);
+    setTheme([...theme, { title: "", id: Date.now() }]);
   };
 
   const removeTheme = (id) => {
@@ -123,7 +124,7 @@ const VersionChecklistEdit = observer(() => {
   };
 
   const changeTheme = (value, id) => {
-    setTheme(theme.map((i) => (i.id === id ? { ...i, ["theme"]: value } : i)));
+    setTheme(theme.map((i) => (i.id === id ? { ...i, ["title"]: value } : i)));
   };
 
   const selectHeaderFile = (e) => {
@@ -210,12 +211,7 @@ const VersionChecklistEdit = observer(() => {
                         placeholder="Error"
                         style={{ marginTop: "23px", width: "100%" }}
                         onChange={(e) => changeTheme(e.target.value, i.id)}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Введите название темы",
-                          },
-                        ]}
+                        
                       >
                         <Input defaultValue={`${i.title ? i.title : ''}`} />
                       </Form.Item>
