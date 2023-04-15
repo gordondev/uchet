@@ -13,11 +13,12 @@ import {
     Divider,
     Empty
 } from "antd";
-import { updateOne, fetchChecklist } from "../http/checklistAPI";
+import { updateOne, fetchChecklist, deleteOne } from "../http/checklistAPI";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import { fetchOneChecklist } from "../http/checklistAPI";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
+import { CHECKLIST_ROUTE } from "../utils/consts";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -36,6 +37,7 @@ const ChecklistEdit = () => {
     const [checklist, setChecklist] = useState({ contents: [], user: [] });
     const [name, setName] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -72,7 +74,7 @@ const ChecklistEdit = () => {
 	};
 	const handleOk = () => {
 	  	setIsModalOpen(false);
-	  	// deleteVersion();
+	  	deleteChecklist();
 	};
 	const handleCancel = () => {
 	    setIsModalOpen(false);
@@ -92,6 +94,15 @@ const ChecklistEdit = () => {
 	      message.error(e.response?.data?.message);
 	    }
   	};
+
+  	const deleteChecklist = async () => {
+  		try {
+	      await deleteOne(id);
+	      navigate(CHECKLIST_ROUTE);
+	    } catch(e) {
+	      message.error(e.response?.data?.message);
+	    }
+	}
 
     return (
         <section className="searchSection">

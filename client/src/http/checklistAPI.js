@@ -18,3 +18,7 @@ export const fetchOneChecklist = async (id) => {
 export const updateOne = async (id, newChecklist) => {
   await $host.put('api/checklist/edit/' + id, newChecklist);
 }
+
+export const deleteOne = async (id) => {
+  await $host.delete('api/checklist/edit/' + id);
+}
