@@ -27,7 +27,7 @@ const ChecklistEdit = () => {
     const [countVersion, setCountVersion] = useState(0);
     const [countRowsChecklist, setCountRowsChecklist] = useState(0);
     const [versionChecklist, setVersionChecklist] = useState(null);
-    const [showRecondCounter, setShowRecondCounter] = useState(false);
+    const [showRecondCounter, setShowRecondCounter] = useState(true);
     const [checklists, setChecklists] = useState([]);
     const [version, setVersion] = useState([]);
     const [isLoadind, setIsLoading] = useState(true);
@@ -41,6 +41,7 @@ const ChecklistEdit = () => {
 
     useEffect(() => {
         setIsLoading(true);
+        fetchVersionChecklist().then(response => setVersion(response.rows));
         fetchChecklist().then(response => setChecklists(response.rows));
         fetchOneChecklist(id).then(data => { 
         	setChecklist(data);
@@ -49,11 +50,8 @@ const ChecklistEdit = () => {
         	setName(data.name);
         	setVersionChecklist(data.versionChecklistId);
         })
-        fetchVersionChecklist().then(response => setVersion(response.rows));
         setIsLoading(false);
     }, []);
-
-    console.log(checklist);
 
     const addContent = () => {
 	    setContent([...content, { content: "", id: Date.now() }]);
@@ -86,7 +84,6 @@ const ChecklistEdit = () => {
 	    formData.append("name", name);
 	    formData.append("versionChecklistId", versionChecklist);
 	    formData.append("description", description);
-	    console.log(content);
 	    formData.append("contents", JSON.stringify(content));
 	    try {
 	      await updateOne(id, formData);
@@ -120,12 +117,6 @@ const ChecklistEdit = () => {
 			                label="Версия чек-листа"
 			                hasFeedback
 			                style={{ width: "100%" }}
-			                rules={[
-			                    {
-			                        required: true,
-			                        message: "Выберите версию",
-			                    },
-			                ]}
 			            >
 			                <Select 
 			                	placeholder={versionChecklist}
@@ -178,12 +169,6 @@ const ChecklistEdit = () => {
 		                      rows={4}
 		                      style={{ marginTop: "23px", width: "100%" }}
 		                      onChange={(e) => changeContent(e.target.value, i.id)}
-		                      rules={[
-		                        {
-		                          required: true,
-		                          message: 'Введите содержние',
-		                        },
-		                      ]}
 		                    >
 		                      <Input.TextArea showCount maxLength={500} defaultValue={`${i.content ? i.content : ''}`}/>
 		                    </Form.Item>
@@ -208,7 +193,6 @@ const ChecklistEdit = () => {
 		                  style={{ width: "100%", marginBottom: "20px" }}
 		                  icon={<PlusOutlined />}
 		                  onClick={addContent}
-		                  disabled={countRowsChecklist >= countVersion}
 		                >
 		                  Добавить
 		                </Button>
@@ -219,6 +203,7 @@ const ChecklistEdit = () => {
 		                    htmlType="submit"
 		                    icon={<SaveOutlined />}
 		                    style={{ width: "100%" }}
+		                    disabled={countRowsChecklist >= countVersion}
 		                  >
 		                    Сохранить
 		                  </Button>

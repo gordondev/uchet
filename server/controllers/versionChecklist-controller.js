@@ -86,8 +86,6 @@ class VersionChecklistController {
       const { updateId, id, actualKey, userId, quanityType, reasonForUse, acceptanceDate, comment, theme } =
         req.body;
 
-      console.log(theme);
-
       await versionChecklist.updateOne(
         updateId,
         id,
