@@ -74,16 +74,16 @@ class ChecklistController {
 
   async updateOne(req, res, next) {
     try {
-      const { id, name, versionChecklistId, description, file, userId, contents } =
+      const { id, name, versionChecklistId, description, contents } =
         req.body;
+
+      console.log("DATA\n\n", id, name, versionChecklistId, description, contents);
 
       await checklist.updateOne(
         id,
         name,
         versionChecklistId,
         description,
-        file,
-        userId,
         contents
       );
       return res.json({ message: `Данные чек-листа - ${id} были обновленны` });

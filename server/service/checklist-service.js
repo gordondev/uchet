@@ -75,8 +75,6 @@ class ChecklistService {
     name,
     versionChecklistId,
     description,
-    file,
-    userId,
     contents
   ) {
 

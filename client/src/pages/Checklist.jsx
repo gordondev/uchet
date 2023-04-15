@@ -74,7 +74,6 @@ const Checklist = () => {
               showSearch
               placeholder="Версия"
               style={{ width: "100%", marginTop: "20px" }}
-              // onChange={ (value) => { sortedAndSearchedChecklist.filter((i) => i.versionChecklistId === value) } }
             >
             {
               version.map(item => (
