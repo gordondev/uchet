@@ -14,6 +14,7 @@ import {
   Empty,
 } from "antd";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
+import { observer } from "mobx-react-lite";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -32,7 +33,7 @@ const config = {
   ),
 };
 
-const VersionChecklistCreate = () => {
+const VersionChecklistCreate = observer(() => {
   const [modal, contextHolder] = Modal.useModal();
   const [count, setCount] = useState(1);
   const { user } = useContext(Context);
@@ -264,6 +265,6 @@ const VersionChecklistCreate = () => {
       <UnreachableContext.Provider value="Bamboo" />
     </ReachableContext.Provider>
   );
-};
+});
 
 export default VersionChecklistCreate;

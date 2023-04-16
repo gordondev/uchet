@@ -8,12 +8,13 @@ import { useObserver } from "../hooks/useObserver";
 import { Collapse } from "antd";
 import { fetchChecklist } from "../http/checklistAPI";
 import Checklists from "../components/Checklists";
+import { observer } from "mobx-react-lite";
 
 const { Panel } = Collapse;
 const { Option } = Select;
 const { Search } = Input;
 
-const Checklist = () => {
+const Checklist = observer(() => {
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,8 +45,6 @@ const Checklist = () => {
   let sortedAndSearchedChecklist = data.filter((data) =>
     String(data.name.toLowerCase()).includes(searchQuery.toLowerCase())
   );
-
-  // console.log(sortedAndSearchedChecklist.filter((i) => i.versionChecklistId === 3));
 
   const searchChecklist = (e) => {
     setSearchQuery(e.target.value);
@@ -101,6 +100,6 @@ const Checklist = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Checklist;
