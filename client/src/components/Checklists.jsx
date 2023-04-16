@@ -15,7 +15,7 @@ const Checklists = ({ checklists }) => {
   return checklists.map((data) => (
     <Col
       className="gutter-row"
-      span={checklists.length === 2 ? 12 : 8}
+      span={checklists.length >= 4 ? 6 : checklists.length === 2 ? 12 : 8}
       key={data.id}
     >
       <Card
@@ -32,7 +32,7 @@ const Checklists = ({ checklists }) => {
           }
         }}
         style={{
-          minWidth: 270,
+          minWidth: 300,
           marginTop: 16,
         }}
       >
