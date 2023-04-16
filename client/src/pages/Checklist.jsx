@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Input, Row, FloatButton, Spin, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -9,12 +9,14 @@ import { Collapse } from "antd";
 import { fetchChecklist } from "../http/checklistAPI";
 import Checklists from "../components/Checklists";
 import { observer } from "mobx-react-lite";
+import { Context } from "../index";
 
 const { Panel } = Collapse;
 const { Option } = Select;
 const { Search } = Input;
 
 const Checklist = observer(() => {
+  const { checklist } = useContext(Context);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,19 +30,19 @@ const Checklist = observer(() => {
 
   useObserver(lastElement, data.length < totalCount, isLoadind, () => {
     currentPage.current += 1;
-    fetchChecklist(24, currentPage.current).then((response) => {
+    fetchChecklist(checklist.selectedVersion, 24, currentPage.current).then((response) => {
       setData([...data, ...response.rows]);
     });
   });
 
   useEffect(() => {
     setIsLoading(true);
-    fetchChecklist(24, currentPage.current).then((response) => {
-      setData([...data, ...response.rows]);
+    fetchChecklist(checklist.selectedVersion, 24, currentPage.current).then((response) => {
+      setData(response.rows);
     });
     fetchVersionChecklist().then((response) => setVersion(response.rows));
     setIsLoading(false);
-  }, []);
+  }, [checklist.selectedVersion]);
 
   let sortedAndSearchedChecklist = data.filter((data) =>
     String(data.name.toLowerCase()).includes(searchQuery.toLowerCase())
@@ -49,6 +51,8 @@ const Checklist = observer(() => {
   const searchChecklist = (e) => {
     setSearchQuery(e.target.value);
   };
+
+  console.log(checklist.selectedVersion);
 
   return (
     <section className="searchSection">
@@ -68,6 +72,7 @@ const Checklist = observer(() => {
               showSearch
               placeholder="Версия"
               style={{ width: "100%", marginTop: "20px" }}
+              onChange={(value) => { checklist.setSelectedVersion(value) }}
             >
               {version.map((item) => (
                 <Option value={item.id}>{item.id}</Option>

@@ -44,8 +44,13 @@ class ChecklistService {
     return { checklist: checklistDto };
   }
 
-  async getAll(limit, offset) {
-    const checklist = await Checklist.findAndCountAll({ limit, offset });
+  async getAll(versionChecklistId, limit, offset) {
+    let checklist;
+    if (versionChecklistId) {
+      checklist = await Checklist.findAndCountAll({where: {versionChecklistId}, limit, offset});
+    } else {
+      checklist = await Checklist.findAndCountAll({ limit, offset });
+    }
     return checklist;
   }
 
