@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
-import { Input, Row, FloatButton, Spin, Select, Col, Card } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import { Input, Row, FloatButton, Spin, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { observer } from "mobx-react-lite";
 import { CHECKLIST_CREATE_ROUTE } from "../utils/consts";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { useObserver } from "../hooks/useObserver";
-import VersionsList from "../components/VersionsList";
-import { Collapse } from 'antd';
+import { Collapse } from "antd";
 import { fetchChecklist } from "../http/checklistAPI";
 import Checklists from "../components/Checklists";
 
@@ -17,16 +15,13 @@ const { Search } = Input;
 
 const Checklist = () => {
   const [data, setData] = useState([]);
-  const [fetching, setFetching] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [checklists, setChecklists] = useState([]);
   const [version, setVersion] = useState([]);
   const [isLoadind, setIsLoading] = useState(true);
 
   const currentPage = useRef(1);
   const lastElement = useRef();
-  const observer = useRef();
 
   const navigate = useNavigate();
 
@@ -37,12 +32,12 @@ const Checklist = () => {
     });
   });
 
-  useEffect( () => {
+  useEffect(() => {
     setIsLoading(true);
     fetchChecklist(24, currentPage.current).then((response) => {
       setData([...data, ...response.rows]);
     });
-    fetchVersionChecklist().then(response => setVersion(response.rows));
+    fetchVersionChecklist().then((response) => setVersion(response.rows));
     setIsLoading(false);
   }, []);
 
@@ -59,7 +54,7 @@ const Checklist = () => {
   return (
     <section className="searchSection">
       <div className="container">
-        <Collapse defaultActiveKey={['1']} ghost style={{ width: "100%" }}>
+        <Collapse defaultActiveKey={["1"]} ghost style={{ width: "100%" }}>
           <Panel header="Фильтры" key="1" style={{ width: "100%" }}>
             <Search
               placeholder="Введите название чек-листа"
@@ -75,11 +70,9 @@ const Checklist = () => {
               placeholder="Версия"
               style={{ width: "100%", marginTop: "20px" }}
             >
-            {
-              version.map(item => (
-                <Option value={item.id}>{item.id}</Option>    
-              ))
-            }
+              {version.map((item) => (
+                <Option value={item.id}>{item.id}</Option>
+              ))}
             </Select>
           </Panel>
         </Collapse>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../index";
 import {
   Typography,
@@ -9,7 +9,7 @@ import {
   Button,
   Empty,
   Skeleton,
-  message
+  message,
 } from "antd";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
@@ -21,22 +21,22 @@ const { Option } = Select;
 
 const ChecklistCreate = () => {
   const { user } = useContext(Context);
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState("");
   const [showRecondCounter, setShowRecondCounter] = useState(false);
   const [countVersion, setCountVersion] = useState(0);
   const [countRowsChecklist, setCountRowsChecklist] = useState(0);
   const [isLoadind, setIsLoading] = useState(true);
   const [version, setVersion] = useState([]);
   const [content, setContent] = useState([]);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [versionChecklist, setVersionChecklist] = useState(null);
   const [file, setFile] = useState("");
   const [checklists, setChecklists] = useState([]);
 
-  useEffect( () => {
+  useEffect(() => {
     setIsLoading(true);
-    fetchChecklist().then(response => setChecklists(response.rows));
-    fetchVersionChecklist().then(response => setVersion(response.rows));
+    fetchChecklist().then((response) => setChecklists(response.rows));
+    fetchVersionChecklist().then((response) => setVersion(response.rows));
     setIsLoading(false);
   }, []);
 
@@ -76,12 +76,14 @@ const ChecklistCreate = () => {
   };
 
   return (
-      <section className="searchSection">
-        <div className="container">
-          <Form onFinish={addChecklist}>
-            <div className="defaultForm">
-              {isLoadind ? ( <Skeleton active /> ) : (
-                <>
+    <section className="searchSection">
+      <div className="container">
+        <Form onFinish={addChecklist}>
+          <div className="defaultForm">
+            {isLoadind ? (
+              <Skeleton active />
+            ) : (
+              <>
                 <div className="defaultForm__tile">
                   <Form.Item
                     name="title"
@@ -93,46 +95,48 @@ const ChecklistCreate = () => {
                         required: true,
                         message: "Введите название чек-листа",
                       },
-                          ]}
+                    ]}
                   >
                     <Input />
                   </Form.Item>
                 </div>
-
                 <Form.Item
-                    name="select"
-                    label="Версия чек-листа"
-                    hasFeedback
-                    style={{ width: "100%" }}
-                    rules={[
-                          {
-                            required: true,
-                            message: "Выберите версию",
-                          },
-                        ]}
+                  name="select"
+                  label="Версия чек-листа"
+                  hasFeedback
+                  style={{ width: "100%" }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Выберите версию",
+                    },
+                  ]}
+                >
+                  <Select
+                    onChange={(value) => {
+                      setCountVersion(
+                        version.find((item) => item.id === value).quanityType
+                      );
+                      setCountRowsChecklist(
+                        checklists.filter((i) => i.versionChecklistId === value)
+                          .length
+                      );
+                      setVersionChecklist(value);
+                      setShowRecondCounter(true);
+                    }}
                   >
-                    <Select 
-                      onChange={(value) => {
-                        setCountVersion(version.find(item => item.id === value).quanityType);
-                        setCountRowsChecklist(checklists.filter((i) => i.versionChecklistId === value).length);
-                        setVersionChecklist(value);
-                        setShowRecondCounter(true);
-                      }}
-                    >
-                        {
-                          version.map(item => (
-                            <Option value={item.id}>{item.id}</Option>    
-                          ))
-                        }
-                    </Select>
+                    {version.map((item) => (
+                      <Option value={item.id}>{item.id}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
-
-                {
-                  showRecondCounter && <Text type="secondary">
-                  <p className="counter">{countRowsChecklist}/{countVersion} записей</p>
+                {showRecondCounter && (
+                  <Text type="secondary">
+                    <p className="counter">
+                      {countRowsChecklist}/{countVersion} записей
+                    </p>
                   </Text>
-                }
-
+                )}
                 <Form.Item label="Описание">
                   <TextArea
                     rows={4}
@@ -141,7 +145,6 @@ const ChecklistCreate = () => {
                     maxLength={500}
                   />
                 </Form.Item>
-
                 <input
                   type="file"
                   className="inputUpload"
@@ -149,49 +152,41 @@ const ChecklistCreate = () => {
                   accept=".doc, .docx"
                 />
                 Прикрепите файл содержния чек-листа
-
                 <Divider orientation="center">Содержния</Divider>
-
-                {
-                  content.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                }
-
+                {content.length === 0 && (
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                )}
                 {content.map((i) => (
-
                   <>
+                    <div className="theme_item">
+                      <Form.Item
+                        name={i.id}
+                        label="Содержние"
+                        rows={4}
+                        style={{ marginTop: "23px", width: "100%" }}
+                        onChange={(e) => changeContent(e.target.value, i.id)}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Введите содержние",
+                          },
+                        ]}
+                      >
+                        <Input.TextArea showCount maxLength={500} />
+                      </Form.Item>
 
-                  <div className="theme_item">
-                    <Form.Item
-                      name={i.id}
-                      label="Содержние"
-                      rows={4}
-                      style={{ marginTop: "23px", width: "100%" }}
-                      onChange={(e) => changeContent(e.target.value, i.id)}
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Введите содержние',
-                        },
-                      ]}
-                    >
-                      <Input.TextArea showCount maxLength={500}/>
-                    </Form.Item>
-
-                    <Button
-                      type="primary"
-                      danger
-                      style={{ marginLeft: "20px" }}
-                      icon={<DeleteOutlined />}
-                      onClick={() => removeContent(i.id)}
-                    >
-                      Удалить
-                    </Button>
-                  </div>
-
+                      <Button
+                        type="primary"
+                        danger
+                        style={{ marginLeft: "20px" }}
+                        icon={<DeleteOutlined />}
+                        onClick={() => removeContent(i.id)}
+                      >
+                        Удалить
+                      </Button>
+                    </div>
                   </>
-
                 ))}
-
                 <Button
                   type="primary"
                   style={{ width: "100%", marginBottom: "20px" }}
@@ -201,7 +196,6 @@ const ChecklistCreate = () => {
                 >
                   Добавить
                 </Button>
-
                 <Form.Item style={{ width: "100%" }}>
                   <Button
                     type="primary"
@@ -211,15 +205,14 @@ const ChecklistCreate = () => {
                   >
                     Сохранить
                   </Button>
-              </Form.Item>
-
-                </>
-              )}
+                </Form.Item>
+              </>
+            )}
           </div>
-          </Form>
-        </div>
-     </section>
-  )
-}
+        </Form>
+      </div>
+    </section>
+  );
+};
 
 export default ChecklistCreate;

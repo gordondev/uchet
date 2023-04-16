@@ -1,35 +1,21 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
-import { Input, Row, FloatButton, Spin, Select } from "antd";
+import React from "react";
+import { Input, FloatButton, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { observer } from "mobx-react-lite";
 import { RESULT_CREATE_ROUTE } from "../utils/consts";
-import { fetchVersionChecklist } from "../http/versionChecklistAPI";
-import { useObserver } from "../hooks/useObserver";
-import VersionsList from "../components/VersionsList";
-import { QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import { Collapse } from 'antd';
+import { Collapse } from "antd";
 
 const { Panel } = Collapse;
 
 const { Search } = Input;
 
 const Result = () => {
-  const [versionIsLoadind, setVersionIsLoading] = useState(true);
-  const currentPage = useRef(1);
-  const [data, setData] = useState([]);
-  const [fetching, setFetching] = useState(true);
-  const [totalCount, setTotalCount] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const lastElement = useRef();
-  const observer = useRef();
-
   const navigate = useNavigate();
 
   return (
     <section className="searchSection">
       <div className="container">
-        <Collapse defaultActiveKey={['1']} ghost style={{ width: "100%" }}>
+        <Collapse defaultActiveKey={["1"]} ghost style={{ width: "100%" }}>
           <Panel header="Фильтры" key="1" style={{ width: "100%" }}>
             <Search
               placeholder="Введите название работы"
@@ -44,16 +30,18 @@ const Result = () => {
               optionFilterProp="children"
               style={{ width: "100%", marginTop: "20px" }}
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               options={[
                 {
-                  value: 'Да',
-                  label: 'Да',
+                  value: "Да",
+                  label: "Да",
                 },
                 {
-                  value: 'Нет',
-                  label: 'Нет',
+                  value: "Нет",
+                  label: "Нет",
                 },
               ]}
             />
@@ -63,88 +51,90 @@ const Result = () => {
               optionFilterProp="children"
               style={{ width: "100%", marginTop: "20px" }}
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               options={[
                 {
-                  value: 'ТЦ-3',
-                  label: 'ТЦ-3',
+                  value: "ТЦ-3",
+                  label: "ТЦ-3",
                 },
                 {
-                  value: 'РЦ-2',
-                  label: 'РЦ-2',
+                  value: "РЦ-2",
+                  label: "РЦ-2",
                 },
                 {
-                  value: 'РЦ-3',
-                  label: 'РЦ-3',
+                  value: "РЦ-3",
+                  label: "РЦ-3",
                 },
                 {
-                  value: 'ЦЦР',
-                  label: 'ЦЦР',
+                  value: "ЦЦР",
+                  label: "ЦЦР",
                 },
                 {
-                  value: 'ЦОРО',
-                  label: 'ЦОРО',
+                  value: "ЦОРО",
+                  label: "ЦОРО",
                 },
                 {
-                  value: 'ЭЦ',
-                  label: 'ЭЦ',
+                  value: "ЭЦ",
+                  label: "ЭЦ",
                 },
                 {
-                  value: 'ЦТАИ',
-                  label: 'ЦТАИ',
+                  value: "ЦТАИ",
+                  label: "ЦТАИ",
                 },
                 {
-                  value: 'ЦВ',
-                  label: 'ЦВ',
+                  value: "ЦВ",
+                  label: "ЦВ",
                 },
                 {
-                  value: 'ОРБ',
-                  label: 'ОРБ',
+                  value: "ОРБ",
+                  label: "ОРБ",
                 },
                 {
-                  value: 'ХЦ',
-                  label: 'ХЦ',
+                  value: "ХЦ",
+                  label: "ХЦ",
                 },
                 {
-                  value: 'ТЦ-2',
-                  label: 'ТЦ-2',
+                  value: "ТЦ-2",
+                  label: "ТЦ-2",
                 },
                 {
-                  value: 'РТЦ-1',
-                  label: 'РТЦ-1',
+                  value: "РТЦ-1",
+                  label: "РТЦ-1",
                 },
                 {
-                  value: 'ЦОС',
-                  label: 'ЦОС',
+                  value: "ЦОС",
+                  label: "ЦОС",
                 },
                 {
-                  value: 'ОПБ',
-                  label: 'ОПБ',
+                  value: "ОПБ",
+                  label: "ОПБ",
                 },
                 {
-                  value: 'ОЯБиН',
-                  label: 'ОЯБиН',
+                  value: "ОЯБиН",
+                  label: "ОЯБиН",
                 },
                 {
-                  value: 'Управление',
-                  label: 'Управление',
+                  value: "Управление",
+                  label: "Управление",
                 },
                 {
-                  value: 'ОТИиПБ',
-                  label: 'ОТИиПБ',
+                  value: "ОТИиПБ",
+                  label: "ОТИиПБ",
                 },
                 {
-                  value: 'ОИиКОБ',
-                  label: 'ОИиКОБ',
+                  value: "ОИиКОБ",
+                  label: "ОИиКОБ",
                 },
                 {
-                  value: 'ООТ',
-                  label: 'ООТ',
+                  value: "ООТ",
+                  label: "ООТ",
                 },
                 {
-                  value: 'УТП',
-                  label: 'УТП',
+                  value: "УТП",
+                  label: "УТП",
                 },
               ]}
             />
@@ -157,8 +147,12 @@ const Result = () => {
             right: 24,
           }}
         >
-          <FloatButton icon={<PlusOutlined />} type="primary" onClick={() => navigate(RESULT_CREATE_ROUTE)}/>
-          <FloatButton type="primary"/>
+          <FloatButton
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => navigate(RESULT_CREATE_ROUTE)}
+          />
+          <FloatButton type="primary" />
         </FloatButton.Group>
       </div>
     </section>

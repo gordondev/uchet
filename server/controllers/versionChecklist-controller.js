@@ -2,29 +2,35 @@ const versionChecklist = require("../service/versionChecklist-service");
 const ApiError = require("../exceptions/api-error");
 
 class VersionChecklistController {
-
   async create(req, res, next) {
     try {
-      const { id, actualKey, userId, quanityType, reasonForUse, acceptanceDate, comment, theme } =
-        req.body;
+      const {
+        id,
+        actualKey,
+        userId,
+        quanityType,
+        reasonForUse,
+        acceptanceDate,
+        comment,
+        theme,
+      } = req.body;
 
       if (!req.files) {
         const versionChecklistData =
-        await versionChecklist.createVersionChecklist(
-          id,
-          actualKey,
-          userId,
-          quanityType,
-          reasonForUse,
-          acceptanceDate,
-          comment,
-          null,
-          null,
-          theme
-        );
+          await versionChecklist.createVersionChecklist(
+            id,
+            actualKey,
+            userId,
+            quanityType,
+            reasonForUse,
+            acceptanceDate,
+            comment,
+            null,
+            null,
+            theme
+          );
         return res.json(versionChecklistData);
       } else {
-        
         const { headerFile } = req.files;
         const { commentFile } = req.files;
 
@@ -41,7 +47,7 @@ class VersionChecklistController {
             commentFile,
             theme
           );
-          return res.json(versionChecklistData);
+        return res.json(versionChecklistData);
       }
     } catch (e) {
       next(ApiError.BadRequest(e.message));
@@ -50,11 +56,14 @@ class VersionChecklistController {
 
   async getAll(req, res, next) {
     try {
-      let {limit, page} = req.query;
+      let { limit, page } = req.query;
       page = page || 1;
       limit = limit || 24;
       let offset = page * limit - limit;
-      const versionChecklistsData = await versionChecklist.getAll(limit, offset);
+      const versionChecklistsData = await versionChecklist.getAll(
+        limit,
+        offset
+      );
       return res.json(versionChecklistsData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
@@ -83,8 +92,17 @@ class VersionChecklistController {
 
   async updateOne(req, res, next) {
     try {
-      const { updateId, id, actualKey, userId, quanityType, reasonForUse, acceptanceDate, comment, theme } =
-        req.body;
+      const {
+        updateId,
+        id,
+        actualKey,
+        userId,
+        quanityType,
+        reasonForUse,
+        acceptanceDate,
+        comment,
+        theme,
+      } = req.body;
 
       await versionChecklist.updateOne(
         updateId,

@@ -2,7 +2,6 @@ import React, { useContext, useState, createContext } from "react";
 import { createVersion } from "../http/versionChecklistAPI";
 import { Context } from "../index";
 import {
-  Typography,
   Form,
   Select,
   Button,
@@ -12,7 +11,7 @@ import {
   message,
   Modal,
   Divider,
-  Empty
+  Empty,
 } from "antd";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 
@@ -144,9 +143,9 @@ const VersionChecklistCreate = () => {
                 </Form.Item>
               </div>
               <Divider orientation="center">Темы</Divider>
-              {
-                  theme.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-              }
+              {theme.length === 0 && (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              )}
               {theme.map((i) => (
                 <div className="theme_item">
                   <Form.Item
@@ -252,7 +251,7 @@ const VersionChecklistCreate = () => {
                   type="primary"
                   htmlType="submit"
                   icon={<SaveOutlined />}
-                  style={{ width: "100%"}}
+                  style={{ width: "100%" }}
                 >
                   Сохранить
                 </Button>

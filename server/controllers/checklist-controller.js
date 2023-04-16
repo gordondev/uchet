@@ -2,38 +2,33 @@ const checklist = require("../service/checklist-service");
 const ApiError = require("../exceptions/api-error");
 
 class ChecklistController {
-
-	async create(req, res, next) {
+  async create(req, res, next) {
     try {
       const { name, versionChecklistId, description, userId, contents } =
         req.body;
 
-        if (!req.files) {
-          const checklistData =
-          await checklist.createChecklist(
-            name,
-            versionChecklistId,
-            description,
-            null,
-            userId,
-            contents
-          );
-          return res.json(checklistData);
-        } else {
-
-          const { file } = req.files;
-          const checklistData =
-          await checklist.createChecklist(
-            name,
-            versionChecklistId,
-            description,
-            file,
-            userId,
-            contents
-          );
-          return res.json(checklistData);
-        }
-
+      if (!req.files) {
+        const checklistData = await checklist.createChecklist(
+          name,
+          versionChecklistId,
+          description,
+          null,
+          userId,
+          contents
+        );
+        return res.json(checklistData);
+      } else {
+        const { file } = req.files;
+        const checklistData = await checklist.createChecklist(
+          name,
+          versionChecklistId,
+          description,
+          file,
+          userId,
+          contents
+        );
+        return res.json(checklistData);
+      }
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
@@ -41,7 +36,7 @@ class ChecklistController {
 
   async getAll(req, res, next) {
     try {
-      let {limit, page} = req.query;
+      let { limit, page } = req.query;
       page = page || 1;
       limit = limit || 24;
       let offset = page * limit - limit;
@@ -74,10 +69,16 @@ class ChecklistController {
 
   async updateOne(req, res, next) {
     try {
-      const { id, name, versionChecklistId, description, contents } =
-        req.body;
+      const { id, name, versionChecklistId, description, contents } = req.body;
 
-      console.log("DATA\n\n", id, name, versionChecklistId, description, contents);
+      console.log(
+        "DATA\n\n",
+        id,
+        name,
+        versionChecklistId,
+        description,
+        contents
+      );
 
       await checklist.updateOne(
         id,
@@ -91,7 +92,6 @@ class ChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
-
 }
 
 module.exports = new ChecklistController();

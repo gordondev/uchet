@@ -6,19 +6,21 @@ export const createChecklist = async (checklist) => {
 };
 
 export const fetchChecklist = async (limit, page) => {
-    const {data} = await $authHost.get('api/checklist/', { params: { limit, page } });
-    return data;
+  const { data } = await $authHost.get("api/checklist/", {
+    params: { limit, page },
+  });
+  return data;
 };
 
 export const fetchOneChecklist = async (id) => {
-    const {data} = await $host.get('api/checklist/' + id)
-    return data
+  const { data } = await $host.get("api/checklist/" + id);
+  return data;
 };
 
 export const updateOne = async (id, newChecklist) => {
-  await $host.put('api/checklist/edit/' + id, newChecklist);
-}
+  await $host.put("api/checklist/edit/" + id, newChecklist);
+};
 
 export const deleteOne = async (id) => {
-  await $host.delete('api/checklist/edit/' + id);
-}
+  await $host.delete("api/checklist/edit/" + id);
+};

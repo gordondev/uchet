@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Input, Row, FloatButton, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_CREATE_ROUTE } from "../utils/consts";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { useObserver } from "../hooks/useObserver";
@@ -13,14 +12,12 @@ const { Search } = Input;
 const VersionChecklist = () => {
   const [versionIsLoadind, setVersionIsLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [fetching, setFetching] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const currentPage = useRef(1);
   const lastElement = useRef();
-  const observer = useRef();
-  
+
   const navigate = useNavigate();
 
   useObserver(lastElement, data.length < totalCount, versionIsLoadind, () => {

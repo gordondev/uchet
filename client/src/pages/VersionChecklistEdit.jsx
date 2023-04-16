@@ -11,15 +11,15 @@ import {
   Modal,
   Skeleton,
   Divider,
-  Empty
+  Empty,
 } from "antd";
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  SaveOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchOneVersion, deleteOne, updateOne } from "../http/versionChecklistAPI";
+import {
+  fetchOneVersion,
+  deleteOne,
+  updateOne,
+} from "../http/versionChecklistAPI";
 import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
 
@@ -39,7 +39,6 @@ const config = {
     </>
   ),
 };
-
 
 const VersionChecklistEdit = observer(() => {
   const [modal, contextHolder] = Modal.useModal();
@@ -74,10 +73,10 @@ const VersionChecklistEdit = observer(() => {
     try {
       await deleteOne(id);
       navigate(VERSION_CHECKLIST_ROUTE);
-    } catch(e) {
+    } catch (e) {
       message.error(e.response?.data?.message);
     }
-  }
+  };
 
   const updateVersion = async () => {
     const formData = new FormData();
@@ -96,7 +95,7 @@ const VersionChecklistEdit = observer(() => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
-  }
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -200,9 +199,9 @@ const VersionChecklistEdit = observer(() => {
               ) : (
                 <>
                   <Divider orientation="center">Темы</Divider>
-                  {
-                    theme.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                  }
+                  {theme.length === 0 && (
+                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  )}
                   {theme.map((i) => (
                     <div className="theme_item">
                       <Form.Item
@@ -211,9 +210,8 @@ const VersionChecklistEdit = observer(() => {
                         placeholder="Error"
                         style={{ marginTop: "23px", width: "100%" }}
                         onChange={(e) => changeTheme(e.target.value, i.id)}
-                        
                       >
-                        <Input defaultValue={`${i.title ? i.title : ''}`} />
+                        <Input defaultValue={`${i.title ? i.title : ""}`} />
                       </Form.Item>
                       <Button
                         type="primary"
@@ -264,10 +262,7 @@ const VersionChecklistEdit = observer(() => {
                       style={{ width: "100%" }}
                     />
                   </Form.Item>
-                  <Form.Item
-                    label="Дата принятия"
-                    name="date-picker"
-                  >
+                  <Form.Item label="Дата принятия" name="date-picker">
                     <DatePicker
                       placeholder={version.acceptanceDate}
                       style={{ width: "100%" }}
@@ -277,7 +272,9 @@ const VersionChecklistEdit = observer(() => {
                     />
                   </Form.Item>
 
-                  <Divider orientation="center">Основание использования</Divider>
+                  <Divider orientation="center">
+                    Основание использования
+                  </Divider>
 
                   <Paragraph
                     editable={{
@@ -307,7 +304,7 @@ const VersionChecklistEdit = observer(() => {
                   >
                     {comment}
                   </Paragraph>
-                 
+
                   <Form.Item style={{ width: "100%" }}>
                     <Button
                       type="primary"
