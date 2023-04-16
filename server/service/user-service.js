@@ -94,15 +94,31 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
+  async deleteAccount(id) {
+    await User.destroy({
+      where: { id },
+    });
+  }
+
   async getAllUsers() {
     const users = await User.findAll();
     return users;
   }
 
-  // async check() {
-  // 	return
-  // 	// return tokenService.generateTokens({ ...userDto });
-  // }
+  async updateAccount(id, name, surname, patronymic) {
+    const user = await User.update(
+      {
+        name: name,
+        surname: surname,
+        patronymic: patronymic,
+      },
+      {
+        where: { id: id },
+      }
+    );
+    return user;
+  }
+
 }
 
 module.exports = new UserService();

@@ -39,3 +39,11 @@ export const check = async () => {
 export const logout = async () => {
   return $host.post("api/user/logout");
 };
+
+export const deleteAccount = async (id) => {
+  await $host.delete("api/user/delete/" + id);
+};
+
+export const updateAccount = async (id, newData) => {
+  await $host.put("api/user/update/" + id, newData);
+};

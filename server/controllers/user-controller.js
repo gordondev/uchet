@@ -91,12 +91,34 @@ class UserController {
   async check(req, res, next) {
     try {
       return res.json({ message: "all right" });
-      // const token = userService.check(email, password, role, division, name, surname, patronymic);
-      // return res.json({token});
+
     } catch (e) {
       next(e);
     }
   }
+
+  async deleteAccount(req, res, next) {
+    try {
+      const { id } = req.params;
+      await userService.deleteAccount(id);
+      return res.json({ message: `Аккаунт был удален` });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async updateAccount(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { name, surname, patronymic } = req.body;
+      console.log(name, surname, patronymic);
+      await userService.updateAccount(id, name, surname, patronymic);
+      return res.json({ message: `Данные были обновленны` });
+    } catch (e) {
+      next(e);
+    }
+  }
+
 }
 
 module.exports = new UserController();

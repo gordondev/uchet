@@ -2,31 +2,10 @@ import React from "react";
 
 const Admin = () => {
   return (
-    <div>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-      <h1>A D M I N</h1>
-    </div>
+    <section className="searchSection">
+      <div className="container">
+      </div>
+    </section>
   );
 };
 

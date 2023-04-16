@@ -10,11 +10,15 @@ import {
   Typography,
 } from "antd";
 import { Context } from "../index";
+import { deleteAccount, updateAccount } from "../http/userAPI";
+import { MAIN_ROUTE } from "../utils/consts";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 const { Paragraph } = Typography;
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user } = useContext(Context);
   const [editableStrSerName, setEditableSerName] = useState(
     `${user?.user?.surname}`
@@ -35,6 +39,7 @@ const Profile = () => {
   };
   const handleOk = () => {
     setIsModalOpen(false);
+    deleteThisAccount();
   };
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -42,11 +47,36 @@ const Profile = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
   const success = () => {
+    updateProfile();
     messageApi.open({
       type: "success",
-      content: "Данные были успешно сохраненны",
+      content: "Данные были обновленны",
     });
   };
+
+  const deleteThisAccount = async () => {
+    try {
+      await deleteAccount(user.user.id);
+      user.setUser({});
+      user.setIsAuth(false);
+      localStorage.removeItem("token");
+      navigate(MAIN_ROUTE);
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+  };
+
+  const updateProfile = async () => {
+    const formData = new FormData();
+    formData.append("name", editableStrFirstName);
+    formData.append("surname", editableStrSerName);
+    formData.append("patronymic", editableStrSecondName);
+    try {
+      await updateAccount(user.user.id, formData);
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+  }
 
   return (
     <section className="mainSection">
@@ -79,65 +109,7 @@ const Profile = () => {
           >
             {editableStrSecondName}
           </Paragraph>
-          <Checkbox
-            checked={componentDisabled}
-            onChange={(e) => setComponentDisabled(e.target.checked)}
-            style={{ marginBottom: "20px" }}
-          >
-            Не менять пароль
-          </Checkbox>
-          <Form disabled={componentDisabled}>
-            <Form.Item
-              name="password"
-              label="Старый пароль"
-              rules={[
-                {
-                  required: true,
-                  message: "Введите старый пароль",
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item
-              name="newPassword"
-              label="Новый пароль"
-              rules={[
-                {
-                  required: true,
-                  message: "Введите новый пароль",
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item
-              name="confirm"
-              label="Повторите пароль"
-              dependencies={["password"]}
-              hasFeedback
-              rules={[
-                {
-                  required: true,
-                  message: "Повторите пароль",
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Два введенных вами пароля не совпадают!")
-                    );
-                  },
-                }),
-              ]}
-            >
-              <Input.Password />
-            </Form.Item>
-          </Form>
+          
           {contextHolder}
           <Button
             type="primary"
