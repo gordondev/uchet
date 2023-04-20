@@ -76,7 +76,7 @@ const NavBar = observer(() => {
           <Menu.Item disabled={true}>
             <Link>Статистика</Link>
           </Menu.Item>
-          <Menu.Item key={ADMIN_ROUTE} disabled={true}>
+          <Menu.Item key={ADMIN_ROUTE}>
             <Link to={ADMIN_ROUTE}>Админ</Link>
           </Menu.Item>
           <Menu.Item key={PROFILE_ROUTE}>
