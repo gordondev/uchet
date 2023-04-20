@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
 import { Layout, Menu, message, Dropdown, Space } from "antd";
-import { DownOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
+import { DownOutlined, UserOutlined, LogoutOutlined, FileDoneOutlined, UnorderedListOutlined, FileSearchOutlined, LineChartOutlined, BarChartOutlined, TeamOutlined} from "@ant-design/icons";
 import {
   MAIN_ROUTE,
   PROFILE_ROUTE,
@@ -61,32 +61,33 @@ const NavBar = observer(() => {
           selectedKeys={window.location.pathname}
           className="navmenu"
         >
-          <Menu.Item key={VERSION_CHECKLIST_ROUTE}>
+          <Menu.Item key={VERSION_CHECKLIST_ROUTE} icon={<FileDoneOutlined />}>
             <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
           </Menu.Item>
-          <Menu.Item key={CHECKLIST_ROUTE}>
+          <Menu.Item key={CHECKLIST_ROUTE} icon={<UnorderedListOutlined />}>
             <Link to={CHECKLIST_ROUTE}>Чек-листы</Link>
           </Menu.Item>
-          <Menu.Item key={RESULT_ROUTE}>
+          <Menu.Item key={RESULT_ROUTE} icon={<FileSearchOutlined />}>
             <Link to={RESULT_ROUTE}>Результаты</Link>
           </Menu.Item>
-          <Menu.Item disabled={true}>
+          <Menu.Item disabled={true} icon={<LineChartOutlined />}>
             <Link>Графики</Link>
           </Menu.Item>
-          <Menu.Item disabled={true}>
+          <Menu.Item disabled={true} icon={<BarChartOutlined />}>
             <Link>Статистика</Link>
           </Menu.Item>
-          <Menu.Item key={ADMIN_ROUTE}>
+          <Menu.Item key={ADMIN_ROUTE} icon={<TeamOutlined />}>
             <Link to={ADMIN_ROUTE}>Админ</Link>
           </Menu.Item>
           <Menu.Item key={PROFILE_ROUTE}>
             <Dropdown
+              
               menu={{
                 items,
               }}
             >
               <Link>
-                <Space>
+                <Space icon={<UserOutlined />}>
                   Пользователь
                   <DownOutlined />
                 </Space>

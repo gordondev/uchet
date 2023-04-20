@@ -143,7 +143,7 @@ const Admin = observer(() => {
       title: 'Действие',
       dataIndex: '',
       key: 'x',
-      width: 170,
+      width: 165,
       render: () => <Button
                         type="primary"
                         icon={<EditOutlined />}
