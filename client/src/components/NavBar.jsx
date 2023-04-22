@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
 import { Layout, Menu, message, Dropdown, Space } from "antd";
@@ -20,6 +20,7 @@ const { Header } = Layout;
 const NavBar = observer(() => {
   const navigate = useNavigate();
   const { user } = useContext(Context);
+  const [ currentPage, setCurrentPage ] = useState('');
 
   const logOut = async () => {
     try {
@@ -46,6 +47,37 @@ const NavBar = observer(() => {
     },
   ];
 
+  const routes = [
+    { key: "1", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE },
+    { key: "2", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE + "/create" },
+    { key: "3", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE + "/edit/" },
+    { key: "4", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE + "/" },
+    { key: "5", label: CHECKLIST_ROUTE, path: CHECKLIST_ROUTE },
+    { key: "6", label: CHECKLIST_ROUTE, path: CHECKLIST_ROUTE + "/create" },
+    { key: "7", label: CHECKLIST_ROUTE, path: CHECKLIST_ROUTE + "/edit/" },
+    { key: "8", label: CHECKLIST_ROUTE, path: CHECKLIST_ROUTE + "/" },
+    { key: "9", label: RESULT_ROUTE, path: RESULT_ROUTE },
+    { key: "10", label: RESULT_ROUTE, path: RESULT_ROUTE + "/create" },
+    { key: "11", label: RESULT_ROUTE, path: RESULT_ROUTE + "/edit" },
+    { key: "12", label: RESULT_ROUTE, path: RESULT_ROUTE + "/" },
+    { key: "13", label: ADMIN_ROUTE, path: ADMIN_ROUTE },
+    { key: "14", label: PROFILE_ROUTE, path: PROFILE_ROUTE },
+  ];
+
+  useEffect(() => {
+    routes.map((item) => {
+      if (window.location.pathname === "/") {
+        setCurrentPage(window.location.pathname);
+      } else {
+        if (item.path === window.location.pathname) {
+          setCurrentPage(item.label);
+        } else if (window.location.pathname.includes(item.path)) {
+          setCurrentPage(item.label);
+        }
+      }
+    });
+  }, [window.location.pathname]);
+
   return (
     <Header className="header">
       <div className="logo" onClick={() => navigate(MAIN_ROUTE)}>
@@ -58,7 +90,7 @@ const NavBar = observer(() => {
         <Menu
           theme="light"
           mode="horizontal"
-          selectedKeys={window.location.pathname}
+          selectedKeys={currentPage}
           className="navmenu"
         >
           <Menu.Item key={VERSION_CHECKLIST_ROUTE} icon={<FileDoneOutlined />}>
