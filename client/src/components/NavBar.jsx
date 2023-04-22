@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
 import { Layout, Menu, message, Dropdown, Space } from "antd";
-import { DownOutlined, UserOutlined, LogoutOutlined, FileDoneOutlined, UnorderedListOutlined, FileSearchOutlined, LineChartOutlined, BarChartOutlined, TeamOutlined} from "@ant-design/icons";
+import { DownOutlined, UserOutlined, LogoutOutlined, FileDoneOutlined, UnorderedListOutlined, FileSearchOutlined, LineChartOutlined, BarChartOutlined, TeamOutlined } from "@ant-design/icons";
 import {
   MAIN_ROUTE,
   PROFILE_ROUTE,
@@ -79,7 +79,7 @@ const NavBar = observer(() => {
           <Menu.Item key={ADMIN_ROUTE} icon={<TeamOutlined />}>
             <Link to={ADMIN_ROUTE}>Админ</Link>
           </Menu.Item>
-          <Menu.Item key={PROFILE_ROUTE}>
+          <Menu.Item key={PROFILE_ROUTE} icon={<UserOutlined />}>
             <Dropdown
               
               menu={{
@@ -88,7 +88,7 @@ const NavBar = observer(() => {
             >
               <Link>
                 <Space icon={<UserOutlined />}>
-                  Пользователь
+                  { user.user.surname + "." + user.user.name[0] + "." + user.user.patronymic[0] }
                   <DownOutlined />
                 </Space>
               </Link>
