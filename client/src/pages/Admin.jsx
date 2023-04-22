@@ -17,9 +17,6 @@ const Admin = observer(() => {
     setIsLoading(false);
   }, []);
 
-  console.log(users);
-
-
   const columns = [
     {
       title: 'Email',
@@ -182,10 +179,10 @@ const Admin = observer(() => {
       <div className="container">
         <Table columns={columns} size="middle" dataSource={users} 
         pagination={{
-          pageSize: 10,
+          pageSize: 30,
         }}
         scroll={{
-          y: 440,
+          y: 940,
         }}
         loading={isLoadind}
         />

@@ -52,8 +52,6 @@ const Checklist = observer(() => {
     setSearchQuery(e.target.value);
   };
 
-  console.log(checklist.selectedVersion);
-
   return (
     <section className="searchSection">
       <div className="container">

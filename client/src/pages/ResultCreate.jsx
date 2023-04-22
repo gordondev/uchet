@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { Form, Input, Select, Divider, Button, Tabs } from "antd";
 import { SaveOutlined, PlusOutlined } from "@ant-design/icons";
+import { fetchVersionChecklist } from "../http/versionChecklistAPI";
+import { fetchChecklist } from "../http/checklistAPI";
 
 const { Option } = Select;
 
 const ResultCreate = () => {
   const options = [];
+  const [checklists, setChecklists] = useState([]);
+  const [version, setVersion] = useState([]);
+  const [isLoadind, setIsLoading] = useState(true);
+
   for (let i = 10; i < 36; i++) {
     options.push({
       label: "тема " + i,
@@ -14,9 +20,18 @@ const ResultCreate = () => {
     });
   }
 
+  useEffect(() => {
+    setIsLoading(true);
+    fetchChecklist().then((response) => setChecklists(response.rows));
+    fetchVersionChecklist().then((response) => setVersion(response.rows));
+    setIsLoading(false);
+  }, []);
+
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
+
+  console.log(version);
 
   return (
     <section className="searchSection">

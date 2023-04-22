@@ -3,7 +3,7 @@ import { Col, Card, Empty, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { CHECKLIST_ROUTE, CHECKLIST_EDIT_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
-import girl from "../images/welcome.png";
+import checklistImage from "../images/checklist.png";
 
 const Checklists = ({ checklists }) => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const Checklists = ({ checklists }) => {
           marginTop: 16,
         }}
       >
-        <div className="checklist__item-content">
+        <div className="item-content">
           <Button
             type="primary"
             htmlType="submit"
@@ -44,8 +44,10 @@ const Checklists = ({ checklists }) => {
             style={{ width: "40px", height: "40px", borderRadius: "100%" }}
             icon={<EditOutlined />}
           ></Button>
-          <img src={girl} alt="girl" />
-          <p className="titleChecklist">{data.name}</p>
+          <img src={checklistImage} alt="checklistImage" />
+          <div className="item__title-block">
+            <p className="item-title">{data.name}</p>
+          </div>
         </div>
       </Card>
     </Col>
