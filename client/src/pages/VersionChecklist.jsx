@@ -47,13 +47,25 @@ const VersionChecklist = () => {
     });
 
     setVersionIsLoading(false);
-  }, [actualKey]);
+  }, []);
 
   const searchData = async (value) => {
     setVersionIsLoading(true);
     currentPage.current = 1;
     setSearchQuery(value);
     fetchVersionChecklist(16, currentPage.current, actualKey, value).then((response) => {
+      setData(response.rows);
+      setTotalCount(response.count);
+    });
+    await sleep(1 * 50);
+    setVersionIsLoading(false);
+  }
+
+  const actulKeyFilter = async (value) => {
+    setVersionIsLoading(true);
+    currentPage.current = 1;
+    setActualKey(value);
+    fetchVersionChecklist(16, currentPage.current, value, searchQuery).then((response) => {
       setData(response.rows);
       setTotalCount(response.count);
     });
@@ -78,7 +90,7 @@ const VersionChecklist = () => {
               allowClear
               placeholder="Ключ актуальности"
               style={{ width: "100%", marginTop: "20px" }}
-              onChange={(value) => { setActualKey(value) }}
+              onChange={(value) => { actulKeyFilter(value) }}
             >
               <Option value="Актуально">Актуально</Option>
               <Option value="Не актуально">Не актуально</Option>
