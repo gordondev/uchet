@@ -18,7 +18,7 @@ const VersionsList = ({ versions }) => {
     }
 
     return versions.map((data) => (
-        <Col
+      <Col
         className="gutter-row"
         span={versions.length >= 4 ? 6 : versions.length === 2 ? 12 : 8}
         key={data.id}

@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../index";
 import { observer } from "mobx-react-lite";
 import { login } from "../http/userAPI";
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
 const Login = observer(() => {
   const { user } = useContext(Context);
@@ -56,7 +57,7 @@ const Login = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={email} />
+            <Input defaultValue={email} prefix={<UserOutlined className="site-form-item-icon" />}/>
           </Form.Item>
 
           <Form.Item
@@ -70,7 +71,7 @@ const Login = observer(() => {
               },
             ]}
           >
-            <Input.Password defaultValue={password} />
+            <Input.Password defaultValue={password} prefix={<LockOutlined className="site-form-item-icon" />}/>
           </Form.Item>
 
           <Form.Item
