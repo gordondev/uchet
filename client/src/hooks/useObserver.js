@@ -9,7 +9,6 @@ export const useObserver = (ref, canLoad, isLoading, callback) => {
 
     var cb = function (entries, observer) {
       if (entries[0].isIntersecting && canLoad) {
-        console.log("CALL");
         callback();
       }
     };

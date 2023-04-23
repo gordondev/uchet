@@ -1,6 +1,7 @@
 const { VersionChecklist, Themes, User } = require("../models/models");
 const VersionChecklistDto = require("../dtos/versionChecklist-dto");
 const ApiError = require("../exceptions/api-error");
+const { Op } = require("sequelize");
 const path = require("path");
 const uuid = require("uuid");
 
@@ -15,7 +16,8 @@ class VersionChecklistService {
     comment,
     headerFile,
     commentFile,
-    theme
+    theme,
+    title
   ) {
     const candidate = await VersionChecklist.findOne({ where: { id } });
 
@@ -64,6 +66,7 @@ class VersionChecklistService {
       comment,
       headerFile: headerFile ? fileName : headerFile,
       commentFile: commentFile ? fileName : commentFile,
+      title
     });
 
     if (theme) {
@@ -81,11 +84,43 @@ class VersionChecklistService {
     return { versionChecklist: versionChecklistDto };
   }
 
-  async getAll(limit, offset) {
-    const versionChecklists = await VersionChecklist.findAndCountAll({
-      limit,
-      offset,
-    });
+  async getAll(limit, offset, actualKey, title) {
+
+    let versionChecklists;
+
+    if (actualKey && title) {
+        versionChecklists = await VersionChecklist.findAndCountAll({
+          limit,
+          offset,
+          where: {
+            title: { [Op.like]: `%${title}%` },
+            actualKey: actualKey
+          }
+        });
+      } else if (actualKey) {
+        versionChecklists = await VersionChecklist.findAndCountAll({
+          limit,
+          offset,
+          where: {
+            actualKey: actualKey
+          }
+        });
+      } else if (title) {
+        versionChecklists = await VersionChecklist.findAndCountAll({
+          limit,
+          offset,
+          where: {
+            title: { [Op.like]: `%${title}%` },
+          }
+        });
+      } else {
+        versionChecklists = await VersionChecklist.findAndCountAll({
+          limit,
+          offset,
+        });
+      }
+
+
     return versionChecklists;
   }
 

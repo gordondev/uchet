@@ -10,9 +10,9 @@ export const editVersion = async (version) => {
   return data;
 };
 
-export const fetchVersionChecklist = async (limit, page) => {
+export const fetchVersionChecklist = async (limit, page, actualKey, title) => {
   const { data } = await $authHost.get("api/versionchecklist/", {
-    params: { limit, page },
+    params: { limit, page, actualKey, title },
   });
   return data;
 };

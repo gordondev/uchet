@@ -45,6 +45,7 @@ const Tokens = sequelize.define("tokens", {
 const VersionChecklist = sequelize.define("version_checklist", {
   id: { type: DataTypes.INTEGER, primaryKey: true, unique: true },
   actualKey: { type: DataTypes.ENUM("Актуально", "Не актуально") },
+  title: { type: DataTypes.STRING(600) },
   userId: { type: DataTypes.INTEGER },
   headerFile: { type: DataTypes.STRING(500) },
   commentFile: { type: DataTypes.STRING(500) },

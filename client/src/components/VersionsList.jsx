@@ -52,7 +52,7 @@ const VersionsList = ({ versions }) => {
           <img src={versionImage} alt="girl" />
           <div className="item__title-block">
             <p className="item-title">Версия № {data.id}</p>
-            <p className="item-title">Название версии</p>
+            <p className="item-title">{data.title}</p>
           </div>
           {data.actualKey == "Не актуально" ? (
             <p className="keyNotActual">Не актуально</p> 

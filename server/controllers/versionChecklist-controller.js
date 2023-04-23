@@ -13,6 +13,7 @@ class VersionChecklistController {
         acceptanceDate,
         comment,
         theme,
+        title
       } = req.body;
 
       if (!req.files) {
@@ -27,7 +28,8 @@ class VersionChecklistController {
             comment,
             null,
             null,
-            theme
+            theme,
+            title
           );
         return res.json(versionChecklistData);
       } else {
@@ -45,7 +47,8 @@ class VersionChecklistController {
             comment,
             headerFile,
             commentFile,
-            theme
+            theme,
+            title
           );
         return res.json(versionChecklistData);
       }
@@ -56,13 +59,15 @@ class VersionChecklistController {
 
   async getAll(req, res, next) {
     try {
-      let { limit, page } = req.query;
+      let { limit, page, actualKey, title } = req.query;
       page = page || 1;
       limit = limit || 24;
       let offset = page * limit - limit;
       const versionChecklistsData = await versionChecklist.getAll(
         limit,
-        offset
+        offset,
+        actualKey,
+        title
       );
       return res.json(versionChecklistsData);
     } catch (e) {
