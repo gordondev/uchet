@@ -12,9 +12,11 @@ import {
   Modal,
   Divider,
   Empty,
+  Upload
 } from "antd";
-import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, SaveOutlined, InboxOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
+const { Dragger } = Upload;
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -86,15 +88,39 @@ const VersionChecklistCreate = observer(() => {
     }
   };
 
-  const selectHeaderFile = (e) => {
-    setHeaderFile(e.target.files[0]);
-    console.log("HEADER FILE", e.target.files[0]);
+  const beforeUploadHeaderFile = (file) => {
+      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!isDocx) {
+        message.error('Вы можете загрузить только .docx файл');
+      } else {
+        setHeaderFile(file);
+      }
+      return false;
   };
 
-  const selectCommentFile = (e) => {
-    setCommentFile(e.target.files[0]);
-    console.log("COMMENT FILE", e.target.files[0]);
+  const removeHeaderFile = () => {
+    setHeaderFile('');
+  }
+
+  const beforeUploadCommentFile = (file) => {
+      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!isDocx) {
+        message.error('Вы можете загрузить только .docx файл');
+      } else {
+        setCommentFile(file);
+      }
+      return false;
   };
+
+  const removeCommentFile = () => {
+    setCommentFile('');
+  }
+
+  const props = {
+    name: 'file',
+    multiple: false,
+    maxCount: 1,
+  }
 
   return (
     <ReachableContext.Provider value="Light">
@@ -201,21 +227,27 @@ const VersionChecklistCreate = observer(() => {
                 Добавить, осталось: {6 - (count - 1)}
               </Button>
               <div className="defaultForm__dragBlock">
-                <input
-                  type="file"
-                  className="inputUpload"
-                  onChange={selectHeaderFile}
-                  accept=".doc, .docx"
-                />{" "}
-                Выбор шапки
+              <Dragger {...props}  beforeUpload={beforeUploadHeaderFile} onRemove={removeHeaderFile}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">Нажмите или перетащите файл в область загрузки</p>
+                <p className="ant-upload-hint">
+                  Прикрепите файл шапки в формате .doc или .docx
+                </p>
+              </Dragger>
+                
                 <br />
-                <input
-                  type="file"
-                  className="inputUpload"
-                  onChange={selectCommentFile}
-                  accept=".doc, .docx"
-                />{" "}
-                Выбор комментария
+
+              <Dragger {...props}  beforeUpload={beforeUploadCommentFile} onRemove={removeCommentFile}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">Нажмите или перетащите файл в область загрузки</p>
+                <p className="ant-upload-hint">
+                  Прикрепите файл комментария в формате .doc или .docx
+                </p>
+              </Dragger>  
               </div>
               <Form.Item
                 label="Количество типов"
