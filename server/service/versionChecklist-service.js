@@ -1,4 +1,4 @@
-const { VersionChecklist, Themes, User } = require("../models/models");
+const { VersionChecklist, Themes, User, HeaderFiles, CommentFiles } = require("../models/models");
 const VersionChecklistDto = require("../dtos/versionChecklist-dto");
 const ApiError = require("../exceptions/api-error");
 const { Op } = require("sequelize");
@@ -35,6 +35,17 @@ class VersionChecklistService {
 
     let fileName = uuid.v4() + ".docx";
 
+    const versionChecklist = await VersionChecklist.create({
+      id,
+      actualKey,
+      userId,
+      quanityType,
+      reasonForUse,
+      acceptanceDate,
+      comment,
+      title
+    });
+
     if (headerFile != null) {
       headerFile.mv(
         path.resolve(
@@ -44,6 +55,11 @@ class VersionChecklistService {
           fileName
         )
       );
+      await HeaderFiles.create({
+        id: fileName,
+        name: headerFile.name,
+        versionChecklistId: id,
+      });
     }
     if (commentFile != null) {
       commentFile.mv(
@@ -54,20 +70,12 @@ class VersionChecklistService {
           fileName
         )
       );
+      await CommentFiles.create({
+        id: fileName,
+        name: commentFile.name,
+        versionChecklistId: id,
+      });
     }
-
-    const versionChecklist = await VersionChecklist.create({
-      id,
-      actualKey,
-      userId,
-      quanityType,
-      reasonForUse,
-      acceptanceDate,
-      comment,
-      headerFile: headerFile ? fileName : headerFile,
-      commentFile: commentFile ? fileName : commentFile,
-      title
-    });
 
     if (theme) {
       theme = JSON.parse(theme);
@@ -130,12 +138,51 @@ class VersionChecklistService {
       include: [
         { model: Themes, as: "themes" },
         { model: User, as: "user" },
+        { model: HeaderFiles },
+        { model: CommentFiles },
       ],
     });
     return versionChecklist;
   }
 
   async deleteOne(id) {
+
+    const nameHeaderFile = await HeaderFiles.findOne({
+      where: { versionChecklistId: id },
+    });
+
+    const nameCommentFile = await CommentFiles.findOne({
+      where: { versionChecklistId: id },
+    });
+
+    var fs = require("fs");
+
+    if (nameHeaderFile) {
+      fs.unlink(path.resolve(
+          __dirname,
+          "..",
+          "static/versionChecklist/headerFiles",
+          nameHeaderFile.id
+        ), function(err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
+
+    if (nameCommentFile) {
+      fs.unlink(path.resolve(
+          __dirname,
+          "..",
+          "static/versionChecklist/commentFiles",
+          nameCommentFile.id
+        ), function(err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
+
     await VersionChecklist.destroy({
       where: { id },
     });

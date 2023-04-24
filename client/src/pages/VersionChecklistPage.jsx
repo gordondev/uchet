@@ -12,29 +12,8 @@ import { observer } from "mobx-react-lite";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 
-const files = [
-  <>
-    <Text type="secondary">
-      {" "}
-      <FileWordOutlined /> Header.docx
-    </Text>
-    <Button type="primary" icon={<DownloadOutlined />}>
-      Скачать
-    </Button>
-  </>,
-  <>
-    <Text type="secondary">
-      {" "}
-      <FileWordOutlined /> Comment.docx
-    </Text>
-    <Button type="primary" icon={<DownloadOutlined />}>
-      Скачать
-    </Button>
-  </>,
-];
-
 const VersionChecklistPage = observer(() => {
-  const [version, setVersion] = useState({ themes: [], user: [] });
+  const [version, setVersion] = useState({ themes: [], user: [], comment_files: [], header_files: [] });
   const [loading, setIsLoading] = useState(true);
   const { id } = useParams();
   useEffect(() => {
@@ -68,7 +47,7 @@ const VersionChecklistPage = observer(() => {
                     </Title>
                     {version.actualKey == "Не актуально" ? (
                       <Text type="secondary">
-                        Ключ акртуальности: {version.actualKey}
+                        Ключ актуальности: {version.actualKey}
                       </Text>
                     ) : (
                       <div style={{ display: "flex" }}>
@@ -111,9 +90,45 @@ const VersionChecklistPage = observer(() => {
                   <List
                     size="large"
                     bordered
-                    dataSource={files}
                     renderItem={(item) => <List.Item>{item}</List.Item>}
-                  />
+                  >
+                    <List.Item>
+                    {
+                      version?.header_files[0]?.name ? 
+                      <>
+                        <Text type="secondary">
+                        <FileWordOutlined /> {version?.header_files[0]?.name}
+                        </Text>
+                        <Button type="primary" icon={<DownloadOutlined />}>
+                          Скачать
+                        </Button>
+                      </> :
+                      <>
+                        <Text type="secondary">Файл шапки не существует</Text>
+                      </>
+                    }
+                     
+                    
+                    </List.Item>
+
+                    <List.Item>
+                    {
+                      version?.comment_files[0]?.name ? 
+                      <>
+                        <Text type="secondary">
+                          <FileWordOutlined /> {version?.comment_files[0]?.name}
+                        </Text>
+                        <Button type="primary" icon={<DownloadOutlined />}>
+                          Скачать
+                        </Button>
+                      </> :
+                      <>
+                        <Text type="secondary">Файл комментария не существует</Text>
+                      </>
+                    }
+                    </List.Item>
+
+                  </List>
                 </>
         )}
         </div>

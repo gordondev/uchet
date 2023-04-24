@@ -37,6 +37,12 @@ const User = sequelize.define("user", {
   activationLink: { type: DataTypes.STRING(500) },
 });
 
+const ProfilePhotoFiles = sequelize.define("profile_photo_files", {
+  id: { type: DataTypes.STRING(600) , primaryKey: true, unique: true },
+  name: { type: DataTypes.STRING(600) },
+  userId: { type: DataTypes.INTEGER },
+});
+
 const Tokens = sequelize.define("tokens", {
   userId: { type: DataTypes.INTEGER },
   refreshToken: { type: DataTypes.STRING(600), required: true },
@@ -47,12 +53,22 @@ const VersionChecklist = sequelize.define("version_checklist", {
   actualKey: { type: DataTypes.ENUM("Актуально", "Не актуально") },
   title: { type: DataTypes.STRING(600) },
   userId: { type: DataTypes.INTEGER },
-  headerFile: { type: DataTypes.STRING(500) },
-  commentFile: { type: DataTypes.STRING(500) },
   quanityType: { type: DataTypes.INTEGER },
   acceptanceDate: { type: DataTypes.DATEONLY },
   reasonForUse: { type: DataTypes.STRING(500) },
   comment: { type: DataTypes.STRING(500) },
+});
+
+const HeaderFiles = sequelize.define("header_files", {
+  id: { type: DataTypes.STRING(600) , primaryKey: true, unique: true },
+  name: { type: DataTypes.STRING(600) },
+  versionChecklistId: { type: DataTypes.INTEGER },
+});
+
+const CommentFiles = sequelize.define("comment_files", {
+  id: { type: DataTypes.STRING(600) , primaryKey: true, unique: true },
+  name: { type: DataTypes.STRING(600) },
+  versionChecklistId: { type: DataTypes.INTEGER },
 });
 
 const Checklist = sequelize.define("checklist", {
@@ -60,8 +76,13 @@ const Checklist = sequelize.define("checklist", {
   name: { type: DataTypes.STRING },
   versionChecklistId: { type: DataTypes.INTEGER },
   description: { type: DataTypes.STRING(500) },
-  file: { type: DataTypes.STRING(500) },
   userId: { type: DataTypes.INTEGER },
+});
+
+const ChecklistFiles = sequelize.define("checklist_files", {
+  id: { type: DataTypes.STRING(600) , primaryKey: true, unique: true },
+  name: { type: DataTypes.STRING(600) },
+  checklistId: { type: DataTypes.INTEGER },
 });
 
 const ChecklistContent = sequelize.define("checklist_content", {
@@ -82,8 +103,13 @@ const ObservationResults = sequelize.define("observation_results", {
       "Выше требований"
     ),
   },
-  file: { type: DataTypes.STRING(500) },
   comment: { type: DataTypes.STRING(500) },
+});
+
+const ObservationResultsFiles = sequelize.define("observation_results_files", {
+  id: { type: DataTypes.STRING(600) , primaryKey: true, unique: true },
+  name: { type: DataTypes.STRING(600) },
+  observationResultsId: { type: DataTypes.INTEGER },
 });
 
 const Themes = sequelize.define("themes", {
@@ -99,13 +125,13 @@ const Strengths = sequelize.define("strengths", {
   strength: { type: DataTypes.STRING(500) },
 });
 
-const PointsOfGrowth = sequelize.define("pointsOfGrowth", {
+const PointsOfGrowth = sequelize.define("points_of_growth", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   themeId: { type: DataTypes.INTEGER },
   point: { type: DataTypes.STRING(500) },
 });
 
-const GradeObservationResults = sequelize.define("gradeObservationResults", {
+const GradeObservationResults = sequelize.define("grade_observation_results", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   themeId: { type: DataTypes.INTEGER },
   checklistId: { type: DataTypes.INTEGER },
@@ -128,17 +154,32 @@ VersionChecklist.belongsTo(User);
 User.hasMany(Checklist);
 Checklist.belongsTo(User);
 
+User.hasMany(ProfilePhotoFiles);
+ProfilePhotoFiles.belongsTo(User);
+
 VersionChecklist.hasMany(Checklist);
 Checklist.belongsTo(VersionChecklist);
 
+VersionChecklist.hasMany(HeaderFiles);
+HeaderFiles.belongsTo(VersionChecklist);
+
+VersionChecklist.hasMany(CommentFiles);
+CommentFiles.belongsTo(VersionChecklist);
+
 Checklist.hasMany(ChecklistContent);
 ChecklistContent.belongsTo(Checklist);
+
+Checklist.hasMany(ChecklistFiles);
+ChecklistFiles.belongsTo(Checklist);
 
 User.hasMany(ObservationResults);
 ObservationResults.belongsTo(User);
 
 ObservationResults.hasMany(Themes);
 Themes.belongsTo(ObservationResults);
+
+ObservationResults.hasMany(ObservationResultsFiles);
+ObservationResultsFiles.belongsTo(ObservationResults);
 
 VersionChecklist.hasMany(Themes);
 Themes.belongsTo(VersionChecklist);
@@ -159,9 +200,14 @@ module.exports = {
   User,
   Tokens,
   VersionChecklist,
+  HeaderFiles,
+  CommentFiles,
+  ProfilePhotoFiles,
   Checklist,
+  ChecklistFiles,
   ChecklistContent,
   ObservationResults,
+  ObservationResultsFiles,
   Themes,
   Strengths,
   PointsOfGrowth,
