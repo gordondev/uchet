@@ -144,6 +144,8 @@ const VersionChecklistCreate = observer(() => {
                   <InputNumber
                     min={1}
                     prefix="№"
+                    style={{ width: "200px" }}
+                    placeholder="Введите № версии"
                     onChange={(value) => setId(value)}
                   />
                 </Form.Item>
@@ -155,12 +157,13 @@ const VersionChecklistCreate = observer(() => {
                   rules={[
                     {
                       required: true,
-                      message: "Выберите ключ-актуальности",
+                      message: "Выберите ключ актуальности",
                     },
                   ]}
                 >
                   <Select
                     allowClear
+                    placeholder="Выберите ключ актуальности"
                     onChange={(value) => {
                       setActualKey(value);
                       if (value === "Актуально") {
@@ -185,7 +188,7 @@ const VersionChecklistCreate = observer(() => {
                 ]}
                 onChange={(e) => setTitle(e.target.value)}
               >
-                <Input allowClear/>
+                <Input allowClear placeholder="Введите название версии"/>
               </Form.Item>
               <Divider orientation="center">Темы</Divider>
               {theme.length === 0 && (
@@ -265,6 +268,7 @@ const VersionChecklistCreate = observer(() => {
                 <InputNumber
                   min={1}
                   max={10}
+                  placeholder="Количество типов(max: 10)"
                   onChange={(value) => setQuanityType(value)}
                   style={{ width: "100%" }}
                 />
@@ -303,6 +307,7 @@ const VersionChecklistCreate = observer(() => {
                   rows={4}
                   onChange={(e) => setReasonForUse(e.target.value)}
                   showCount
+                  placeholder="Введите основание использования"
                   maxLength={500}
                 />
               </Form.Item>
@@ -321,6 +326,7 @@ const VersionChecklistCreate = observer(() => {
                   rows={4}
                   onChange={(e) => setComment(e.target.value)}
                   showCount
+                  placeholder="Введите примечание"
                   maxLength={500}
                 />
               </Form.Item>
