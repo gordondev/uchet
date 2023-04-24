@@ -46,6 +46,7 @@ const VersionChecklistCreate = observer(() => {
   const [comment, setComment] = useState("");
   const [headerFile, setHeaderFile] = useState("");
   const [commentFile, setCommentFile] = useState("");
+  const [title, setTitle] = useState("");
   const [theme, setTheme] = useState([]);
 
   const addTheme = () => {
@@ -73,6 +74,7 @@ const VersionChecklistCreate = observer(() => {
     formData.append("reasonForUse", reasonForUse);
     formData.append("acceptanceDate", acceptanceDate);
     formData.append("comment", comment);
+    formData.append("title", title);
     formData.append("theme", JSON.stringify(theme));
     formData.append("headerFile", headerFile);
     formData.append("commentFile", commentFile);
@@ -143,6 +145,20 @@ const VersionChecklistCreate = observer(() => {
                   </Select>
                 </Form.Item>
               </div>
+              <Form.Item
+                name="title"
+                label="Название версии"
+                rules={[
+                  {
+                    required: true,
+                    message: "Введите название версии",
+                    whitespace: true,
+                  },
+                ]}
+                onChange={(e) => setTitle(e.target.value)}
+              >
+                <Input defaultValue="Название версии" />
+              </Form.Item>
               <Divider orientation="center">Темы</Divider>
               {theme.length === 0 && (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
