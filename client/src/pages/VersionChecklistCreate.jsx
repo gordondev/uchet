@@ -183,7 +183,7 @@ const VersionChecklistCreate = observer(() => {
                 ]}
                 onChange={(e) => setTitle(e.target.value)}
               >
-                <Input defaultValue="Название версии" />
+                <Input />
               </Form.Item>
               <Divider orientation="center">Темы</Divider>
               {theme.length === 0 && (
