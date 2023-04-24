@@ -130,20 +130,21 @@ const VersionChecklistCreate = observer(() => {
             <div className="defaultForm">
               <div className="defaultForm__tile">
                 <Form.Item
+                  name="id"
                   label="Номер версии"
                   style={{ marginBottom: "20px" }}
-                >
-                  <InputNumber
-                    min={1}
-                    defaultValue={1}
-                    prefix="№"
-                    onChange={(value) => setId(value)}
-                    rules={[
+                  hasFeedback
+                  rules={[
                       {
                         required: true,
                         message: "Выберите номер версии",
                       },
                     ]}
+                >
+                  <InputNumber
+                    min={1}
+                    prefix="№"
+                    onChange={(value) => setId(value)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -159,6 +160,7 @@ const VersionChecklistCreate = observer(() => {
                   ]}
                 >
                   <Select
+                    allowClear
                     onChange={(value) => {
                       setActualKey(value);
                       if (value === "Актуально") {
@@ -183,7 +185,7 @@ const VersionChecklistCreate = observer(() => {
                 ]}
                 onChange={(e) => setTitle(e.target.value)}
               >
-                <Input />
+                <Input allowClear/>
               </Form.Item>
               <Divider orientation="center">Темы</Divider>
               {theme.length === 0 && (
@@ -250,13 +252,19 @@ const VersionChecklistCreate = observer(() => {
               </Dragger>  
               </div>
               <Form.Item
+                name="quanityType"
                 label="Количество типов"
                 style={{ marginTop: "20px", width: "100%" }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Выберите количество типов",
+                  },
+                ]}
               >
                 <InputNumber
                   min={1}
                   max={10}
-                  defaultValue={1}
                   onChange={(value) => setQuanityType(value)}
                   style={{ width: "100%" }}
                 />
@@ -272,6 +280,7 @@ const VersionChecklistCreate = observer(() => {
                 ]}
               >
                 <DatePicker
+                  allowClear
                   placeholder="Выберите дату"
                   style={{ width: "100%" }}
                   onChange={(date, dateString) => {
@@ -279,16 +288,36 @@ const VersionChecklistCreate = observer(() => {
                   }}
                 />
               </Form.Item>
-              <Form.Item label="Основание использования">
+              <Form.Item 
+                name="reasonForUse"
+                label="Основание использования"
+                rules={[
+                  {
+                    required: true,
+                    message: "Напишите основание использования",
+                  },
+                ]}
+                >
                 <TextArea
+                  allowClear
                   rows={4}
                   onChange={(e) => setReasonForUse(e.target.value)}
                   showCount
                   maxLength={500}
                 />
               </Form.Item>
-              <Form.Item label="Примечание">
+              <Form.Item 
+                label="Примечание"
+                name="comment"
+                rules={[
+                  {
+                    required: true,
+                    message: "Напишите примечание",
+                  },
+                ]}
+              >
                 <TextArea
+                  allowClear
                   rows={4}
                   onChange={(e) => setComment(e.target.value)}
                   showCount
