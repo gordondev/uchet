@@ -12,8 +12,10 @@ import {
   Skeleton,
   Divider,
   Empty,
+  List,
+  Upload,
 } from "antd";
-import { DeleteOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, SaveOutlined, FileWordOutlined, UploadOutlined  } from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchOneVersion,
@@ -24,7 +26,7 @@ import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
 
 const { Option } = Select;
-const { Paragraph } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const ReachableContext = createContext(null);
 const UnreachableContext = createContext(null);
@@ -55,6 +57,8 @@ const VersionChecklistEdit = observer(() => {
   const [acceptanceDate, setAcceptanceDate] = useState("");
   const [reasonForUse, setReasonForUse] = useState("");
   const [comment, setComment] = useState("");
+  const [headerFileName, setHeaderFileName] = useState('');
+  const [commentFileName, setCommentFileName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -108,9 +112,11 @@ const VersionChecklistEdit = observer(() => {
       setReasonForUse(data.reasonForUse);
       setAcceptanceDate(data.acceptanceDate);
       setComment(data.comment);
+      setHeaderFileName(data?.header_files[0]?.name);
+      setCommentFileName(data?.comment_files[0]?.name);
     });
     setIsLoading(false);
-  }, []);
+  }, [headerFile, commentFile]);
 
   const addTheme = () => {
     setCount(count + 1);
@@ -126,15 +132,7 @@ const VersionChecklistEdit = observer(() => {
     setTheme(theme.map((i) => (i.id === id ? { ...i, ["title"]: value } : i)));
   };
 
-  const selectHeaderFile = (e) => {
-    setHeaderFile(e.target.files[0]);
-    console.log("HEADER FILE", e.target.files[0]);
-  };
-
-  const selectCommentFile = (e) => {
-    setCommentFile(e.target.files[0]);
-    console.log("COMMENT FILE", e.target.files[0]);
-  };
+  // console.log("version", version?.header_files[0]?.name);
 
   return (
     <ReachableContext.Provider value="Light">
@@ -234,21 +232,65 @@ const VersionChecklistEdit = observer(() => {
                     Добавить, осталось: {6 - count}
                   </Button>
                   <div className="defaultForm__dragBlock">
-                    <input
-                      type="file"
-                      className="inputUpload"
-                      onChange={selectHeaderFile}
-                      accept=".doc, .docx"
-                    />{" "}
-                    Выбор шапки
-                    <br />
-                    <input
-                      type="file"
-                      className="inputUpload"
-                      onChange={selectCommentFile}
-                      accept=".doc, .docx"
-                    />{" "}
-                    Выбор комментария
+                    <List
+                      size="large"
+                      bordered
+                    >
+                      <List.Item>
+                      { headerFileName ?
+                        <>
+                          <Text type="secondary">
+                          <FileWordOutlined /> {headerFileName}
+                          </Text>
+                          <Button
+                            type="primary"
+                            danger
+                            icon={<DeleteOutlined />}
+                          >
+                            Удалить
+                          </Button>
+                        </> :
+                        <>
+                          <Text type="secondary">
+                          <FileWordOutlined /> Файл шапки не найден
+                          </Text>
+                          <Upload>
+                            <Button icon={<UploadOutlined />}>Нажмите для загрузки</Button>
+                          </Upload>
+                        </>
+                      }
+                        
+                      
+                      </List.Item>
+
+                      <List.Item>
+                      { commentFileName ?
+                        <>
+                          <Text type="secondary">
+                          <FileWordOutlined /> {commentFileName}
+                          </Text>
+                          <Button
+                            type="primary"
+                            danger
+                            icon={<DeleteOutlined />}
+                          >
+                            Удалить
+                          </Button>
+                        </> :
+                        <>
+                          <Text type="secondary">
+                          <FileWordOutlined /> Файл комментария не найден
+                          </Text>
+                          <Upload>
+                            <Button icon={<UploadOutlined />}>Нажмите для загрузки</Button>
+                          </Upload>
+                        </>
+                      }
+                        
+                      
+                      </List.Item>
+
+                    </List>
                   </div>
                   <Form.Item
                     label="Количество типов"

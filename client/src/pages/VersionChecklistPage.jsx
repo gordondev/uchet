@@ -138,7 +138,7 @@ const VersionChecklistPage = observer(() => {
                         </Button>
                       </> :
                       <>
-                        <Text type="secondary">Файл шапки не существует</Text>
+                        <Text type="secondary">Файл шапки не найден</Text>
                       </>
                     }
                      
@@ -157,7 +157,7 @@ const VersionChecklistPage = observer(() => {
                         </Button>
                       </> :
                       <>
-                        <Text type="secondary">Файл комментария не существует</Text>
+                        <Text type="secondary">Файл комментария не найден</Text>
                       </>
                     }
                     </List.Item>
