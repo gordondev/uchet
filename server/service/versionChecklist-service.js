@@ -101,7 +101,7 @@ class VersionChecklistService {
           limit,
           offset,
           where: {
-            title: { [Op.like]: `%${title}%` },
+            title: { [Op.iLike]: `%${title}%` },
             actualKey: actualKey
           }
         });
@@ -118,7 +118,7 @@ class VersionChecklistService {
           limit,
           offset,
           where: {
-            title: { [Op.like]: `%${title}%` },
+            title: { [Op.iLike]: `%${title}%` },
           }
         });
       } else {
