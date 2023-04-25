@@ -19,17 +19,16 @@ const VersionChecklistPage = observer(() => {
   const [headerFile, setHeaderFile] = useState('');
   const [commentFile, setCommentFile] = useState('');
   const { id } = useParams();
+
   useEffect(() => {
     setIsLoading(true);
     fetchOneVersion(id).then((data) => { 
+      setHeaderFile(data?.header_files[0]?.id);
+      setCommentFile(data?.comment_files[0]?.id);
       setVersion(data);
     });
-    setHeaderFile(version?.header_files[0]?.id);
-    setCommentFile(version?.comment_files[0]?.id);
     setIsLoading(false);
-  }, []);
-
-  console.log("commentFile", commentFile);
+  }, [commentFile, headerFile]);
 
   const data = [
     `Количество типов: ${version.quanityType}`,
