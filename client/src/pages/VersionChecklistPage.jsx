@@ -32,9 +32,13 @@ const VersionChecklistPage = observer(() => {
 
   const data = [
     `Количество типов: ${version.quanityType}`,
-    `Дата принятия к руководству: ${version.acceptanceDate}`,
+    `Дата принятия к руководству: ${new Date(version.acceptanceDate).toLocaleString('ru-RU', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    })}`,
     `Автор: ${version.user.name + " " + version.user.patronymic}`,
-    `Дата создания: ${version.createdAt}`,
+    `Дата создания: ${new Date(version?.createdAt).toLocaleString('ru-RU')}`,
   ];
 
   const downloadHeader = async () => {
