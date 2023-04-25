@@ -125,6 +125,35 @@ class VersionChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
+
+  async downloadHeaderFile(req, res, next) {
+    try {
+      const { headerFile } = req.query;
+
+      console.log(req.query);
+
+      const path = await versionChecklist.downloadHeaderFile(headerFile);
+
+      return res.download(path.pathHeaderFile, path.file.id);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
+  async downloadCommentFile(req, res, next) {
+    try {
+      const { commentFile } = req.query;
+
+      console.log(req.query);
+
+      const path = await versionChecklist.downloadCommentFile(commentFile);
+
+      return res.download(path.pathCommentFile, path.file.id);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
 }
 
 module.exports = new VersionChecklistController();

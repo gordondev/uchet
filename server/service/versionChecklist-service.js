@@ -188,6 +188,36 @@ class VersionChecklistService {
     });
   }
 
+  async downloadHeaderFile(headerFile) {
+    const file = await HeaderFiles.findOne({
+      where: { id: headerFile },
+    });
+
+    const pathHeaderFile = path.resolve(
+      __dirname,
+      "..",
+      "static/versionChecklist/headerFiles",
+      file.id
+    );
+
+    return { pathHeaderFile, file };
+  }
+
+  async downloadCommentFile(commentFile) {
+    const file = await CommentFiles.findOne({
+      where: { id: commentFile },
+    });
+
+    const pathCommentFile = path.resolve(
+      __dirname,
+      "..",
+      "static/versionChecklist/commentFiles",
+      file.id
+    );
+
+    return { pathCommentFile, file };
+  }
+
   async updateOne(
     updateId,
     id,

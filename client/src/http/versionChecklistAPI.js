@@ -1,4 +1,4 @@
-import { $authHost, $host } from "./index";
+import { $authHost, $host, $download } from "./index";
 
 export const createVersion = async (version) => {
   const { data } = await $authHost.post("api/versionchecklist/create", version);
@@ -28,4 +28,14 @@ export const deleteOne = async (id) => {
 
 export const updateOne = async (id, newVersion) => {
   await $host.put("api/versionchecklist/edit/" + id, newVersion);
+};
+
+export const downloadHeaderFile = async (id, headerFile) => {
+  const { data } = await $download.get("api/versionchecklist/" + id + "/download-header/", { params: { headerFile } });
+  return data;
+};
+
+export const downloadCommentFile = async (id, commentFile) => {
+  const { data } = await $download.get("api/versionchecklist/" + id + "/download-comment/", { params: { commentFile } });
+  return data;
 };
