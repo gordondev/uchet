@@ -95,7 +95,7 @@ const VersionChecklistCreate = observer(() => {
       } else {
         setHeaderFile(file);
       }
-      return false;
+      return !isDocx;
   };
 
   const removeHeaderFile = () => {
@@ -109,7 +109,7 @@ const VersionChecklistCreate = observer(() => {
       } else {
         setCommentFile(file);
       }
-      return false;
+      return !isDocx;
   };
 
   const removeCommentFile = () => {
