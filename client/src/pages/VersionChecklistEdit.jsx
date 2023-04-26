@@ -132,7 +132,25 @@ const VersionChecklistEdit = observer(() => {
     setTheme(theme.map((i) => (i.id === id ? { ...i, ["title"]: value } : i)));
   };
 
-  // console.log("version", version?.header_files[0]?.name);
+  const props = {
+    name: 'file',
+    multiple: false,
+    maxCount: 1,
+  }
+
+  const beforeUploadHeaderFile = (file) => {
+      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!isDocx) {
+        message.error('Вы можете загрузить только .docx файл');
+      } else {
+        setHeaderFile(file);
+      }
+      return false;
+  };
+
+  const removeHeaderFile = () => {
+    setHeaderFile('');
+  }
 
   return (
     <ReachableContext.Provider value="Light">
@@ -143,8 +161,9 @@ const VersionChecklistEdit = observer(() => {
               <div className="defaultForm__tile">
                 {loading ? (
                   <>
-                    <Skeleton.Input active="true" size="400" />
-                    <Skeleton.Input active="true" size="400" />
+                    <Skeleton.Input active="true" size="400" style={{ marginBottom: "20px" }}/>
+                    <br />
+                    <Skeleton.Input active="true" size="400" style={{ marginBottom: "20px" }}/>
                   </>
                 ) : (
                   <>
@@ -246,6 +265,7 @@ const VersionChecklistEdit = observer(() => {
                             type="primary"
                             danger
                             icon={<DeleteOutlined />}
+                            onClick={() => setHeaderFileName(null)}
                           >
                             Удалить
                           </Button>
@@ -254,8 +274,8 @@ const VersionChecklistEdit = observer(() => {
                           <Text type="secondary">
                           <FileWordOutlined /> Файл шапки не найден
                           </Text>
-                          <Upload>
-                            <Button icon={<UploadOutlined />}>Нажмите для загрузки</Button>
+                          <Upload {...props} beforeUpload={beforeUploadHeaderFile}>
+                            <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
                           </Upload>
                         </>
                       }
@@ -273,6 +293,7 @@ const VersionChecklistEdit = observer(() => {
                             type="primary"
                             danger
                             icon={<DeleteOutlined />}
+                            onClick={() => setCommentFileName(null)}
                           >
                             Удалить
                           </Button>
@@ -282,7 +303,7 @@ const VersionChecklistEdit = observer(() => {
                           <FileWordOutlined /> Файл комментария не найден
                           </Text>
                           <Upload>
-                            <Button icon={<UploadOutlined />}>Нажмите для загрузки</Button>
+                            <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
                           </Upload>
                         </>
                       }
