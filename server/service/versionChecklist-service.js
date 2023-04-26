@@ -227,7 +227,8 @@ class VersionChecklistService {
     reasonForUse,
     acceptanceDate,
     comment,
-    theme
+    theme,
+    title
   ) {
     const candidate = false;
 
@@ -258,6 +259,7 @@ class VersionChecklistService {
         reasonForUse: reasonForUse,
         acceptanceDate: acceptanceDate,
         comment: comment,
+        title: title
       },
       {
         where: { id },

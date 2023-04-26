@@ -107,6 +107,7 @@ class VersionChecklistController {
         acceptanceDate,
         comment,
         theme,
+        title
       } = req.body;
 
       await versionChecklist.updateOne(
@@ -118,7 +119,8 @@ class VersionChecklistController {
         reasonForUse,
         acceptanceDate,
         comment,
-        theme
+        theme,
+        title
       );
       return res.json({ message: `Данные чек-листа - ${id} были обновленны` });
     } catch (e) {

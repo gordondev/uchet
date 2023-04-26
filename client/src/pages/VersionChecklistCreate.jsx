@@ -208,7 +208,7 @@ const VersionChecklistCreate = observer(() => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input allowClear/>
                   </Form.Item>
                   <Button
                     type="primary"

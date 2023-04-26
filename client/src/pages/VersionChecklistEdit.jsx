@@ -60,6 +60,7 @@ const VersionChecklistEdit = observer(() => {
   const [headerFileName, setHeaderFileName] = useState('');
   const [commentFileName, setCommentFileName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [title, setTitle] = useState("");
   const navigate = useNavigate();
 
   const showModal = () => {
@@ -84,7 +85,6 @@ const VersionChecklistEdit = observer(() => {
 
   const updateVersion = async () => {
     const formData = new FormData();
-    console.log(theme);
     formData.append("updateId", updateId);
     formData.append("id", id);
     formData.append("actualKey", actualKey);
@@ -92,7 +92,10 @@ const VersionChecklistEdit = observer(() => {
     formData.append("reasonForUse", reasonForUse);
     formData.append("acceptanceDate", acceptanceDate);
     formData.append("comment", comment);
+    formData.append("title", title);
     formData.append("theme", JSON.stringify(theme));
+    formData.append("headerFile", headerFile);
+    formData.append("commentFile", commentFile);
     try {
       await updateOne(id, formData);
       message.success(`Данные были обновленны`);
@@ -114,9 +117,10 @@ const VersionChecklistEdit = observer(() => {
       setComment(data.comment);
       setHeaderFileName(data?.header_files[0]?.name);
       setCommentFileName(data?.comment_files[0]?.name);
+      setTitle(data.title);
     });
     setIsLoading(false);
-  }, [headerFile, commentFile]);
+  }, []);
 
   const addTheme = () => {
     setCount(count + 1);
@@ -143,13 +147,29 @@ const VersionChecklistEdit = observer(() => {
       if (!isDocx) {
         message.error('Вы можете загрузить только .docx файл');
       } else {
+        setHeaderFileName(file.name);
         setHeaderFile(file);
       }
-      return false;
+      return !isDocx;
   };
 
   const removeHeaderFile = () => {
     setHeaderFile('');
+  }
+
+  const beforeUploadCommentFile = (file) => {
+      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!isDocx) {
+        message.error('Вы можете загрузить только .docx файл');
+      } else {
+        setCommentFileName(file.name);
+        setCommentFile(file);
+      }
+      return !isDocx;
+  };
+
+  const removeCommentFile = () => {
+    setCommentFile('');
   }
 
   return (
@@ -161,9 +181,9 @@ const VersionChecklistEdit = observer(() => {
               <div className="defaultForm__tile">
                 {loading ? (
                   <>
-                    <Skeleton.Input active="true" size="400" style={{ marginBottom: "20px" }}/>
+                    <Skeleton.Input active="true" size="small" style={{ marginBottom: "20px" }}/>
                     <br />
-                    <Skeleton.Input active="true" size="400" style={{ marginBottom: "20px" }}/>
+                    <Skeleton.Input active="true" size="small" style={{ marginBottom: "20px" }}/>
                   </>
                 ) : (
                   <>
@@ -176,6 +196,7 @@ const VersionChecklistEdit = observer(() => {
                         placeholder={updateId}
                         prefix="№"
                         onChange={(value) => setUpdateId(value)}
+                        style={{ width: "200px" }}
                         rules={[
                           {
                             required: true,
@@ -209,6 +230,22 @@ const VersionChecklistEdit = observer(() => {
               </div>
               {loading ? (
                 <>
+                  <Skeleton.Input active="true" size="small" block={true} style={{ marginBottom: "20px" }}/>
+                </>
+              ) : (
+                <>
+                  <Form.Item
+                    name="title"
+                    label="Название версии"
+                    onChange={(e) => setTitle(e.target.value)}
+                  >
+                    <Input allowClear placeholder={title}/>
+                  </Form.Item>
+                </>
+              )}
+              
+              {loading ? (
+                <>
                   <Skeleton active="true" />
                   <br />
                   <Skeleton active="true" />
@@ -228,7 +265,7 @@ const VersionChecklistEdit = observer(() => {
                         style={{ marginTop: "23px", width: "100%" }}
                         onChange={(e) => changeTheme(e.target.value, i.id)}
                       >
-                        <Input defaultValue={`${i.title ? i.title : ""}`} />
+                        <Input placeholder={`${i.title ? i.title : ""}`} allowClear/>
                       </Form.Item>
                       <Button
                         type="primary"
@@ -302,7 +339,7 @@ const VersionChecklistEdit = observer(() => {
                           <Text type="secondary">
                           <FileWordOutlined /> Файл комментария не найден
                           </Text>
-                          <Upload>
+                          <Upload {...props} beforeUpload={beforeUploadCommentFile}>
                             <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
                           </Upload>
                         </>
