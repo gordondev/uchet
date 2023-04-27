@@ -5,7 +5,92 @@ const { Op } = require("sequelize");
 const path = require("path");
 const uuid = require("uuid");
 
+
+async function saveHeaderFile(headerFile, id) {
+    let fileName = uuid.v4() + ".docx";
+      headerFile.mv(
+        path.resolve(
+          __dirname,
+          "..",
+          "static/versionChecklist/headerFiles",
+          fileName
+        )
+      );
+    await HeaderFiles.create({
+      id: fileName,
+      name: headerFile.name,
+      versionChecklistId: id,
+    });
+  }
+
+async function destroyHeaderFile(id) {
+    const nameHeaderFile = await HeaderFiles.findOne({
+      where: { versionChecklistId: id },
+    });
+
+    var fs = require("fs");
+
+    if (nameHeaderFile) {
+      await HeaderFiles.destroy({
+        where: { versionChecklistId: id },
+      });
+      fs.unlink(path.resolve(
+          __dirname,
+          "..",
+          "static/versionChecklist/headerFiles",
+          nameHeaderFile.id
+        ), function(err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
+  }
+
+async function saveCommentFile(commentFile, id) {
+    let fileName = uuid.v4() + ".docx";
+      commentFile.mv(
+        path.resolve(
+          __dirname,
+          "..",
+          "static/versionChecklist/commentFiles",
+          fileName
+        )
+      );
+    await CommentFiles.create({
+      id: fileName,
+      name: commentFile.name,
+      versionChecklistId: id,
+    });
+  }
+
+async function destroyCommentFile(id) {
+    const nameCommentFile = await CommentFiles.findOne({
+      where: { versionChecklistId: id },
+    });
+
+    var fs = require("fs");
+
+    if (nameCommentFile) {
+      await CommentFiles.destroy({
+        where: { versionChecklistId: id },
+      });
+      fs.unlink(path.resolve(
+          __dirname,
+          "..",
+          "static/versionChecklist/commentFiles",
+          nameCommentFile.id
+        ), function(err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
+  }
+
+
 class VersionChecklistService {
+
   async createVersionChecklist(
     id,
     actualKey,
@@ -33,8 +118,6 @@ class VersionChecklistService {
       );
     }
 
-    let fileName = uuid.v4() + ".docx";
-
     const versionChecklist = await VersionChecklist.create({
       id,
       actualKey,
@@ -47,34 +130,11 @@ class VersionChecklistService {
     });
 
     if (headerFile != null) {
-      headerFile.mv(
-        path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/headerFiles",
-          fileName
-        )
-      );
-      await HeaderFiles.create({
-        id: fileName,
-        name: headerFile.name,
-        versionChecklistId: id,
-      });
+      await saveHeaderFile(headerFile, id);
     }
+
     if (commentFile != null) {
-      commentFile.mv(
-        path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/commentFiles",
-          fileName
-        )
-      );
-      await CommentFiles.create({
-        id: fileName,
-        name: commentFile.name,
-        versionChecklistId: id,
-      });
+      await saveCommentFile(commentFile, id);
     }
 
     if (theme) {
@@ -147,41 +207,8 @@ class VersionChecklistService {
 
   async deleteOne(id) {
 
-    const nameHeaderFile = await HeaderFiles.findOne({
-      where: { versionChecklistId: id },
-    });
-
-    const nameCommentFile = await CommentFiles.findOne({
-      where: { versionChecklistId: id },
-    });
-
-    var fs = require("fs");
-
-    if (nameHeaderFile) {
-      fs.unlink(path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/headerFiles",
-          nameHeaderFile.id
-        ), function(err) {
-        if (err) {
-          console.log(err);
-        }
-      });
-    }
-
-    if (nameCommentFile) {
-      fs.unlink(path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/commentFiles",
-          nameCommentFile.id
-        ), function(err) {
-        if (err) {
-          console.log(err);
-        }
-      });
-    }
+    await destroyHeaderFile(id);
+    await destroyCommentFile(id);
 
     await VersionChecklist.destroy({
       where: { id },
@@ -228,7 +255,11 @@ class VersionChecklistService {
     acceptanceDate,
     comment,
     theme,
-    title
+    title,
+    headerFile,
+    commentFile,
+    headerIsDeleted,
+    commentIsDeleted
   ) {
     const candidate = false;
 
@@ -265,6 +296,20 @@ class VersionChecklistService {
         where: { id },
       }
     );
+
+    if (headerFile != null) {
+      await destroyHeaderFile(updateId);
+      await saveHeaderFile(headerFile, updateId);
+    } else if (Boolean(headerIsDeleted)) {
+      await destroyHeaderFile(updateId);
+    }
+
+    if (commentFile != null) {
+      await destroyCommentFile(updateId);
+      await saveCommentFile(commentFile, updateId);
+    } else if (Boolean(commentIsDeleted)) {
+      await destroyCommentFile(updateId);
+    }
 
     if (theme) {
       const candidateTheme = await Themes.findOne({

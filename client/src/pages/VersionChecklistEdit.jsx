@@ -60,6 +60,8 @@ const VersionChecklistEdit = observer(() => {
   const [headerFileName, setHeaderFileName] = useState('');
   const [commentFileName, setCommentFileName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [headerIsDeleted, setHeaderIsDeleted] = useState('');
+  const [commentIsDeleted, setCommentIsDeleted] = useState('');
   const [title, setTitle] = useState("");
   const navigate = useNavigate();
 
@@ -96,6 +98,8 @@ const VersionChecklistEdit = observer(() => {
     formData.append("theme", JSON.stringify(theme));
     formData.append("headerFile", headerFile);
     formData.append("commentFile", commentFile);
+    formData.append("headerIsDeleted", headerIsDeleted);
+    formData.append("commentIsDeleted", commentIsDeleted);
     try {
       await updateOne(id, formData);
       message.success(`Данные были обновленны`);
@@ -149,6 +153,7 @@ const VersionChecklistEdit = observer(() => {
       } else {
         setHeaderFileName(file.name);
         setHeaderFile(file);
+        setHeaderIsDeleted('');
       }
       return !isDocx;
   };
@@ -164,6 +169,7 @@ const VersionChecklistEdit = observer(() => {
       } else {
         setCommentFileName(file.name);
         setCommentFile(file);
+        setCommentIsDeleted('');
       }
       return !isDocx;
   };
@@ -302,14 +308,14 @@ const VersionChecklistEdit = observer(() => {
                             type="primary"
                             danger
                             icon={<DeleteOutlined />}
-                            onClick={() => setHeaderFileName(null)}
+                            onClick={() => {setHeaderFileName(null); setHeaderFile(null); setHeaderIsDeleted(true)}}
                           >
                             Удалить
                           </Button>
                         </> :
                         <>
                           <Text type="secondary">
-                          <FileWordOutlined /> Файл шапки не найден
+                          <FileWordOutlined /> Прикрепите файл шапки
                           </Text>
                           <Upload {...props} beforeUpload={beforeUploadHeaderFile}>
                             <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
@@ -330,14 +336,14 @@ const VersionChecklistEdit = observer(() => {
                             type="primary"
                             danger
                             icon={<DeleteOutlined />}
-                            onClick={() => setCommentFileName(null)}
+                            onClick={() => {setCommentFileName(null); setCommentFile(null); setCommentIsDeleted(true)}}
                           >
                             Удалить
                           </Button>
                         </> :
                         <>
                           <Text type="secondary">
-                          <FileWordOutlined /> Файл комментария не найден
+                          <FileWordOutlined /> Прикрепите файл комментария
                           </Text>
                           <Upload {...props} beforeUpload={beforeUploadCommentFile}>
                             <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
