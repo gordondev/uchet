@@ -1,6 +1,7 @@
 const { Checklist, ChecklistContent, User } = require("../models/models");
 const ApiError = require("../exceptions/api-error");
 const ChecklistDto = require("../dtos/checklist-dto");
+const { Op } = require("sequelize");
 const path = require("path");
 const uuid = require("uuid");
 
@@ -44,10 +45,33 @@ class ChecklistService {
     return { checklist: checklistDto };
   }
 
-  async getAll(versionChecklistId, limit, offset) {
+  async getAll(limit, offset, versionChecklistId, name) {
     let checklist;
-    if (versionChecklistId) {
-      checklist = await Checklist.findAndCountAll({where: {versionChecklistId}, limit, offset});
+    if (versionChecklistId && name) {
+      checklist = await Checklist.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          name: { [Op.iLike]: `%${name}%` },
+          versionChecklistId: versionChecklistId
+        }
+      });
+    } else if (name) {
+      checklist = await Checklist.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          name: { [Op.iLike]: `%${name}%` }
+        }
+      });
+    } else if (versionChecklistId) {
+      checklist = await Checklist.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          versionChecklistId: versionChecklistId
+        }
+      });
     } else {
       checklist = await Checklist.findAndCountAll({ limit, offset });
     }

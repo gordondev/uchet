@@ -36,11 +36,11 @@ class ChecklistController {
 
   async getAll(req, res, next) {
     try {
-      let { versionChecklistId, limit, page } = req.query;
+      let { limit, page, versionChecklistId, name } = req.query;
       page = page || 1;
-      limit = limit || 24;
+      limit = limit || 16;
       let offset = page * limit - limit;
-      const checklistData = await checklist.getAll(versionChecklistId, limit, offset);
+      const checklistData = await checklist.getAll(limit, offset, versionChecklistId, name );
 
       return res.json(checklistData);
     } catch (e) {

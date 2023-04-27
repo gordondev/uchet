@@ -61,7 +61,7 @@ class VersionChecklistController {
     try {
       let { limit, page, actualKey, title } = req.query;
       page = page || 1;
-      limit = limit || 24;
+      limit = limit || 16;
       let offset = page * limit - limit;
       const versionChecklistsData = await versionChecklist.getAll(
         limit,
