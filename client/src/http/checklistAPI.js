@@ -5,9 +5,9 @@ export const createChecklist = async (checklist) => {
   return data;
 };
 
-export const fetchChecklist = async (versionChecklistId, limit, page) => {
+export const fetchChecklist = async (limit, page, versionChecklistId, name) => {
   const { data } = await $authHost.get("api/checklist/", {
-    params: { versionChecklistId, limit, page },
+    params: { limit, page, versionChecklistId, name },
   });
   return data;
 };

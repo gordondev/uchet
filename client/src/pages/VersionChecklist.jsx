@@ -97,7 +97,7 @@ const VersionChecklist = () => {
             </Select>
           </Panel>
         </Collapse>
-        <Row gutter={[20, 8]} justify="left">
+        <Row gutter={[40, 16]} justify="left">
           {versionIsLoadind ? (
             <Spin size="large" style={{ marginTop: "20px" }} />
           ) : (

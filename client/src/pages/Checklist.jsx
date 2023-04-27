@@ -19,7 +19,8 @@ const Checklist = observer(() => {
   const { checklist } = useContext(Context);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchNameQuery, setSearchNameQuery] = useState("");
+  const [searchVersionQuery, setSearchVersionQuery] = useState("");
   const [version, setVersion] = useState([]);
   const [isLoadind, setIsLoading] = useState(true);
 
@@ -28,29 +29,54 @@ const Checklist = observer(() => {
 
   const navigate = useNavigate();
 
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   useObserver(lastElement, data.length < totalCount, isLoadind, () => {
+    setIsLoading(true);
     currentPage.current += 1;
-    fetchChecklist(checklist.selectedVersion, 24, currentPage.current).then((response) => {
+    fetchChecklist(16, currentPage.current, searchVersionQuery, searchNameQuery).then((response) => {
       setData([...data, ...response.rows]);
+      setTotalCount(response.count);
     });
+    setIsLoading(false);
   });
 
   useEffect(() => {
     setIsLoading(true);
-    fetchChecklist(checklist.selectedVersion, 24, currentPage.current).then((response) => {
+    currentPage.current = 1;
+    fetchChecklist(16, currentPage.current, searchVersionQuery, searchNameQuery).then((response) => {
       setData(response.rows);
+      setTotalCount(response.count);
     });
-    fetchVersionChecklist().then((response) => setVersion(response.rows));
     setIsLoading(false);
-  }, [checklist.selectedVersion]);
+  }, []);
 
-  let sortedAndSearchedChecklist = data.filter((data) =>
-    String(data.name.toLowerCase()).includes(searchQuery.toLowerCase())
-  );
+  const searchName = async (value) => {
+    setIsLoading(true);
+    currentPage.current = 1;
+    setSearchNameQuery(value);
+    fetchChecklist(16, currentPage.current, searchVersionQuery, value).then((response) => {
+      setData(response.rows);
+      setTotalCount(response.count);
+    });
+    await sleep(1 * 50);
+    setIsLoading(false);
+  }
 
-  const searchChecklist = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  const searchVersion = async (value) => {
+    setIsLoading(true);
+    currentPage.current = 1;
+    setSearchVersionQuery(value);
+    fetchChecklist(16, currentPage.current, value, searchNameQuery).then((response) => {
+      setData(response.rows);
+      setTotalCount(response.count);
+    });
+    await sleep(1 * 50);
+    setIsLoading(false);
+  }
+
 
   return (
     <section className="searchSection">
@@ -62,20 +88,17 @@ const Checklist = observer(() => {
               allowClear
               enterButton="Поиск"
               size="default"
-              value={searchQuery}
-              onChange={searchChecklist}
+              onSearch={(value) => { searchName(value) }}
               style={{ width: "100%" }}
             />
-            <Select
-              showSearch
-              placeholder="Версия"
+            <Search
+              placeholder="Введите версию чек-листа"
+              allowClear
+              size="default"
+              type="number"
+              onSearch={(value) => { searchVersion(value) }}
               style={{ width: "100%", marginTop: "20px" }}
-              onChange={(value) => { checklist.setSelectedVersion(value) }}
-            >
-              {version.map((item) => (
-                <Option value={item.id}>{item.id}</Option>
-              ))}
-            </Select>
+            />
           </Panel>
         </Collapse>
 
@@ -84,7 +107,7 @@ const Checklist = observer(() => {
             <Spin size="large" style={{ marginTop: "20px" }} />
           ) : (
             <>
-              <Checklists checklists={sortedAndSearchedChecklist} />
+              <Checklists checklists={data} />
               <div
                 ref={lastElement}
                 style={{ height: "1px", width: "100%" }}
