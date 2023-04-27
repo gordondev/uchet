@@ -1,94 +1,93 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../index";
 import {
-  Typography,
-  Form,
-  Input,
-  Select,
-  Divider,
-  Button,
-  Empty,
-  Skeleton,
-  message,
+    Typography,
+    Form,
+    Input,
+    Select,
+    Divider,
+    Button,
+    Empty,
+    message,
+    Upload
 } from "antd";
-import { fetchVersionChecklist } from "../http/versionChecklistAPI";
-import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
-import { createChecklist, fetchChecklist } from "../http/checklistAPI";
+import { PlusOutlined, DeleteOutlined, SaveOutlined, InboxOutlined } from "@ant-design/icons";
+import { createChecklist } from "../http/checklistAPI";
 
 const { TextArea } = Input;
 const { Text } = Typography;
 const { Option } = Select;
+const { Dragger } = Upload;
 
 const ChecklistCreate = () => {
-  const { user } = useContext(Context);
-  const [description, setDescription] = useState("");
-  const [showRecondCounter, setShowRecondCounter] = useState(false);
-  const [countVersion, setCountVersion] = useState(0);
-  const [countRowsChecklist, setCountRowsChecklist] = useState(0);
-  const [isLoadind, setIsLoading] = useState(true);
-  const [version, setVersion] = useState([]);
-  const [content, setContent] = useState([]);
-  const [name, setName] = useState("");
-  const [versionChecklist, setVersionChecklist] = useState(null);
-  const [file, setFile] = useState("");
-  const [checklists, setChecklists] = useState([]);
+    const { user } = useContext(Context);
+    const [description, setDescription] = useState("");
+    const [content, setContent] = useState([]);
+    const [name, setName] = useState("");
+    const [versionChecklist, setVersionChecklist] = useState(null);
+    const [file, setFile] = useState("");
+    const [checklists, setChecklists] = useState([]);
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetchChecklist().then((response) => setChecklists(response.rows));
-    fetchVersionChecklist().then((response) => setVersion(response.rows));
-    setIsLoading(false);
-  }, []);
+    const addContent = () => {
+        setContent([...content, { content: "", id: Date.now() }]);
+    };
 
-  const addContent = () => {
-    setContent([...content, { content: "", id: Date.now() }]);
-  };
+    const removeContent = (id) => {
+        setContent(content.filter((i) => i.id !== id));
+    };
 
-  const removeContent = (id) => {
-    setContent(content.filter((i) => i.id !== id));
-  };
+    const changeContent = (value, id) => {
+        setContent(
+            content.map((i) => (i.id === id ? { ...i, ["content"]: value } : i))
+        );
+    };
 
-  const changeContent = (value, id) => {
-    setContent(
-      content.map((i) => (i.id === id ? { ...i, ["content"]: value } : i))
-    );
-  };
+    const addChecklist = async () => {
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("versionChecklistId", versionChecklist);
+        formData.append("description", description);
+        formData.append("file", file);
+        formData.append("userId", user.user.id);
+        formData.append("contents", JSON.stringify(content));
+        try {
+            await createChecklist(formData);
+            message.success(`Чек-лист был добавлен`);
+        } catch (e) {
+            message.error(e.response?.data?.message);
+        }
+    };
 
-  const selectFile = (e) => {
-    setFile(e.target.files[0]);
-    console.log("FILE", e.target.files[0]);
-  };
-
-  const addChecklist = async () => {
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("versionChecklistId", versionChecklist);
-    formData.append("description", description);
-    formData.append("file", file);
-    formData.append("userId", user.user.id);
-    formData.append("contents", JSON.stringify(content));
-    try {
-      await createChecklist(formData);
-      message.success(`Чек-лист был добавлен`);
-    } catch (e) {
-      message.error(e.response?.data?.message);
+    const props = {
+      name: 'file',
+      multiple: false,
+      maxCount: 1,
     }
-  };
 
-  return (
-    <section className="searchSection">
+    const beforeUploadFile = (file) => {
+      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!isDocx) {
+        message.error('Вы можете загрузить только .docx файл');
+      } else {
+        setFile(file);
+      }
+      return !isDocx;
+    };
+
+    const removeFile = () => {
+      setFile('');
+    }
+
+    return (
+        <section className="searchSection">
       <div className="container">
         <Form onFinish={addChecklist}>
           <div className="defaultForm">
-            {isLoadind ? (
-              <Skeleton active />
-            ) : (
-              <>
                 <div className="defaultForm__tile">
                   <Form.Item
                     name="title"
                     label="Название темы"
-                    style={{ width: "100%" }}
+                    style={{ width: "100%", marginRight: "10px" }}
                     onChange={(e) => setName(e.target.value)}
                     rules={[
                       {
@@ -97,61 +96,55 @@ const ChecklistCreate = () => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input placeholder="Введите название темы" allowClear/>
+                  </Form.Item>
+
+                  <Form.Item
+                    name="version"
+                    label="Версиия"
+                    style={{ width: "100%", marginLeft: "10px"}}
+                    onChange={(e) => setVersionChecklist(e.target.value)}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Введите версию чек-листа",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Введите версию чек-листа" type="number" allowClear/>
                   </Form.Item>
                 </div>
-                <Form.Item
-                  name="select"
-                  label="Версия чек-листа"
-                  hasFeedback
-                  style={{ width: "100%" }}
+
+                <Form.Item 
+                  label="Описание"
+                  name="description"
                   rules={[
                     {
                       required: true,
-                      message: "Выберите версию",
+                      message: "Введите описание",
                     },
                   ]}
                 >
-                  <Select
-                    onChange={(value) => {
-                      setCountVersion(
-                        version.find((item) => item.id === value).quanityType
-                      );
-                      setCountRowsChecklist(
-                        checklists.filter((i) => i.versionChecklistId === value)
-                          .length
-                      );
-                      setVersionChecklist(value);
-                      setShowRecondCounter(true);
-                    }}
-                  >
-                    {version.map((item) => (
-                      <Option value={item.id}>{item.id}</Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                {showRecondCounter && (
-                  <Text type="secondary">
-                    <p className="counter">
-                      {countRowsChecklist}/{countVersion} записей
-                    </p>
-                  </Text>
-                )}
-                <Form.Item label="Описание">
-                  <TextArea
-                    rows={4}
-                    onChange={(e) => setDescription(e.target.value)}
-                    showCount
-                    maxLength={500}
-                  />
-                </Form.Item>
-                <input
-                  type="file"
-                  className="inputUpload"
-                  onChange={selectFile}
-                  accept=".doc, .docx"
+                <TextArea
+                  allowClear
+                  rows={4}
+                  onChange={(e) => setDescription(e.target.value)}
+                  showCount
+                  placeholder="Введите описание"
+                  maxLength={500}
                 />
-                Прикрепите файл содержния чек-листа
+                </Form.Item>
+
+                <Dragger {...props}  beforeUpload={beforeUploadFile} onRemove={removeFile}>
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">Нажмите или перетащите файл в область загрузки</p>
+                  <p className="ant-upload-hint">
+                    Прикрепите файл содержания в формате .doc или .docx
+                  </p>
+                </Dragger>
+                
                 <Divider orientation="center">Содержния</Divider>
                 {content.length === 0 && (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
@@ -172,7 +165,7 @@ const ChecklistCreate = () => {
                           },
                         ]}
                       >
-                        <Input.TextArea showCount maxLength={500} />
+                        <Input showCount maxLength={500} allowClear/>
                       </Form.Item>
 
                       <Button
@@ -192,7 +185,6 @@ const ChecklistCreate = () => {
                   style={{ width: "100%", marginBottom: "20px" }}
                   icon={<PlusOutlined />}
                   onClick={addContent}
-                  disabled={countRowsChecklist >= countVersion}
                 >
                   Добавить
                 </Button>
@@ -206,13 +198,11 @@ const ChecklistCreate = () => {
                     Сохранить
                   </Button>
                 </Form.Item>
-              </>
-            )}
           </div>
         </Form>
       </div>
     </section>
-  );
+    );
 };
 
 export default ChecklistCreate;
