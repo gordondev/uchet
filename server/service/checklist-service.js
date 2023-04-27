@@ -1,9 +1,50 @@
-const { Checklist, ChecklistContent, User } = require("../models/models");
+const { Checklist, ChecklistContent, User, ChecklistFiles } = require("../models/models");
 const ApiError = require("../exceptions/api-error");
 const ChecklistDto = require("../dtos/checklist-dto");
 const { Op } = require("sequelize");
 const path = require("path");
 const uuid = require("uuid");
+
+async function saveFile(file, id) {
+    let fileName = uuid.v4() + ".docx";
+      file.mv(
+        path.resolve(
+          __dirname,
+          "..",
+          "static/checklist/contents",
+          fileName
+        )
+      );
+    await ChecklistFiles.create({
+      id: fileName,
+      name: file.name,
+      checklistId: id,
+    });
+  }
+
+async function destroyHeaderFile(id) {
+    const file = await ChecklistFiles.findOne({
+      where: { checklistId: id },
+    });
+
+    var fs = require("fs");
+
+    if (file) {
+      await ChecklistFiles.destroy({
+        where: { checklistId: id },
+      });
+      fs.unlink(path.resolve(
+          __dirname,
+          "..",
+          "static/checklist/contents",
+          file.id
+        ), function(err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
+  }
 
 class ChecklistService {
   async createChecklist(
@@ -14,19 +55,11 @@ class ChecklistService {
     userId,
     contents
   ) {
-    let fileName = uuid.v4() + ".docx";
-
-    if (file != null) {
-      file.mv(
-        path.resolve(__dirname, "..", "static/checklist/contents", fileName)
-      );
-    }
 
     const checklist = await Checklist.create({
       name,
       versionChecklistId,
       description,
-      file: file ? fileName : file,
       userId,
     });
 
@@ -39,6 +72,8 @@ class ChecklistService {
         })
       );
     }
+
+    saveFile(file, checklist.id);
 
     const checklistDto = new ChecklistDto(checklist);
 
@@ -116,16 +151,6 @@ class ChecklistService {
       });
       const newContents = JSON.parse(contents);
 
-      console.log("\n\n________________NEW CONTENTS________________\n\n");
-      newContents.forEach((item) => {
-        console.log(item.id + " | " + item.content);
-      });
-
-      console.log("\n\n________________OLD CONTENTS________________\n\n");
-      oldContents.forEach((item) => {
-        console.log(item.id + " | " + item.content);
-      });
-
       if (candidateContent) {
         oldContents.forEach((oldItem) => {
           if (newContents.find((el) => el.id == oldItem.id)) {
@@ -167,31 +192,6 @@ class ChecklistService {
         );
       }
     }
-
-    // const candidateContent = await ChecklistContent.findOne({ where: { checklistId: id } });
-
-    // if (candidateContent) {
-    //   if (contents) {
-    //     contents = JSON.parse(contents);
-    //     contents.forEach((i) =>
-    //       ChecklistContent.update({
-    //         content: i.content,
-    //         checklistId: id,
-    //       },
-    //       {
-    //         where: { id },
-    //       })
-    //     );
-    //   }
-    // } else if (contents) {
-    //   contents = JSON.parse(contents);
-    //   contents.forEach((i) =>
-    //     ChecklistContent.create({
-    //       content: i.content,
-    //       checklistId: id,
-    //     })
-    //   );
-    // }
   }
 }
 
