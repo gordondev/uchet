@@ -9,11 +9,13 @@ import {
   Modal,
   Divider,
   Empty,
-  Skeleton
+  Skeleton,
+  List,
+  Upload,
 } from "antd";
 import { updateOne, fetchChecklist, deleteOne } from "../http/checklistAPI";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
-import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, SaveOutlined, UploadOutlined, FileWordOutlined } from "@ant-design/icons";
 import { fetchOneChecklist } from "../http/checklistAPI";
 import { useParams, useNavigate } from "react-router-dom";
 import { CHECKLIST_ROUTE } from "../utils/consts";
@@ -24,32 +26,32 @@ const { Text } = Typography;
 const { Paragraph } = Typography;
 
 const ChecklistEdit = observer(() => {
-  const [countVersion, setCountVersion] = useState(0);
-  const [countRowsChecklist, setCountRowsChecklist] = useState(0);
   const [versionChecklist, setVersionChecklist] = useState(null);
-  const [showRecondCounter, setShowRecondCounter] = useState(true);
   const [checklists, setChecklists] = useState([]);
-  const [version, setVersion] = useState([]);
   const [isLoadind, setIsLoading] = useState(true);
   const [description, setDescription] = useState("");
   const [content, setContent] = useState([]);
   const [checklist, setChecklist] = useState({ contents: [], user: [] });
   const [name, setName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [versionChecklistId, setVersionChecklistId] = useState(null);
+  const [file, setFile] = useState('');
+  const [nameFile, setNameFile] = useState('');
+  const [fileIsDeleted, setFileIsDeleted] = useState('');
   const navigate = useNavigate();
 
   const { id } = useParams();
 
   useEffect(() => {
     setIsLoading(true);
-    fetchVersionChecklist().then((response) => setVersion(response.rows));
     fetchChecklist().then((response) => setChecklists(response.rows));
     fetchOneChecklist(id).then((data) => {
       setChecklist(data);
       setDescription(data.description);
       setContent(data.checklist_contents);
-      setName(data.name);
-      setVersionChecklist(data.versionChecklistId);
+      setName(data?.name);
+      setNameFile(data?.checklist_files[0]?.name);
+      setVersionChecklistId(data?.versionChecklistId);
     });
     setIsLoading(false);
   }, []);
@@ -79,11 +81,13 @@ const ChecklistEdit = observer(() => {
     setIsModalOpen(false);
   };
 
+  console.log(checklist);
+
   const updateChecklist = async () => {
     const formData = new FormData();
     formData.append("id", id);
     formData.append("name", name);
-    formData.append("versionChecklistId", versionChecklist);
+    formData.append("versionChecklistId", versionChecklistId);
     formData.append("description", description);
     formData.append("contents", JSON.stringify(content));
     try {
@@ -117,51 +121,36 @@ const ChecklistEdit = observer(() => {
                 ) : (
                   <>
                       <div className="defaultForm__tile">
-                        <Typography.Title
-                          editable={{
-                            onChange: setName,
-                          }}
-                          level={3}
-                          style={{
-                            margin: 0,
-                            color: "#0e78ff",
-                          }}
+                        <Form.Item
+                          name="title"
+                          label="Название темы"
+                          style={{ width: "100%", marginRight: "10px" }}
+                          onChange={(e) => setName(e.target.value)}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Введите название чек-листа",
+                            },
+                          ]}
                         >
-                          {name}
-                        </Typography.Title>
+                          <Input placeholder={name} allowClear/>
+                        </Form.Item>
+
+                        <Form.Item
+                          name="version"
+                          label="Версиия"
+                          style={{ width: "100%", marginLeft: "10px"}}
+                          onChange={(e) => setVersionChecklistId(e.target.value)}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Введите версию чек-листа",
+                            },
+                          ]}
+                        >
+                          <Input placeholder={versionChecklistId} type="number" allowClear/>
+                        </Form.Item>
                       </div>
-                      <Form.Item
-                        name="select"
-                        label="Версия чек-листа"
-                        hasFeedback
-                        style={{ width: "100%" }}
-                      >
-                        <Select
-                          placeholder={versionChecklist}
-                          onChange={(value) => {
-                            setCountVersion(
-                              version.find((item) => item.id === value).quanityType
-                            );
-                            setCountRowsChecklist(
-                              checklists.filter((i) => i.versionChecklistId === value)
-                                .length
-                            );
-                            setVersionChecklist(value);
-                            setShowRecondCounter(true);
-                          }}
-                        >
-                          {version.map((item) => (
-                            <Option value={item.id}>{item.id}</Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                      {showRecondCounter && (
-                        <Text type="secondary">
-                          <p className="counter">
-                            {countRowsChecklist}/{countVersion} записей
-                          </p>
-                        </Text>
-                      )}
                       <Divider orientation="center">Описание</Divider>
                       <Paragraph
                         style={{ marginBottom: "20px" }}
@@ -190,12 +179,14 @@ const ChecklistEdit = observer(() => {
                               rows={4}
                               style={{ marginTop: "23px", width: "100%" }}
                               onChange={(e) => changeContent(e.target.value, i.id)}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Введите содержние",
+                                },
+                              ]}
                             >
-                              <Input.TextArea
-                                showCount
-                                maxLength={500}
-                                defaultValue={`${i.content ? i.content : ""}`}
-                              />
+                              <Input showCount maxLength={500} placeholder={`${i.content ? i.content : ""}`} allowClear/>
                             </Form.Item>
 
                             <Button
@@ -220,13 +211,44 @@ const ChecklistEdit = observer(() => {
                         Добавить
                       </Button>
 
+                      <List
+                        size="large"
+                        bordered
+                        style={{ marginBottom: "20px"}}
+                      >
+                      <List.Item>
+                        { nameFile ?
+                          <>
+                            <Text type="secondary">
+                            <FileWordOutlined /> {nameFile}
+                            </Text>
+                            <Button
+                              type="primary"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => {setNameFile(null); setFile(null); setFileIsDeleted(true)}}
+                            >
+                              Удалить
+                            </Button>
+                          </> :
+                          <>
+                            <Text type="secondary">
+                            <FileWordOutlined /> Прикрепите файл содержания
+                            </Text>
+                            <Upload >
+                              <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
+                            </Upload>
+                          </>
+                        }
+                      </List.Item>
+                    </List>
+
                       <Form.Item style={{ width: "100%" }}>
                         <Button
                           type="primary"
                           htmlType="submit"
                           icon={<SaveOutlined />}
                           style={{ width: "100%" }}
-                          disabled={countRowsChecklist >= countVersion}
                         >
                           Сохранить
                         </Button>
