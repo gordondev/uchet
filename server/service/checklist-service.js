@@ -1,4 +1,4 @@
-const { Checklist, ChecklistContent, User, ChecklistFiles } = require("../models/models");
+const { Checklist, ChecklistContent, User, ChecklistFiles, VersionChecklist } = require("../models/models");
 const ApiError = require("../exceptions/api-error");
 const ChecklistDto = require("../dtos/checklist-dto");
 const { Op } = require("sequelize");
@@ -56,6 +56,26 @@ class ChecklistService {
     contents
   ) {
 
+    const versionQuanity = await VersionChecklist.findOne({
+      where: { id: versionChecklistId }
+    });
+
+    if (!versionQuanity) {
+      throw ApiError.BadRequest(
+        `Данной версии не существует`
+      );
+    }
+
+    const numberOfRecordsAvailable = await Checklist.count({
+      where: { versionChecklistId: versionChecklistId }
+    });
+
+    if (numberOfRecordsAvailable >= versionQuanity.quanityType) {
+      throw ApiError.BadRequest(
+        `Превышенно количество чек-листов с данной версией`
+      );
+    }
+
     const checklist = await Checklist.create({
       name,
       versionChecklistId,
@@ -73,7 +93,9 @@ class ChecklistService {
       );
     }
 
-    saveFile(file, checklist.id);
+    if (file != null) {
+      saveFile(file, checklist.id);
+    }
 
     const checklistDto = new ChecklistDto(checklist);
 
