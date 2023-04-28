@@ -8,5 +8,6 @@ router.get("/", checkListController.getAll);
 router.get("/:id", checkListController.getOne);
 router.delete("/edit/:id", checkListController.deleteOne);
 router.put("/edit/:id", checkListController.updateOne);
+router.get("/:id/download", checkListController.downloadFile);
 
 module.exports = router;

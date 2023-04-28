@@ -22,7 +22,7 @@ async function saveFile(file, id) {
     });
   }
 
-async function destroyHeaderFile(id) {
+async function destroyFile(id) {
     const file = await ChecklistFiles.findOne({
       where: { checklistId: id },
     });
@@ -80,6 +80,21 @@ class ChecklistService {
     return { checklist: checklistDto };
   }
 
+  async downloadFile(file) {
+    const fileItem = await ChecklistFiles.findOne({
+      where: { id: file },
+    });
+
+    const pathFile = path.resolve(
+      __dirname,
+      "..",
+      "static/checklist/contents",
+      fileItem.id
+    );
+
+    return { pathFile, fileItem };
+  }
+
   async getAll(limit, offset, versionChecklistId, name) {
     let checklist;
     if (versionChecklistId && name) {
@@ -119,6 +134,7 @@ class ChecklistService {
       include: [
         { model: ChecklistContent, as: "checklist_contents" },
         { model: User, as: "user" },
+        { model: ChecklistFiles },
       ],
     });
     return checklist;

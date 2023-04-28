@@ -1,4 +1,4 @@
-import { $authHost, $host } from "./index";
+import { $authHost, $host, $download } from "./index";
 
 export const createChecklist = async (checklist) => {
   const { data } = await $authHost.post("api/checklist/create", checklist);
@@ -23,4 +23,9 @@ export const updateOne = async (id, newChecklist) => {
 
 export const deleteOne = async (id) => {
   await $host.delete("api/checklist/edit/" + id);
+};
+
+export const download = async (id, file) => {
+  const { data } = await $download.get("api/checklist/" + id + "/download/", { params: { file } });
+  return data;
 };
