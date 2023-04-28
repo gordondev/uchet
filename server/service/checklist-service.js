@@ -146,7 +146,7 @@ class ChecklistService {
     });
   }
 
-  async updateOne(id, name, versionChecklistId, description, contents) {
+  async updateOne(id, name, versionChecklistId, description, contents, file, fileIsDeleted) {
     const checklist = await Checklist.update(
       {
         name: name,
@@ -157,6 +157,13 @@ class ChecklistService {
         where: { id },
       }
     );
+
+    if (file != null) {
+      await destroyFile(id);
+      await saveFile(file, id);
+    } else if (Boolean(fileIsDeleted)) {
+      await destroyFile(id);
+    }
 
     if (contents) {
       const candidateContent = await ChecklistContent.findOne({

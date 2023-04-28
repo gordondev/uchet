@@ -81,7 +81,23 @@ const ChecklistEdit = observer(() => {
     setIsModalOpen(false);
   };
 
-  console.log(checklist);
+  const props = {
+    name: 'file',
+    multiple: false,
+    maxCount: 1,
+  }
+
+  const beforeUploadFile = (file_) => {
+      const isDocx = file_.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!isDocx) {
+        message.error('Вы можете загрузить только .docx файл');
+      } else {
+        setNameFile(file_.name);
+        setFile(file_);
+        setFileIsDeleted('');
+      }
+      return !isDocx;
+  };
 
   const updateChecklist = async () => {
     const formData = new FormData();
@@ -90,6 +106,8 @@ const ChecklistEdit = observer(() => {
     formData.append("versionChecklistId", versionChecklistId);
     formData.append("description", description);
     formData.append("contents", JSON.stringify(content));
+    formData.append("file", file);
+    formData.append("fileIsDeleted", fileIsDeleted);
     try {
       await updateOne(id, formData);
       message.success(`Данные были обновленны`);
@@ -126,12 +144,6 @@ const ChecklistEdit = observer(() => {
                           label="Название темы"
                           style={{ width: "100%", marginRight: "10px" }}
                           onChange={(e) => setName(e.target.value)}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Введите название чек-листа",
-                            },
-                          ]}
                         >
                           <Input placeholder={name} allowClear/>
                         </Form.Item>
@@ -141,12 +153,6 @@ const ChecklistEdit = observer(() => {
                           label="Версиия"
                           style={{ width: "100%", marginLeft: "10px"}}
                           onChange={(e) => setVersionChecklistId(e.target.value)}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Введите версию чек-листа",
-                            },
-                          ]}
                         >
                           <Input placeholder={versionChecklistId} type="number" allowClear/>
                         </Form.Item>
@@ -179,12 +185,6 @@ const ChecklistEdit = observer(() => {
                               rows={4}
                               style={{ marginTop: "23px", width: "100%" }}
                               onChange={(e) => changeContent(e.target.value, i.id)}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Введите содержние",
-                                },
-                              ]}
                             >
                               <Input showCount maxLength={500} placeholder={`${i.content ? i.content : ""}`} allowClear/>
                             </Form.Item>
@@ -235,7 +235,7 @@ const ChecklistEdit = observer(() => {
                             <Text type="secondary">
                             <FileWordOutlined /> Прикрепите файл содержания
                             </Text>
-                            <Upload >
+                            <Upload {...props} beforeUpload={beforeUploadFile}>
                               <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
                             </Upload>
                           </>

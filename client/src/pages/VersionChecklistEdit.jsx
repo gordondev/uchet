@@ -158,10 +158,6 @@ const VersionChecklistEdit = observer(() => {
       return !isDocx;
   };
 
-  const removeHeaderFile = () => {
-    setHeaderFile('');
-  }
-
   const beforeUploadCommentFile = (file) => {
       const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
       if (!isDocx) {
@@ -173,10 +169,6 @@ const VersionChecklistEdit = observer(() => {
       }
       return !isDocx;
   };
-
-  const removeCommentFile = () => {
-    setCommentFile('');
-  }
 
   return (
     <ReachableContext.Provider value="Light">

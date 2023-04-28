@@ -84,24 +84,33 @@ class ChecklistController {
 
   async updateOne(req, res, next) {
     try {
-      const { id, name, versionChecklistId, description, contents } = req.body;
+      const { id, name, versionChecklistId, description, contents, fileIsDeleted } = req.body;
 
-      console.log(
-        "DATA\n\n",
-        id,
-        name,
-        versionChecklistId,
-        description,
-        contents
-      );
+      if (!req.files) {
+        const checklistData = await checklist.updateOne(
+          id,
+          name,
+          versionChecklistId,
+          description,
+          contents,
+          null,
+          fileIsDeleted
+        );
+        return res.json(checklistData);
+      } else {
+        const { file } = req.files;
+        const checklistData = await checklist.updateOne(
+          id,
+          name,
+          versionChecklistId,
+          description,
+          contents,
+          file,
+          fileIsDeleted
+        );
+        return res.json(checklistData);
+      }
 
-      await checklist.updateOne(
-        id,
-        name,
-        versionChecklistId,
-        description,
-        contents
-      );
       return res.json({ message: `Данные чек-листа - ${id} были обновленны` });
     } catch (e) {
       next(ApiError.BadRequest(e.message));
