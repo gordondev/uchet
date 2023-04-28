@@ -112,6 +112,7 @@ const VersionChecklist = () => {
         </Row>
 
         <FloatButton
+          tooltip={<div>Создать версию чек-листа</div>}
           icon={<PlusOutlined />}
           type="primary"
           style={{

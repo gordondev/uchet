@@ -116,6 +116,7 @@ const Checklist = observer(() => {
           )}
         </Row>
         <FloatButton
+          tooltip={<div>Создать чек-лист</div>}
           icon={<PlusOutlined />}
           type="primary"
           style={{
