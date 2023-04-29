@@ -109,31 +109,36 @@ const ObservationResults = sequelize.define("observation_results", {
 const ObservationResultsFiles = sequelize.define("observation_results_files", {
   id: { type: DataTypes.STRING(600) , primaryKey: true, unique: true },
   name: { type: DataTypes.STRING(600) },
-  observationResultsId: { type: DataTypes.INTEGER },
+  observationResultId: { type: DataTypes.INTEGER },
 });
 
 const Themes = sequelize.define("themes", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   title: { type: DataTypes.STRING },
   versionChecklistId: { type: DataTypes.INTEGER },
+});
+
+const ThemesResults = sequelize.define("themes_results", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  themeId: { type: DataTypes.INTEGER },
   observationResultId: { type: DataTypes.INTEGER },
 });
 
 const Strengths = sequelize.define("strengths", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  themeId: { type: DataTypes.INTEGER },
+  themesResultId: { type: DataTypes.INTEGER },
   strength: { type: DataTypes.STRING(500) },
 });
 
 const PointsOfGrowth = sequelize.define("points_of_growth", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  themeId: { type: DataTypes.INTEGER },
+  themesResultId: { type: DataTypes.INTEGER },
   point: { type: DataTypes.STRING(500) },
 });
 
 const GradeObservationResults = sequelize.define("grade_observation_results", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  themeId: { type: DataTypes.INTEGER },
+  themesResultId: { type: DataTypes.INTEGER },
   checklistId: { type: DataTypes.INTEGER },
   grade: {
     type: DataTypes.ENUM(
@@ -175,8 +180,11 @@ ChecklistFiles.belongsTo(Checklist);
 User.hasMany(ObservationResults);
 ObservationResults.belongsTo(User);
 
-ObservationResults.hasMany(Themes);
-Themes.belongsTo(ObservationResults);
+ObservationResults.hasMany(ThemesResults);
+ThemesResults.belongsTo(ObservationResults);
+
+Themes.hasMany(ThemesResults);
+ThemesResults.belongsTo(Themes);
 
 ObservationResults.hasMany(ObservationResultsFiles);
 ObservationResultsFiles.belongsTo(ObservationResults);
@@ -184,14 +192,14 @@ ObservationResultsFiles.belongsTo(ObservationResults);
 VersionChecklist.hasMany(Themes);
 Themes.belongsTo(VersionChecklist);
 
-Themes.hasMany(Strengths);
-Strengths.belongsTo(Themes);
+ThemesResults.hasMany(Strengths);
+Strengths.belongsTo(ThemesResults);
 
-Themes.hasMany(PointsOfGrowth);
-PointsOfGrowth.belongsTo(Themes);
+ThemesResults.hasMany(PointsOfGrowth);
+PointsOfGrowth.belongsTo(ThemesResults);
 
-Themes.hasMany(GradeObservationResults);
-GradeObservationResults.belongsTo(Themes);
+ThemesResults.hasMany(GradeObservationResults);
+GradeObservationResults.belongsTo(ThemesResults);
 
 Checklist.hasMany(GradeObservationResults);
 GradeObservationResults.belongsTo(Checklist);
@@ -212,4 +220,5 @@ module.exports = {
   Strengths,
   PointsOfGrowth,
   GradeObservationResults,
+  ThemesResults
 };

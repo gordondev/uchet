@@ -120,7 +120,7 @@ const NavBar = observer(() => {
             >
               <Link>
                 <Space icon={<UserOutlined />}>
-                  { user.user.surname + "." + user.user.name[0] + "." + user.user.patronymic[0] }
+                  { user?.user?.name }
                   <DownOutlined />
                 </Space>
               </Link>

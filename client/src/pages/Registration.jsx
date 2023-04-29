@@ -50,8 +50,10 @@ const Registration = observer(() => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [patronymic, setPatronymic] = useState("");
+  const [loading, setIsLoading] = useState(false);
 
-  const click = async () => {
+  const onFinish = async (values) => {
+    setIsLoading(true);
     try {
       let data = await registration(
         email,
@@ -68,10 +70,7 @@ const Registration = observer(() => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
-  };
-
-  const onFinish = (values) => {
-    // console.log("Received values of form: ", values);
+    setIsLoading(false);
   };
 
   return (
@@ -108,9 +107,9 @@ const Registration = observer(() => {
           >
             <Select
               defaultValue={division}
+              allowClear
               onChange={(value) => {
                 setDivision(value);
-                console.log(value);
               }}
             >
               <Option value="ТЦ-3">ТЦ-3</Option>
@@ -148,7 +147,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={name} />
+            <Input defaultValue={name} allowClear/>
           </Form.Item>
 
           <Form.Item
@@ -163,7 +162,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={surname} />
+            <Input defaultValue={surname} allowClear/>
           </Form.Item>
 
           <Form.Item
@@ -178,7 +177,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={patronymic} />
+            <Input defaultValue={patronymic} allowClear/>
           </Form.Item>
 
           <Form.Item
@@ -196,7 +195,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={email} />
+            <Input defaultValue={email} allowClear/>
           </Form.Item>
 
           <Form.Item
@@ -211,7 +210,7 @@ const Registration = observer(() => {
             ]}
             hasFeedback
           >
-            <Input.Password defaultValue={password} />
+            <Input.Password defaultValue={password} allowClear/>
           </Form.Item>
 
           <Form.Item
@@ -236,15 +235,15 @@ const Registration = observer(() => {
               }),
             ]}
           >
-            <Input.Password defaultValue={password} />
+            <Input.Password defaultValue={password} allowClear/>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit" onClick={click}>
+            <Button type="primary" htmlType="submit" loading={loading}>
               Создать аккаунт
             </Button>
             <Link to={LOGIN_ROUTE} style={{ marginLeft: "20px" }}>
-              Уже есть аккаунт есть? Войдите
+              Уже есть аккаунт? Войдите
             </Link>
             <p className="createAccount"></p>
           </Form.Item>

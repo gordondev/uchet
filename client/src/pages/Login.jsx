@@ -12,8 +12,10 @@ const Login = observer(() => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setIsLoading] = useState(false);
 
   const onFinish = async (values) => {
+    setIsLoading(true);
     try {
       const data = await login(values.email, values.password);
       user.setIsAuth(true);
@@ -22,6 +24,7 @@ const Login = observer(() => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -57,7 +60,7 @@ const Login = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={email} prefix={<UserOutlined className="site-form-item-icon" />}/>
+            <Input defaultValue={email} prefix={<UserOutlined className="site-form-item-icon" />} allowClear/>
           </Form.Item>
 
           <Form.Item
@@ -71,7 +74,7 @@ const Login = observer(() => {
               },
             ]}
           >
-            <Input.Password defaultValue={password} prefix={<LockOutlined className="site-form-item-icon" />}/>
+            <Input.Password defaultValue={password} prefix={<LockOutlined className="site-form-item-icon" />} allowClear/>
           </Form.Item>
 
           <Form.Item
@@ -91,7 +94,7 @@ const Login = observer(() => {
               span: 16,
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               Войти
             </Button>
             <Link to={REGISTRATION_ROUTE} style={{ marginLeft: "20px" }}>
