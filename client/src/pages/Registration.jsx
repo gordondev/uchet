@@ -147,7 +147,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={name} allowClear/>
+            <Input defaultValue={name} allowClear />
           </Form.Item>
 
           <Form.Item
@@ -162,7 +162,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={surname} allowClear/>
+            <Input defaultValue={surname} allowClear />
           </Form.Item>
 
           <Form.Item
@@ -177,7 +177,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={patronymic} allowClear/>
+            <Input defaultValue={patronymic} allowClear />
           </Form.Item>
 
           <Form.Item
@@ -195,7 +195,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={email} allowClear/>
+            <Input defaultValue={email} allowClear />
           </Form.Item>
 
           <Form.Item
@@ -210,7 +210,7 @@ const Registration = observer(() => {
             ]}
             hasFeedback
           >
-            <Input.Password defaultValue={password} allowClear/>
+            <Input.Password defaultValue={password} allowClear />
           </Form.Item>
 
           <Form.Item
@@ -235,7 +235,7 @@ const Registration = observer(() => {
               }),
             ]}
           >
-            <Input.Password defaultValue={password} allowClear/>
+            <Input.Password defaultValue={password} allowClear />
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>

@@ -76,7 +76,7 @@ const Profile = () => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
-  }
+  };
 
   return (
     <section className="mainSection">
@@ -109,7 +109,7 @@ const Profile = () => {
           >
             {editableStrSecondName}
           </Paragraph>
-          
+
           {contextHolder}
           <Button
             type="primary"

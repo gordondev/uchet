@@ -2,7 +2,17 @@ import React, { useContext, useState, useEffect } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
 import { Layout, Menu, message, Dropdown, Space } from "antd";
-import { DownOutlined, UserOutlined, LogoutOutlined, FileDoneOutlined, UnorderedListOutlined, FileSearchOutlined, LineChartOutlined, BarChartOutlined, TeamOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  FileDoneOutlined,
+  UnorderedListOutlined,
+  FileSearchOutlined,
+  LineChartOutlined,
+  BarChartOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 import {
   MAIN_ROUTE,
   PROFILE_ROUTE,
@@ -20,7 +30,7 @@ const { Header } = Layout;
 const NavBar = observer(() => {
   const navigate = useNavigate();
   const { user } = useContext(Context);
-  const [ currentPage, setCurrentPage ] = useState('');
+  const [currentPage, setCurrentPage] = useState("");
 
   const logOut = async () => {
     try {
@@ -49,9 +59,21 @@ const NavBar = observer(() => {
 
   const routes = [
     { key: "1", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE },
-    { key: "2", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE + "/create" },
-    { key: "3", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE + "/edit/" },
-    { key: "4", label: VERSION_CHECKLIST_ROUTE, path: VERSION_CHECKLIST_ROUTE + "/" },
+    {
+      key: "2",
+      label: VERSION_CHECKLIST_ROUTE,
+      path: VERSION_CHECKLIST_ROUTE + "/create",
+    },
+    {
+      key: "3",
+      label: VERSION_CHECKLIST_ROUTE,
+      path: VERSION_CHECKLIST_ROUTE + "/edit/",
+    },
+    {
+      key: "4",
+      label: VERSION_CHECKLIST_ROUTE,
+      path: VERSION_CHECKLIST_ROUTE + "/",
+    },
     { key: "5", label: CHECKLIST_ROUTE, path: CHECKLIST_ROUTE },
     { key: "6", label: CHECKLIST_ROUTE, path: CHECKLIST_ROUTE + "/create" },
     { key: "7", label: CHECKLIST_ROUTE, path: CHECKLIST_ROUTE + "/edit/" },
@@ -113,14 +135,13 @@ const NavBar = observer(() => {
           </Menu.Item>
           <Menu.Item key={PROFILE_ROUTE} icon={<UserOutlined />}>
             <Dropdown
-              
               menu={{
                 items,
               }}
             >
               <Link>
                 <Space icon={<UserOutlined />}>
-                  { user?.user?.name }
+                  {user?.user?.name}
                   <DownOutlined />
                 </Space>
               </Link>

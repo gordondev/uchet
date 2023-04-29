@@ -15,7 +15,11 @@ const Result = () => {
   return (
     <section className="searchSection">
       <div className="container">
-        <Collapse defaultActiveKey={["1"]} ghost style={{ width: "100%" }}>
+        <Collapse
+          defaultActiveKey={["1"]}
+          ghost
+          className="collapse__main-filter"
+        >
           <Panel header="Фильтры" key="1" style={{ width: "100%" }}>
             <Search
               placeholder="Введите название работы"

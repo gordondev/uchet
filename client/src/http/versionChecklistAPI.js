@@ -31,11 +31,17 @@ export const updateOne = async (id, newVersion) => {
 };
 
 export const downloadHeaderFile = async (id, headerFile) => {
-  const { data } = await $download.get("api/versionchecklist/" + id + "/download-header/", { params: { headerFile } });
+  const { data } = await $download.get(
+    "api/versionchecklist/" + id + "/download-header/",
+    { params: { headerFile } }
+  );
   return data;
 };
 
 export const downloadCommentFile = async (id, commentFile) => {
-  const { data } = await $download.get("api/versionchecklist/" + id + "/download-comment/", { params: { commentFile } });
+  const { data } = await $download.get(
+    "api/versionchecklist/" + id + "/download-comment/",
+    { params: { commentFile } }
+  );
   return data;
 };

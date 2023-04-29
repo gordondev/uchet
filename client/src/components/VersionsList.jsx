@@ -2,8 +2,8 @@ import React from "react";
 import { Col, Card, Empty, Button } from "antd";
 import { EditOutlined, CheckOutlined } from "@ant-design/icons";
 import {
-    VERSION_CHECKLIST_ROUTE,
-    VERSION_CHECKLIST_EDIT_ROUTE,
+  VERSION_CHECKLIST_ROUTE,
+  VERSION_CHECKLIST_EDIT_ROUTE,
 } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 import versionImage from "../images/version.png";
@@ -11,18 +11,18 @@ import versionImage from "../images/version.png";
 const { Meta } = Card;
 
 const VersionsList = ({ versions }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    if (!versions.length) {
-        return <Empty style={{ marginTop: "20px" }} />;
-    }
+  if (!versions.length) {
+    return <Empty style={{ marginTop: "20px" }} />;
+  }
 
-    return versions.map((data) => (
-      <Col
-        className="gutter-row"
-        span={versions.length >= 4 ? 6 : versions.length === 2 ? 12 : 8}
-        key={data.id}
-      >
+  return versions.map((data) => (
+    <Col
+      className="gutter-row"
+      span={versions.length >= 4 ? 6 : versions.length === 2 ? 12 : 8}
+      key={data.id}
+    >
       <Card
         hoverable
         style={{
@@ -41,7 +41,7 @@ const VersionsList = ({ versions }) => {
           }
         }}
       >
-      <div className="item-content">
+        <div className="item-content">
           <Button
             type="primary"
             htmlType="submit"
@@ -55,8 +55,8 @@ const VersionsList = ({ versions }) => {
             <p className="item-title">{data.title}</p>
           </div>
           {data.actualKey == "Не актуально" ? (
-            <p className="keyNotActual">Не актуально</p> 
-            ) : (
+            <p className="keyNotActual">Не актуально</p>
+          ) : (
             <>
               <p className="keyActual">
                 Актуально <CheckOutlined />
@@ -66,7 +66,7 @@ const VersionsList = ({ versions }) => {
         </div>
       </Card>
     </Col>
-    ));
+  ));
 };
 
 export default VersionsList;

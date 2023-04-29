@@ -1,96 +1,105 @@
-const { VersionChecklist, Themes, User, HeaderFiles, CommentFiles } = require("../models/models");
+const {
+  VersionChecklist,
+  Themes,
+  User,
+  HeaderFiles,
+  CommentFiles,
+} = require("../models/models");
 const VersionChecklistDto = require("../dtos/versionChecklist-dto");
 const ApiError = require("../exceptions/api-error");
 const { Op } = require("sequelize");
 const path = require("path");
 const uuid = require("uuid");
 
-
 async function saveHeaderFile(headerFile, id) {
-    let fileName = uuid.v4() + ".docx";
-      headerFile.mv(
-        path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/headerFiles",
-          fileName
-        )
-      );
-    await HeaderFiles.create({
-      id: fileName,
-      name: headerFile.name,
-      versionChecklistId: id,
-    });
-  }
+  let fileName = uuid.v4() + ".docx";
+  headerFile.mv(
+    path.resolve(
+      __dirname,
+      "..",
+      "static/versionChecklist/headerFiles",
+      fileName
+    )
+  );
+  await HeaderFiles.create({
+    id: fileName,
+    name: headerFile.name,
+    versionChecklistId: id,
+  });
+}
 
 async function destroyHeaderFile(id) {
-    const nameHeaderFile = await HeaderFiles.findOne({
+  const nameHeaderFile = await HeaderFiles.findOne({
+    where: { versionChecklistId: id },
+  });
+
+  var fs = require("fs");
+
+  if (nameHeaderFile) {
+    await HeaderFiles.destroy({
       where: { versionChecklistId: id },
     });
-
-    var fs = require("fs");
-
-    if (nameHeaderFile) {
-      await HeaderFiles.destroy({
-        where: { versionChecklistId: id },
-      });
-      fs.unlink(path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/headerFiles",
-          nameHeaderFile.id
-        ), function(err) {
+    fs.unlink(
+      path.resolve(
+        __dirname,
+        "..",
+        "static/versionChecklist/headerFiles",
+        nameHeaderFile.id
+      ),
+      function (err) {
         if (err) {
           console.log(err);
         }
-      });
-    }
+      }
+    );
   }
+}
 
 async function saveCommentFile(commentFile, id) {
-    let fileName = uuid.v4() + ".docx";
-      commentFile.mv(
-        path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/commentFiles",
-          fileName
-        )
-      );
-    await CommentFiles.create({
-      id: fileName,
-      name: commentFile.name,
-      versionChecklistId: id,
-    });
-  }
+  let fileName = uuid.v4() + ".docx";
+  commentFile.mv(
+    path.resolve(
+      __dirname,
+      "..",
+      "static/versionChecklist/commentFiles",
+      fileName
+    )
+  );
+  await CommentFiles.create({
+    id: fileName,
+    name: commentFile.name,
+    versionChecklistId: id,
+  });
+}
 
 async function destroyCommentFile(id) {
-    const nameCommentFile = await CommentFiles.findOne({
+  const nameCommentFile = await CommentFiles.findOne({
+    where: { versionChecklistId: id },
+  });
+
+  var fs = require("fs");
+
+  if (nameCommentFile) {
+    await CommentFiles.destroy({
       where: { versionChecklistId: id },
     });
-
-    var fs = require("fs");
-
-    if (nameCommentFile) {
-      await CommentFiles.destroy({
-        where: { versionChecklistId: id },
-      });
-      fs.unlink(path.resolve(
-          __dirname,
-          "..",
-          "static/versionChecklist/commentFiles",
-          nameCommentFile.id
-        ), function(err) {
+    fs.unlink(
+      path.resolve(
+        __dirname,
+        "..",
+        "static/versionChecklist/commentFiles",
+        nameCommentFile.id
+      ),
+      function (err) {
         if (err) {
           console.log(err);
         }
-      });
-    }
+      }
+    );
   }
-
+}
 
 class VersionChecklistService {
-
   async createVersionChecklist(
     id,
     actualKey,
@@ -126,7 +135,7 @@ class VersionChecklistService {
       reasonForUse,
       acceptanceDate,
       comment,
-      title
+      title,
     });
 
     if (headerFile != null) {
@@ -153,41 +162,39 @@ class VersionChecklistService {
   }
 
   async getAll(limit, offset, actualKey, title) {
-
     let versionChecklists;
 
     if (actualKey && title) {
-        versionChecklists = await VersionChecklist.findAndCountAll({
-          limit,
-          offset,
-          where: {
-            title: { [Op.iLike]: `%${title}%` },
-            actualKey: actualKey
-          }
-        });
-      } else if (actualKey) {
-        versionChecklists = await VersionChecklist.findAndCountAll({
-          limit,
-          offset,
-          where: {
-            actualKey: actualKey
-          }
-        });
-      } else if (title) {
-        versionChecklists = await VersionChecklist.findAndCountAll({
-          limit,
-          offset,
-          where: {
-            title: { [Op.iLike]: `%${title}%` },
-          }
-        });
-      } else {
-        versionChecklists = await VersionChecklist.findAndCountAll({
-          limit,
-          offset,
-        });
-      }
-
+      versionChecklists = await VersionChecklist.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          title: { [Op.iLike]: `%${title}%` },
+          actualKey: actualKey,
+        },
+      });
+    } else if (actualKey) {
+      versionChecklists = await VersionChecklist.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          actualKey: actualKey,
+        },
+      });
+    } else if (title) {
+      versionChecklists = await VersionChecklist.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          title: { [Op.iLike]: `%${title}%` },
+        },
+      });
+    } else {
+      versionChecklists = await VersionChecklist.findAndCountAll({
+        limit,
+        offset,
+      });
+    }
 
     return versionChecklists;
   }
@@ -206,7 +213,6 @@ class VersionChecklistService {
   }
 
   async deleteOne(id) {
-
     await destroyHeaderFile(id);
     await destroyCommentFile(id);
 
@@ -290,7 +296,7 @@ class VersionChecklistService {
         reasonForUse: reasonForUse,
         acceptanceDate: acceptanceDate,
         comment: comment,
-        title: title
+        title: title,
       },
       {
         where: { id },

@@ -26,6 +26,8 @@ export const deleteOne = async (id) => {
 };
 
 export const download = async (id, file) => {
-  const { data } = await $download.get("api/checklist/" + id + "/download/", { params: { file } });
+  const { data } = await $download.get("api/checklist/" + id + "/download/", {
+    params: { file },
+  });
   return data;
 };

@@ -1,4 +1,10 @@
-const { Checklist, ChecklistContent, User, ChecklistFiles, VersionChecklist } = require("../models/models");
+const {
+  Checklist,
+  ChecklistContent,
+  User,
+  ChecklistFiles,
+  VersionChecklist,
+} = require("../models/models");
 const ApiError = require("../exceptions/api-error");
 const ChecklistDto = require("../dtos/checklist-dto");
 const { Op } = require("sequelize");
@@ -6,45 +12,36 @@ const path = require("path");
 const uuid = require("uuid");
 
 async function saveFile(file, id) {
-    let fileName = uuid.v4() + ".docx";
-      file.mv(
-        path.resolve(
-          __dirname,
-          "..",
-          "static/checklist/contents",
-          fileName
-        )
-      );
-    await ChecklistFiles.create({
-      id: fileName,
-      name: file.name,
-      checklistId: id,
-    });
-  }
+  let fileName = uuid.v4() + ".docx";
+  file.mv(path.resolve(__dirname, "..", "static/checklist/contents", fileName));
+  await ChecklistFiles.create({
+    id: fileName,
+    name: file.name,
+    checklistId: id,
+  });
+}
 
 async function destroyFile(id) {
-    const file = await ChecklistFiles.findOne({
+  const file = await ChecklistFiles.findOne({
+    where: { checklistId: id },
+  });
+
+  var fs = require("fs");
+
+  if (file) {
+    await ChecklistFiles.destroy({
       where: { checklistId: id },
     });
-
-    var fs = require("fs");
-
-    if (file) {
-      await ChecklistFiles.destroy({
-        where: { checklistId: id },
-      });
-      fs.unlink(path.resolve(
-          __dirname,
-          "..",
-          "static/checklist/contents",
-          file.id
-        ), function(err) {
+    fs.unlink(
+      path.resolve(__dirname, "..", "static/checklist/contents", file.id),
+      function (err) {
         if (err) {
           console.log(err);
         }
-      });
-    }
+      }
+    );
   }
+}
 
 class ChecklistService {
   async createChecklist(
@@ -55,19 +52,16 @@ class ChecklistService {
     userId,
     contents
   ) {
-
     const versionQuanity = await VersionChecklist.findOne({
-      where: { id: versionChecklistId }
+      where: { id: versionChecklistId },
     });
 
     if (!versionQuanity) {
-      throw ApiError.BadRequest(
-        `Данной версии не существует`
-      );
+      throw ApiError.BadRequest(`Данной версии не существует`);
     }
 
     const numberOfRecordsAvailable = await Checklist.count({
-      where: { versionChecklistId: versionChecklistId }
+      where: { versionChecklistId: versionChecklistId },
     });
 
     if (numberOfRecordsAvailable >= versionQuanity.quanityType) {
@@ -125,24 +119,24 @@ class ChecklistService {
         offset,
         where: {
           name: { [Op.iLike]: `%${name}%` },
-          versionChecklistId: versionChecklistId
-        }
+          versionChecklistId: versionChecklistId,
+        },
       });
     } else if (name) {
       checklist = await Checklist.findAndCountAll({
         limit,
         offset,
         where: {
-          name: { [Op.iLike]: `%${name}%` }
-        }
+          name: { [Op.iLike]: `%${name}%` },
+        },
       });
     } else if (versionChecklistId) {
       checklist = await Checklist.findAndCountAll({
         limit,
         offset,
         where: {
-          versionChecklistId: versionChecklistId
-        }
+          versionChecklistId: versionChecklistId,
+        },
       });
     } else {
       checklist = await Checklist.findAndCountAll({ limit, offset });
@@ -168,7 +162,15 @@ class ChecklistService {
     });
   }
 
-  async updateOne(id, name, versionChecklistId, description, contents, file, fileIsDeleted) {
+  async updateOne(
+    id,
+    name,
+    versionChecklistId,
+    description,
+    contents,
+    file,
+    fileIsDeleted
+  ) {
     const checklist = await Checklist.update(
       {
         name: name,

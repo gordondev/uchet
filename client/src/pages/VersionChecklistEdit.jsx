@@ -15,7 +15,13 @@ import {
   List,
   Upload,
 } from "antd";
-import { DeleteOutlined, PlusOutlined, SaveOutlined, FileWordOutlined, UploadOutlined  } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  FileWordOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchOneVersion,
@@ -57,12 +63,13 @@ const VersionChecklistEdit = observer(() => {
   const [acceptanceDate, setAcceptanceDate] = useState("");
   const [reasonForUse, setReasonForUse] = useState("");
   const [comment, setComment] = useState("");
-  const [headerFileName, setHeaderFileName] = useState('');
-  const [commentFileName, setCommentFileName] = useState('');
+  const [headerFileName, setHeaderFileName] = useState("");
+  const [commentFileName, setCommentFileName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [headerIsDeleted, setHeaderIsDeleted] = useState('');
-  const [commentIsDeleted, setCommentIsDeleted] = useState('');
+  const [headerIsDeleted, setHeaderIsDeleted] = useState("");
+  const [commentIsDeleted, setCommentIsDeleted] = useState("");
   const [title, setTitle] = useState("");
+  const [dataIsSent, setDataIsSent] = useState(false);
   const navigate = useNavigate();
 
   const showModal = () => {
@@ -86,6 +93,7 @@ const VersionChecklistEdit = observer(() => {
   };
 
   const updateVersion = async () => {
+    setDataIsSent(true);
     const formData = new FormData();
     formData.append("updateId", updateId);
     formData.append("id", id);
@@ -106,6 +114,7 @@ const VersionChecklistEdit = observer(() => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
+    setDataIsSent(false);
   };
 
   useEffect(() => {
@@ -141,33 +150,37 @@ const VersionChecklistEdit = observer(() => {
   };
 
   const props = {
-    name: 'file',
+    name: "file",
     multiple: false,
     maxCount: 1,
-  }
+  };
 
   const beforeUploadHeaderFile = (file) => {
-      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      if (!isDocx) {
-        message.error('Вы можете загрузить только .docx файл');
-      } else {
-        setHeaderFileName(file.name);
-        setHeaderFile(file);
-        setHeaderIsDeleted('');
-      }
-      return !isDocx;
+    const isDocx =
+      file.type ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    if (!isDocx) {
+      message.error("Вы можете загрузить только .docx файл");
+    } else {
+      setHeaderFileName(file.name);
+      setHeaderFile(file);
+      setHeaderIsDeleted("");
+    }
+    return !isDocx;
   };
 
   const beforeUploadCommentFile = (file) => {
-      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      if (!isDocx) {
-        message.error('Вы можете загрузить только .docx файл');
-      } else {
-        setCommentFileName(file.name);
-        setCommentFile(file);
-        setCommentIsDeleted('');
-      }
-      return !isDocx;
+    const isDocx =
+      file.type ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    if (!isDocx) {
+      message.error("Вы можете загрузить только .docx файл");
+    } else {
+      setCommentFileName(file.name);
+      setCommentFile(file);
+      setCommentIsDeleted("");
+    }
+    return !isDocx;
   };
 
   return (
@@ -179,9 +192,17 @@ const VersionChecklistEdit = observer(() => {
               <div className="defaultForm__tile">
                 {loading ? (
                   <>
-                    <Skeleton.Input active="true" size="small" style={{ marginBottom: "20px" }}/>
+                    <Skeleton.Input
+                      active="true"
+                      size="small"
+                      style={{ marginBottom: "20px" }}
+                    />
                     <br />
-                    <Skeleton.Input active="true" size="small" style={{ marginBottom: "20px" }}/>
+                    <Skeleton.Input
+                      active="true"
+                      size="small"
+                      style={{ marginBottom: "20px" }}
+                    />
                   </>
                 ) : (
                   <>
@@ -228,7 +249,12 @@ const VersionChecklistEdit = observer(() => {
               </div>
               {loading ? (
                 <>
-                  <Skeleton.Input active="true" size="small" block={true} style={{ marginBottom: "20px" }}/>
+                  <Skeleton.Input
+                    active="true"
+                    size="small"
+                    block={true}
+                    style={{ marginBottom: "20px" }}
+                  />
                 </>
               ) : (
                 <>
@@ -237,11 +263,11 @@ const VersionChecklistEdit = observer(() => {
                     label="Название версии"
                     onChange={(e) => setTitle(e.target.value)}
                   >
-                    <Input allowClear placeholder={title}/>
+                    <Input allowClear placeholder={title} />
                   </Form.Item>
                 </>
               )}
-              
+
               {loading ? (
                 <>
                   <Skeleton active="true" />
@@ -263,7 +289,10 @@ const VersionChecklistEdit = observer(() => {
                         style={{ marginTop: "23px", width: "100%" }}
                         onChange={(e) => changeTheme(e.target.value, i.id)}
                       >
-                        <Input placeholder={`${i.title ? i.title : ""}`} allowClear/>
+                        <Input
+                          placeholder={`${i.title ? i.title : ""}`}
+                          allowClear
+                        />
                       </Form.Item>
                       <Button
                         type="primary"
@@ -286,66 +315,78 @@ const VersionChecklistEdit = observer(() => {
                     Добавить, осталось: {6 - count}
                   </Button>
                   <div className="defaultForm__dragBlock">
-                    <List
-                      size="large"
-                      bordered
-                    >
+                    <List size="large" bordered>
                       <List.Item>
-                      { headerFileName ?
-                        <>
-                          <Text type="secondary">
-                          <FileWordOutlined /> {headerFileName}
-                          </Text>
-                          <Button
-                            type="primary"
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => {setHeaderFileName(null); setHeaderFile(null); setHeaderIsDeleted(true)}}
-                          >
-                            Удалить
-                          </Button>
-                        </> :
-                        <>
-                          <Text type="secondary">
-                          <FileWordOutlined /> Прикрепите файл шапки
-                          </Text>
-                          <Upload {...props} beforeUpload={beforeUploadHeaderFile}>
-                            <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
-                          </Upload>
-                        </>
-                      }
-                        
-                      
+                        {headerFileName ? (
+                          <>
+                            <Text type="secondary">
+                              <FileWordOutlined /> {headerFileName}
+                            </Text>
+                            <Button
+                              type="primary"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => {
+                                setHeaderFileName(null);
+                                setHeaderFile(null);
+                                setHeaderIsDeleted(true);
+                              }}
+                            >
+                              Удалить
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Text type="secondary">
+                              <FileWordOutlined /> Прикрепите файл шапки
+                            </Text>
+                            <Upload
+                              {...props}
+                              beforeUpload={beforeUploadHeaderFile}
+                            >
+                              <Button icon={<UploadOutlined />}>
+                                Нажмите для загрузки .doc .docx
+                              </Button>
+                            </Upload>
+                          </>
+                        )}
                       </List.Item>
 
                       <List.Item>
-                      { commentFileName ?
-                        <>
-                          <Text type="secondary">
-                          <FileWordOutlined /> {commentFileName}
-                          </Text>
-                          <Button
-                            type="primary"
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => {setCommentFileName(null); setCommentFile(null); setCommentIsDeleted(true)}}
-                          >
-                            Удалить
-                          </Button>
-                        </> :
-                        <>
-                          <Text type="secondary">
-                          <FileWordOutlined /> Прикрепите файл комментария
-                          </Text>
-                          <Upload {...props} beforeUpload={beforeUploadCommentFile}>
-                            <Button icon={<UploadOutlined />}>Нажмите для загрузки .doc .docx</Button>
-                          </Upload>
-                        </>
-                      }
-                        
-                      
+                        {commentFileName ? (
+                          <>
+                            <Text type="secondary">
+                              <FileWordOutlined /> {commentFileName}
+                            </Text>
+                            <Button
+                              type="primary"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => {
+                                setCommentFileName(null);
+                                setCommentFile(null);
+                                setCommentIsDeleted(true);
+                              }}
+                            >
+                              Удалить
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Text type="secondary">
+                              <FileWordOutlined /> Прикрепите файл комментария
+                            </Text>
+                            <Upload
+                              {...props}
+                              beforeUpload={beforeUploadCommentFile}
+                            >
+                              <Button icon={<UploadOutlined />}>
+                                Нажмите для загрузки .doc .docx
+                              </Button>
+                            </Upload>
+                          </>
+                        )}
                       </List.Item>
-
                     </List>
                   </div>
                   <Form.Item
@@ -407,6 +448,7 @@ const VersionChecklistEdit = observer(() => {
                     <Button
                       type="primary"
                       htmlType="submit"
+                      loading={dataIsSent}
                       icon={<SaveOutlined />}
                       style={{ width: "100%" }}
                     >

@@ -11,7 +11,6 @@ const { Search } = Input;
 const { Panel } = Collapse;
 const { Option } = Select;
 
-
 const VersionChecklist = () => {
   const [versionIsLoadind, setVersionIsLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -20,7 +19,7 @@ const VersionChecklist = () => {
   const [actualKey, setActualKey] = useState("");
 
   function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   const currentPage = useRef(1);
@@ -31,20 +30,24 @@ const VersionChecklist = () => {
   useObserver(lastElement, data.length < totalCount, versionIsLoadind, () => {
     setVersionIsLoading(true);
     currentPage.current += 1;
-    fetchVersionChecklist(16, currentPage.current, actualKey, searchQuery).then((response) => {
-      setData([...data, ...response.rows]);
-      setTotalCount(response.count);
-    });
+    fetchVersionChecklist(16, currentPage.current, actualKey, searchQuery).then(
+      (response) => {
+        setData([...data, ...response.rows]);
+        setTotalCount(response.count);
+      }
+    );
     setVersionIsLoading(false);
   });
 
   useEffect(() => {
     setVersionIsLoading(true);
     currentPage.current = 1;
-    fetchVersionChecklist(16, currentPage.current, actualKey, searchQuery).then((response) => {
-      setData(response.rows);
-      setTotalCount(response.count);
-    });
+    fetchVersionChecklist(16, currentPage.current, actualKey, searchQuery).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
 
     setVersionIsLoading(false);
   }, []);
@@ -53,44 +56,56 @@ const VersionChecklist = () => {
     setVersionIsLoading(true);
     currentPage.current = 1;
     setSearchQuery(value);
-    fetchVersionChecklist(16, currentPage.current, actualKey, value).then((response) => {
-      setData(response.rows);
-      setTotalCount(response.count);
-    });
+    fetchVersionChecklist(16, currentPage.current, actualKey, value).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
     await sleep(1 * 50);
     setVersionIsLoading(false);
-  }
+  };
 
   const actulKeyFilter = async (value) => {
     setVersionIsLoading(true);
     currentPage.current = 1;
     setActualKey(value);
-    fetchVersionChecklist(16, currentPage.current, value, searchQuery).then((response) => {
-      setData(response.rows);
-      setTotalCount(response.count);
-    });
+    fetchVersionChecklist(16, currentPage.current, value, searchQuery).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
     await sleep(1 * 50);
     setVersionIsLoading(false);
-  }
+  };
 
   return (
     <section className="searchSection">
       <div className="container">
-        <Collapse defaultActiveKey={["1"]} ghost style={{ width: "100%" }}>
+        <Collapse
+          defaultActiveKey={["1"]}
+          ghost
+          className="collapse__main-filter"
+        >
           <Panel header="Фильтры" key="1" style={{ width: "100%" }}>
             <Search
               placeholder="Введите название версии"
               allowClear
               enterButton="Поиск"
               size="default"
-              onSearch={(value) => { searchData(value) }}
+              onSearch={(value) => {
+                searchData(value);
+              }}
               style={{ width: "100%" }}
             />
             <Select
               allowClear
               placeholder="Ключ актуальности"
               style={{ width: "100%", marginTop: "20px" }}
-              onChange={(value) => { actulKeyFilter(value) }}
+              onChange={(value) => {
+                actulKeyFilter(value);
+              }}
             >
               <Option value="Актуально">Актуально</Option>
               <Option value="Не актуально">Не актуально</Option>

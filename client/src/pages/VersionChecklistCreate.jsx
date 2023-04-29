@@ -12,9 +12,14 @@ import {
   Modal,
   Divider,
   Empty,
-  Upload
+  Upload,
 } from "antd";
-import { PlusOutlined, DeleteOutlined, SaveOutlined, InboxOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  SaveOutlined,
+  InboxOutlined,
+} from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 const { Dragger } = Upload;
 
@@ -50,6 +55,7 @@ const VersionChecklistCreate = observer(() => {
   const [commentFile, setCommentFile] = useState("");
   const [title, setTitle] = useState("");
   const [theme, setTheme] = useState([]);
+  const [dataIsSent, setDataIsSent] = useState(false);
 
   const addTheme = () => {
     setCount(count + 1);
@@ -68,6 +74,7 @@ const VersionChecklistCreate = observer(() => {
   };
 
   const addVersion = async () => {
+    setDataIsSent(true);
     const formData = new FormData();
     formData.append("id", id);
     formData.append("actualKey", actualKey);
@@ -86,41 +93,46 @@ const VersionChecklistCreate = observer(() => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
+    setDataIsSent(false);
   };
 
   const beforeUploadHeaderFile = (file) => {
-      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      if (!isDocx) {
-        message.error('Вы можете загрузить только .docx файл');
-      } else {
-        setHeaderFile(file);
-      }
-      return !isDocx;
+    const isDocx =
+      file.type ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    if (!isDocx) {
+      message.error("Вы можете загрузить только .docx файл");
+    } else {
+      setHeaderFile(file);
+    }
+    return !isDocx;
   };
 
   const removeHeaderFile = () => {
-    setHeaderFile('');
-  }
+    setHeaderFile("");
+  };
 
   const beforeUploadCommentFile = (file) => {
-      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      if (!isDocx) {
-        message.error('Вы можете загрузить только .docx файл');
-      } else {
-        setCommentFile(file);
-      }
-      return !isDocx;
+    const isDocx =
+      file.type ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    if (!isDocx) {
+      message.error("Вы можете загрузить только .docx файл");
+    } else {
+      setCommentFile(file);
+    }
+    return !isDocx;
   };
 
   const removeCommentFile = () => {
-    setCommentFile('');
-  }
+    setCommentFile("");
+  };
 
   const props = {
-    name: 'file',
+    name: "file",
     multiple: false,
     maxCount: 1,
-  }
+  };
 
   return (
     <ReachableContext.Provider value="Light">
@@ -135,11 +147,11 @@ const VersionChecklistCreate = observer(() => {
                   style={{ marginBottom: "20px" }}
                   hasFeedback
                   rules={[
-                      {
-                        required: true,
-                        message: "Выберите номер версии",
-                      },
-                    ]}
+                    {
+                      required: true,
+                      message: "Выберите номер версии",
+                    },
+                  ]}
                 >
                   <InputNumber
                     min={1}
@@ -188,7 +200,7 @@ const VersionChecklistCreate = observer(() => {
                 ]}
                 onChange={(e) => setTitle(e.target.value)}
               >
-                <Input allowClear placeholder="Введите название версии"/>
+                <Input allowClear placeholder="Введите название версии" />
               </Form.Item>
               <Divider orientation="center">Темы</Divider>
               {theme.length === 0 && (
@@ -208,7 +220,7 @@ const VersionChecklistCreate = observer(() => {
                       },
                     ]}
                   >
-                    <Input allowClear/>
+                    <Input allowClear />
                   </Form.Item>
                   <Button
                     type="primary"
@@ -232,27 +244,39 @@ const VersionChecklistCreate = observer(() => {
                 Добавить, осталось: {6 - (count - 1)}
               </Button>
               <div className="defaultForm__dragBlock">
-              <Dragger {...props}  beforeUpload={beforeUploadHeaderFile} onRemove={removeHeaderFile}>
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">Нажмите или перетащите файл в область загрузки</p>
-                <p className="ant-upload-hint">
-                  Прикрепите файл шапки в формате .doc или .docx
-                </p>
-              </Dragger>
-                
+                <Dragger
+                  {...props}
+                  beforeUpload={beforeUploadHeaderFile}
+                  onRemove={removeHeaderFile}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Нажмите или перетащите файл в область загрузки
+                  </p>
+                  <p className="ant-upload-hint">
+                    Прикрепите файл шапки в формате .doc или .docx
+                  </p>
+                </Dragger>
+
                 <br />
 
-              <Dragger {...props}  beforeUpload={beforeUploadCommentFile} onRemove={removeCommentFile}>
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">Нажмите или перетащите файл в область загрузки</p>
-                <p className="ant-upload-hint">
-                  Прикрепите файл комментария в формате .doc или .docx
-                </p>
-              </Dragger>  
+                <Dragger
+                  {...props}
+                  beforeUpload={beforeUploadCommentFile}
+                  onRemove={removeCommentFile}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Нажмите или перетащите файл в область загрузки
+                  </p>
+                  <p className="ant-upload-hint">
+                    Прикрепите файл комментария в формате .doc или .docx
+                  </p>
+                </Dragger>
               </div>
               <Form.Item
                 name="quanityType"
@@ -292,7 +316,7 @@ const VersionChecklistCreate = observer(() => {
                   }}
                 />
               </Form.Item>
-              <Form.Item 
+              <Form.Item
                 name="reasonForUse"
                 label="Основание использования"
                 rules={[
@@ -301,7 +325,7 @@ const VersionChecklistCreate = observer(() => {
                     message: "Напишите основание использования",
                   },
                 ]}
-                >
+              >
                 <TextArea
                   allowClear
                   rows={4}
@@ -311,7 +335,7 @@ const VersionChecklistCreate = observer(() => {
                   maxLength={500}
                 />
               </Form.Item>
-              <Form.Item 
+              <Form.Item
                 label="Примечание"
                 name="comment"
                 rules={[
@@ -333,6 +357,7 @@ const VersionChecklistCreate = observer(() => {
               <Form.Item style={{ width: "100%" }}>
                 <Button
                   type="primary"
+                  loading={dataIsSent}
                   htmlType="submit"
                   icon={<SaveOutlined />}
                   style={{ width: "100%" }}

@@ -49,6 +49,6 @@ export const updateAccount = async (id, newData) => {
 };
 
 export const getAllUsers = async () => {
-  const {data} = await $authHost.get("api/user/users/");
+  const { data } = await $authHost.get("api/user/users/");
   return data;
 };

@@ -30,13 +30,18 @@ const Checklist = observer(() => {
   const navigate = useNavigate();
 
   function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   useObserver(lastElement, data.length < totalCount, isLoadind, () => {
     setIsLoading(true);
     currentPage.current += 1;
-    fetchChecklist(16, currentPage.current, searchVersionQuery, searchNameQuery).then((response) => {
+    fetchChecklist(
+      16,
+      currentPage.current,
+      searchVersionQuery,
+      searchNameQuery
+    ).then((response) => {
       setData([...data, ...response.rows]);
       setTotalCount(response.count);
     });
@@ -46,7 +51,12 @@ const Checklist = observer(() => {
   useEffect(() => {
     setIsLoading(true);
     currentPage.current = 1;
-    fetchChecklist(16, currentPage.current, searchVersionQuery, searchNameQuery).then((response) => {
+    fetchChecklist(
+      16,
+      currentPage.current,
+      searchVersionQuery,
+      searchNameQuery
+    ).then((response) => {
       setData(response.rows);
       setTotalCount(response.count);
     });
@@ -57,38 +67,47 @@ const Checklist = observer(() => {
     setIsLoading(true);
     currentPage.current = 1;
     setSearchNameQuery(value);
-    fetchChecklist(16, currentPage.current, searchVersionQuery, value).then((response) => {
-      setData(response.rows);
-      setTotalCount(response.count);
-    });
+    fetchChecklist(16, currentPage.current, searchVersionQuery, value).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
     await sleep(1 * 50);
     setIsLoading(false);
-  }
+  };
 
   const searchVersion = async (value) => {
     setIsLoading(true);
     currentPage.current = 1;
     setSearchVersionQuery(value);
-    fetchChecklist(16, currentPage.current, value, searchNameQuery).then((response) => {
-      setData(response.rows);
-      setTotalCount(response.count);
-    });
+    fetchChecklist(16, currentPage.current, value, searchNameQuery).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
     await sleep(1 * 50);
     setIsLoading(false);
-  }
-
+  };
 
   return (
     <section className="searchSection">
       <div className="container">
-        <Collapse defaultActiveKey={["1"]} ghost style={{ width: "100%" }}>
+        <Collapse
+          defaultActiveKey={["1"]}
+          ghost
+          className="collapse__main-filter"
+        >
           <Panel header="Фильтры" key="1" style={{ width: "100%" }}>
             <Search
               placeholder="Введите название чек-листа"
               allowClear
               enterButton="Поиск"
               size="default"
-              onSearch={(value) => { searchName(value) }}
+              onSearch={(value) => {
+                searchName(value);
+              }}
               style={{ width: "100%" }}
             />
             <Search
@@ -96,7 +115,9 @@ const Checklist = observer(() => {
               allowClear
               size="default"
               type="number"
-              onSearch={(value) => { searchVersion(value) }}
+              onSearch={(value) => {
+                searchVersion(value);
+              }}
               style={{ width: "100%", marginTop: "20px" }}
             />
           </Panel>

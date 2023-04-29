@@ -13,7 +13,7 @@ class VersionChecklistController {
         acceptanceDate,
         comment,
         theme,
-        title
+        title,
       } = req.body;
 
       if (!req.files) {
@@ -109,49 +109,47 @@ class VersionChecklistController {
         theme,
         title,
         headerIsDeleted,
-        commentIsDeleted
+        commentIsDeleted,
       } = req.body;
 
       if (!req.files) {
-        const versionChecklistData =
-          await versionChecklist.updateOne(
-            updateId,
-            id,
-            actualKey,
-            userId,
-            quanityType,
-            reasonForUse,
-            acceptanceDate,
-            comment,
-            theme,
-            title,
-            null,
-            null,
-            headerIsDeleted,
-            commentIsDeleted
-          );
+        const versionChecklistData = await versionChecklist.updateOne(
+          updateId,
+          id,
+          actualKey,
+          userId,
+          quanityType,
+          reasonForUse,
+          acceptanceDate,
+          comment,
+          theme,
+          title,
+          null,
+          null,
+          headerIsDeleted,
+          commentIsDeleted
+        );
         return res.json(versionChecklistData);
       } else {
         const { headerFile } = req.files;
         const { commentFile } = req.files;
 
-        const versionChecklistData =
-          await versionChecklist.updateOne(
-            updateId,
-            id,
-            actualKey,
-            userId,
-            quanityType,
-            reasonForUse,
-            acceptanceDate,
-            comment,
-            theme,
-            title,
-            headerFile,
-            commentFile,
-            headerIsDeleted,
-            commentIsDeleted
-          );
+        const versionChecklistData = await versionChecklist.updateOne(
+          updateId,
+          id,
+          actualKey,
+          userId,
+          quanityType,
+          reasonForUse,
+          acceptanceDate,
+          comment,
+          theme,
+          title,
+          headerFile,
+          commentFile,
+          headerIsDeleted,
+          commentIsDeleted
+        );
         return res.json(versionChecklistData);
       }
 
@@ -188,7 +186,6 @@ class VersionChecklistController {
       next(ApiError.BadRequest(e.message));
     }
   }
-
 }
 
 module.exports = new VersionChecklistController();

@@ -8,8 +8,8 @@ const $host = axios.create({
 const $download = axios.create({
   withCredentials: true,
   baseURL: process.env.REACT_APP_API_URL,
-  responseType: 'arraybuffer',
-}); 
+  responseType: "arraybuffer",
+});
 
 const $authHost = axios.create({
   withCredentials: true,

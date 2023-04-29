@@ -40,7 +40,12 @@ class ChecklistController {
       page = page || 1;
       limit = limit || 16;
       let offset = page * limit - limit;
-      const checklistData = await checklist.getAll(limit, offset, versionChecklistId, name );
+      const checklistData = await checklist.getAll(
+        limit,
+        offset,
+        versionChecklistId,
+        name
+      );
 
       return res.json(checklistData);
     } catch (e) {
@@ -84,7 +89,14 @@ class ChecklistController {
 
   async updateOne(req, res, next) {
     try {
-      const { id, name, versionChecklistId, description, contents, fileIsDeleted } = req.body;
+      const {
+        id,
+        name,
+        versionChecklistId,
+        description,
+        contents,
+        fileIsDeleted,
+      } = req.body;
 
       if (!req.files) {
         const checklistData = await checklist.updateOne(

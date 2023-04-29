@@ -91,7 +91,6 @@ class UserController {
   async check(req, res, next) {
     try {
       return res.json({ message: "all right" });
-
     } catch (e) {
       next(e);
     }
@@ -118,7 +117,6 @@ class UserController {
       next(e);
     }
   }
-
 }
 
 module.exports = new UserController();
