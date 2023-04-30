@@ -105,7 +105,7 @@ const NavBar = observer(() => {
       <div className="logo" onClick={() => navigate(MAIN_ROUTE)}>
         <img src={logo} alt="LOGO" />
         <p>
-          Учет и анализ <br /> работы персонала
+          Учет и анализ <br /> результатов наблюдения
         </p>
       </div>
       <div className="mainnav">

@@ -1,37 +1,36 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import { Form, Input, Select, Divider, Button, Tabs } from "antd";
+import { Form, Input, Select, Divider, Button, Tabs, Empty } from "antd";
 import { SaveOutlined, PlusOutlined } from "@ant-design/icons";
 import { fetchVersionChecklist } from "../http/versionChecklistAPI";
 import { fetchChecklist } from "../http/checklistAPI";
+import { fetchActualThemes } from "../http/resultAPI";
 
 const { Option } = Select;
 
 const ResultCreate = () => {
-  const options = [];
   const [checklists, setChecklists] = useState([]);
   const [version, setVersion] = useState([]);
   const [isLoadind, setIsLoading] = useState(true);
-
-  for (let i = 10; i < 36; i++) {
-    options.push({
-      label: "тема " + i,
-      value: "тема " + i,
-    });
-  }
+  const [actualThemesTitle, setActualThemesTitle] = useState([]);
+  const [selectedThemes, setSelectedThemes] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
     fetchChecklist().then((response) => setChecklists(response.rows));
     fetchVersionChecklist().then((response) => setVersion(response.rows));
+    fetchActualThemes().then((data) => setActualThemesTitle(data.map(item => ({
+      label: item.title,
+      value: item.title
+    }))));
     setIsLoading(false);
   }, []);
 
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+  console.log(selectedThemes);
 
-  console.log(version);
+  const handleChange = (value) => {
+    setSelectedThemes(value);
+  };
 
   return (
     <section className="searchSection">
@@ -41,7 +40,7 @@ const ResultCreate = () => {
             <div className="defaultForm__tile">
               <Form.Item
                 name="title"
-                label="Название темы"
+                label="Выпоняемая работа"
                 style={{ width: "100%", marginRight: "10px" }}
                 // onChange={(e) => setName(e.target.value)}
                 rules={[
@@ -79,21 +78,24 @@ const ResultCreate = () => {
                 width: "100%",
               }}
               placeholder="Выберите тему"
-              defaultValue={["тема 10", "тема 12"]}
+              // defaultValue={["тема 10", "тема 12"]}
               onChange={handleChange}
-              options={options}
+              options={actualThemesTitle}
             />
+            {selectedThemes.length === 0 && (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            )}
             <Tabs
               tabPosition="top"
               style={{ marginTop: "20px" }}
-              items={new Array(3).fill(null).map((_, i) => {
-                const id = String(i + 1);
+              items={selectedThemes.map((i) => {
                 return {
-                  label: `Тема ${id}`,
-                  key: id,
+                  label: `${i}`,
+                  key: i,
                   children: (
                     <>
                       <Divider orientation="center">Оценки</Divider>
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       <Button
                         type="primary"
                         style={{ width: "100%", marginBottom: "20px" }}
@@ -103,6 +105,7 @@ const ResultCreate = () => {
                         Добавить
                       </Button>
                       <Divider orientation="center">Точки роста</Divider>
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       <Button
                         type="primary"
                         style={{ width: "100%", marginBottom: "20px" }}
@@ -112,6 +115,7 @@ const ResultCreate = () => {
                         Добавить
                       </Button>
                       <Divider orientation="center">Сильные стороны</Divider>
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       <Button
                         type="primary"
                         style={{ width: "100%", marginBottom: "20px" }}
