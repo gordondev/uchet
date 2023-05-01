@@ -10,6 +10,14 @@ class ResultController {
       next(ApiError.BadRequest(e.message));
     }
   }
+  async getActualChecklists(req, res, next) {
+    try {
+      const resultData = await result.getActualChecklists();
+      return res.json(resultData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
 }
 
 module.exports = new ResultController();
