@@ -17,6 +17,7 @@ const ResultCreate = () => {
   const [selectedChecklists, setSelectedChecklists] = useState([]);
   const [themes, setThemes] = useState([]);
   const [activeKey, setActiveKey] = useState('1');
+  // const [activeTheme, setActiveTheme] = useState(null)
 
   useEffect(() => {
     setIsLoading(true);
@@ -53,6 +54,7 @@ const ResultCreate = () => {
   }
 
   const checklistsChange = (value) => {
+    setSelectedChecklists(value);
     value.forEach(checklist => {
       if (!activeTheme.grades.some(({ checklist: c }) => c === checklist)) {
         activeTheme.grades.push({ checklist, grade: 5 });
