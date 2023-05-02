@@ -66,8 +66,11 @@ const ResultCreate = () => {
   };
 
   const addPoint = () => {
-    activeTheme.points_of_growths.push({ point: '', id: Date.now() });
-    setThemes(themes);
+    const newPointsOfGrowth = [...activeTheme.points_of_growths];
+    newPointsOfGrowth.push({ point: '', id: Date.now() });
+    const updatedActiveTheme = { ...activeTheme, points_of_growths: newPointsOfGrowth };
+    const updatedThemes = themes.map((theme) => (theme.theme === activeTheme.theme ? updatedActiveTheme : theme));
+    setThemes(updatedThemes);
   };
 
   const activeTheme = themes.find(theme => theme.theme === activeKey);
@@ -87,6 +90,13 @@ const ResultCreate = () => {
         return theme;
       }
     });
+    setThemes(updatedThemes);
+  };
+
+  const removePoint = (id) => {
+    const newPointsOfGrowth = activeTheme.points_of_growths.filter((point) => point.id !== id);
+    const updatedActiveTheme = { ...activeTheme, points_of_growths: newPointsOfGrowth };
+    const updatedThemes = themes.map((theme) => (theme.theme === activeTheme.theme ? updatedActiveTheme : theme));
     setThemes(updatedThemes);
   };
 
@@ -215,10 +225,25 @@ const ResultCreate = () => {
                             key={id}
                             name={id}
                             label={`Точка роста ${index + 1}`}
-                            style={{ width: "100%", margin: "0px 0px 0px 20px" }}
+                            style={{ width: "100%", margin: "0px 0px 0px 0px" }}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Введите точку роста",
+                              },
+                            ]}
                           >
                             <Input showCount maxLength={500} allowClear />
                           </Form.Item>
+                          <Button
+                            type="primary"
+                            danger
+                            style={{ marginLeft: "20px" }}
+                            icon={<DeleteOutlined />}
+                            onClick={() => removePoint(id)}
+                          >
+                            Удалить
+                          </Button>
                         </div>
                       ))}
                       <Button
