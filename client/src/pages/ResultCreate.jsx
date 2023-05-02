@@ -15,6 +15,8 @@ const ResultCreate = () => {
   const [actualThemesTitle, setActualThemesTitle] = useState([]);
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [selectedChecklists, setSelectedChecklists] = useState([]);
+  const [themes, setThemes] = useState([]);
+  const [activeKey, setActiveKey] = useState('1');
 
   useEffect(() => {
     setIsLoading(true);
@@ -33,11 +35,38 @@ const ResultCreate = () => {
 
   const themesChange = (value) => {
     setSelectedThemes(value);
+    setActiveKey(value[0]);
+    value.forEach(theme => {
+      if (!themes.find(obj => obj.theme === theme)) {
+        themes.push({ theme: theme, grades: [] });
+      }
+    });
+
+    setThemes(themes.filter(theme => value.includes(theme.theme)));
   };
 
-  const checklistsChange = (value) => {
-    setSelectedChecklists(value);
+  const findTheme = () => {
+    console.log("selectedThemes", selectedThemes);
+    console.log("themes", themes);
+    console.log("activeKey", activeKey);
+    console.log("activeTheme", activeTheme);
   }
+
+  const checklistsChange = (value) => {
+    value.forEach(checklist => {
+      if (!activeTheme.grades.some(({ checklist: c }) => c === checklist)) {
+        activeTheme.grades.push({ checklist, grade: 5 });
+      }
+    });
+
+    activeTheme.grades = activeTheme.grades.filter(checklist => value.includes(checklist.checklist));
+  }; 
+
+  const handleTabChange = (key) => {
+    setActiveKey(key);
+  };
+
+  const activeTheme = themes.find(theme => theme.theme === activeKey);
 
   return (
     <section className="searchSection">
@@ -88,12 +117,20 @@ const ResultCreate = () => {
               onChange={themesChange}
               options={actualThemesTitle}
             />
+            <Button
+                type="primary"
+                style={{ width: "100%", marginTop: "20px" }}
+                onClick={findTheme}
+              >
+                TEST
+            </Button>
             {selectedThemes.length === 0 && (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
             <Tabs
               tabPosition="top"
               style={{ marginTop: "20px" }}
+              onChange={handleTabChange}
               items={selectedThemes.map((i) => {
                 return {
                   label: `${i}`,
@@ -113,20 +150,20 @@ const ResultCreate = () => {
                         options={checklists}
                       />
 
-                      {selectedChecklists.length === 0 && (
+                      {activeTheme.grades.length === 0 && (
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       )}
 
-                      {selectedChecklists.map((i) => (
-                        <>
+                      {activeTheme.grades.map(({ checklist }, index) => (
                           <div className="theme_item">
                             
                             <p style={{
                               width: "100%",
-                            }}>{i}</p>
+                            }}>{checklist}</p>
 
                             <Form.Item
-                              name={i + 1}
+                              key={index}
+                              name={index + 1}
                               label="Оценка"
                               hasFeedback
                               style={{ width: "100%", margin: "0px 0px 0px 20px" }}
@@ -144,7 +181,6 @@ const ResultCreate = () => {
                               </Select>
                             </Form.Item>
                           </div>
-                        </>
                       ))}
 
 
