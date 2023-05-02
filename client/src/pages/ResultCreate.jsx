@@ -38,7 +38,7 @@ const ResultCreate = () => {
     setActiveKey(value[0]);
     value.forEach(theme => {
       if (!themes.find(obj => obj.theme === theme)) {
-        themes.push({ theme: theme, grades: [] });
+        themes.push({ theme: theme, grades: [], points_of_growths: [], strengths: [] });
       }
     });
 
@@ -46,9 +46,7 @@ const ResultCreate = () => {
   };
 
   const findTheme = () => {
-    console.log("selectedThemes", selectedThemes);
     console.log("themes", themes);
-    console.log("activeKey", activeKey);
     console.log("activeTheme", activeTheme);
   }
 
@@ -65,6 +63,11 @@ const ResultCreate = () => {
 
   const handleTabChange = (key) => {
     setActiveKey(key);
+  };
+
+  const addPoint = () => {
+    activeTheme.points_of_growths.push({ point: '', id: Date.now() });
+    setThemes(themes);
   };
 
   const activeTheme = themes.find(theme => theme.theme === activeKey);
@@ -158,6 +161,7 @@ const ResultCreate = () => {
                     <>
                       <Divider orientation="center">Оценки</Divider>
                       <Select
+                        allowClear
                         mode="multiple"
                         allowClear
                         style={{
@@ -189,7 +193,7 @@ const ResultCreate = () => {
                               },
                             ]}
                           >
-                            <Select onChange={(value) => changeGrade(value, id)}>
+                            <Select allowClear onChange={(value) => changeGrade(value, id)}>
                               <Option value="Ниже требований">Ниже требований</Option>
                               <Option value="Соответствуют требованиям">Соответствуют требованиям</Option>
                               <Option value="Выше требований">Выше требований</Option>
@@ -200,12 +204,28 @@ const ResultCreate = () => {
 
 
                       <Divider orientation="center">Точки роста</Divider>
-                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+
+                      {activeTheme.points_of_growths.length === 0 && (
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                      )}
+
+                      {activeTheme.points_of_growths.map(({ point, id }, index) => (
+                        <div className="theme_item">
+                          <Form.Item
+                            key={id}
+                            name={id}
+                            label={`Точка роста ${index + 1}`}
+                            style={{ width: "100%", margin: "0px 0px 0px 20px" }}
+                          >
+                            <Input showCount maxLength={500} allowClear />
+                          </Form.Item>
+                        </div>
+                      ))}
                       <Button
                         type="primary"
                         style={{ width: "100%", marginBottom: "20px" }}
                         icon={<PlusOutlined />}
-                        // onClick={addTheme}
+                        onClick={addPoint}
                       >
                         Добавить
                       </Button>
