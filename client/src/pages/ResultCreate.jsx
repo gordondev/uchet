@@ -17,7 +17,6 @@ const ResultCreate = () => {
   const [selectedChecklists, setSelectedChecklists] = useState([]);
   const [themes, setThemes] = useState([]);
   const [activeKey, setActiveKey] = useState('1');
-  // const [activeTheme, setActiveTheme] = useState(null)
 
   useEffect(() => {
     setIsLoading(true);
@@ -57,7 +56,7 @@ const ResultCreate = () => {
     setSelectedChecklists(value);
     value.forEach(checklist => {
       if (!activeTheme.grades.some(({ checklist: c }) => c === checklist)) {
-        activeTheme.grades.push({ checklist, grade: 5 });
+        activeTheme.grades.push({ checklist, grade: '', id: Date.now() });
       }
     });
 
@@ -69,6 +68,24 @@ const ResultCreate = () => {
   };
 
   const activeTheme = themes.find(theme => theme.theme === activeKey);
+
+  const changeGrade = (value, id) => {
+    const updatedThemes = themes.map((theme) => {
+      if (theme.theme === activeKey) {
+        const updatedGrades = theme.grades.map((grade) => {
+          if (grade.id === id) {
+            return { ...grade, grade: value };
+          } else {
+            return grade;
+          }
+        });
+        return { ...theme, grades: updatedGrades };
+      } else {
+        return theme;
+      }
+    });
+    setThemes(updatedThemes);
+  };
 
   return (
     <section className="searchSection">
@@ -156,33 +173,29 @@ const ResultCreate = () => {
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       )}
 
-                      {activeTheme.grades.map(({ checklist }, index) => (
-                          <div className="theme_item">
-                            
-                            <p style={{
-                              width: "100%",
-                            }}>{checklist}</p>
-
-                            <Form.Item
-                              key={index}
-                              name={index + 1}
-                              label="Оценка"
-                              hasFeedback
-                              style={{ width: "100%", margin: "0px 0px 0px 20px" }}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Поствьте оценку",
-                                },
-                              ]}
-                            >
-                              <Select>
-                                <Option value="Ниже требований">Ниже требований</Option>
-                                <Option value="Соответствуют требованиям">Соответствуют требованиям</Option>
-                                <Option value="Выше требований">Выше требований</Option>
-                              </Select>
-                            </Form.Item>
-                          </div>
+                      {activeTheme.grades.map(({ checklist, grade, id }, index) => (
+                        <div className="theme_item">
+                          <p style={{ width: "100%" }}>{checklist}</p>
+                          <Form.Item
+                            key={id}
+                            name={id}
+                            label="Оценка"
+                            hasFeedback
+                            style={{ width: "100%", margin: "0px 0px 0px 20px" }}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Поставьте оценку",
+                              },
+                            ]}
+                          >
+                            <Select onChange={(value) => changeGrade(value, id)}>
+                              <Option value="Ниже требований">Ниже требований</Option>
+                              <Option value="Соответствуют требованиям">Соответствуют требованиям</Option>
+                              <Option value="Выше требований">Выше требований</Option>
+                            </Select>
+                          </Form.Item>
+                        </div>
                       ))}
 
 
