@@ -17,6 +17,7 @@ const ResultCreate = () => {
   const [selectedChecklists, setSelectedChecklists] = useState([]);
   const [themes, setThemes] = useState([]);
   const [activeKey, setActiveKey] = useState('1');
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     setIsLoading(true);
@@ -35,19 +36,29 @@ const ResultCreate = () => {
 
   const themesChange = (value) => {
     setSelectedThemes(value);
-    setActiveKey(value[0]);
     value.forEach(theme => {
       if (!themes.find(obj => obj.theme === theme)) {
         themes.push({ theme: theme, grades: [], points_of_growths: [], strengths: [] });
       }
     });
-
     setThemes(themes.filter(theme => value.includes(theme.theme)));
+
+    if (value.length === 1) {
+      setActiveIndex(0);
+      setActiveKey(value[0]);
+    } else if (!value.includes(activeKey)) {
+      const newActiveIndex = activeIndex >= value.length ? value.length - 1 : activeIndex;
+      setActiveIndex(newActiveIndex);
+      setActiveKey(value[newActiveIndex]);
+    } else {
+      setActiveKey(value[activeIndex]);
+    }
   };
 
   const findTheme = () => {
     console.log("themes", themes);
     console.log("activeTheme", activeTheme);
+    console.log("activeKey", activeKey);
   }
 
   const checklistsChange = (value) => {
@@ -63,6 +74,7 @@ const ResultCreate = () => {
 
   const handleTabChange = (key) => {
     setActiveKey(key);
+    setActiveIndex(selectedThemes.indexOf(key));
   };
 
   const addPoint = () => {
