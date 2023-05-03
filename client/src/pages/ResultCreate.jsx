@@ -114,6 +114,24 @@ const ResultCreate = () => {
     setThemes(updatedThemes);
   };
 
+  const changePoint = (value, id) => {
+    const updatedThemes = themes.map((theme) => {
+      if (theme.theme === activeKey) {
+        const updatedPoint = theme.points_of_growths.map((point) => {
+          if (point.id === id) {
+            return { ...point, point: value };
+          } else {
+            return point;
+          }
+        });
+        return { ...theme, points_of_growths: updatedPoint };
+      } else {
+        return theme;
+      }
+    });
+    setThemes(updatedThemes);
+  };
+
   return (
     <section className="searchSection">
       <div className="container">
@@ -252,7 +270,7 @@ const ResultCreate = () => {
                               },
                             ]}
                           >
-                            <Input showCount maxLength={500} allowClear />
+                            <Input showCount maxLength={500} allowClear onChange={e => changePoint(e.target.value, id)}/>
                           </Form.Item>
                           <Button
                             type="primary"
