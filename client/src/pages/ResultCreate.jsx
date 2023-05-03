@@ -3,6 +3,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { Form, Input, Select, Divider, Button, Tabs, Empty, Upload } from "antd";
 import { SaveOutlined, PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import { fetchActualThemes, fetchActualChecklists } from "../http/resultAPI";
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
 
 const { Option } = Select;
 const { Dragger } = Upload;
@@ -199,7 +201,9 @@ const ResultCreate = () => {
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       )}
 
+                      <TransitionGroup>
                       {activeTheme.grades.map(({ checklist, grade, id }, index) => (
+                        <CSSTransition key={id} timeout={500} classNames="point">
                         <div className="theme_item">
                           <p style={{ width: "100%" }}>{checklist}</p>
                           <Form.Item
@@ -222,8 +226,9 @@ const ResultCreate = () => {
                             </Select>
                           </Form.Item>
                         </div>
+                        </CSSTransition>
                       ))}
-
+                      </TransitionGroup>
 
                       <Divider orientation="center">Точки роста</Divider>
 
@@ -231,7 +236,9 @@ const ResultCreate = () => {
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       )}
 
+                      <TransitionGroup>
                       {activeTheme.points_of_growths.map(({ point, id }, index) => (
+                        <CSSTransition key={point.id} timeout={500} classNames="point">
                         <div className="theme_item">
                           <Form.Item
                             key={id}
@@ -257,7 +264,9 @@ const ResultCreate = () => {
                             Удалить
                           </Button>
                         </div>
+                        </CSSTransition>
                       ))}
+                      </TransitionGroup>
                       <Button
                         type="primary"
                         style={{ width: "100%", marginBottom: "20px" }}

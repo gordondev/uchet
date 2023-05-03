@@ -314,3 +314,27 @@ ul {
   margin-top: 20px;
   width: 100%;
 }
+
+
+
+.point-enter {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.point-enter-active {
+  opacity: 1;
+  transform: translateY(0px);
+  transition: all 500ms;
+}
+
+.point-exit {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.point-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 500ms;
+}
