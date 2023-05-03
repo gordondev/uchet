@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import { Form, Input, Select, Divider, Button, Tabs, Empty, Upload } from "antd";
+import { Form, Input, Select, Divider, Button, Tabs, Empty, Upload, Typography } from "antd";
 import { SaveOutlined, PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import { fetchActualThemes, fetchActualChecklists } from "../http/resultAPI";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Context } from "../index";
 
-
+const { Title } = Typography;
 const { Option } = Select;
 const { Dragger } = Upload;
 const { TextArea } = Input;
@@ -20,6 +21,7 @@ const ResultCreate = () => {
   const [themes, setThemes] = useState([]);
   const [activeKey, setActiveKey] = useState('1');
   const [activeIndex, setActiveIndex] = useState(0);
+  const { user } = useContext(Context);
 
   useEffect(() => {
     setIsLoading(true);
@@ -56,12 +58,6 @@ const ResultCreate = () => {
       setActiveKey(value[activeIndex]);
     }
   };
-
-  const findTheme = () => {
-    console.log("themes", themes);
-    console.log("activeTheme", activeTheme);
-    console.log("activeKey", activeKey);
-  }
 
   const checklistsChange = (value) => {
     setSelectedChecklists(value);
@@ -132,11 +128,45 @@ const ResultCreate = () => {
     setThemes(updatedThemes);
   };
 
+  const addStrengt = () => {
+    const newStrengths = [...activeTheme.strengths];
+    newStrengths.push({ strengt: '', id: Date.now() });
+    const updatedActiveTheme = { ...activeTheme, strengths: newStrengths };
+    const updatedThemes = themes.map((theme) => (theme.theme === activeTheme.theme ? updatedActiveTheme : theme));
+    setThemes(updatedThemes);
+  };
+
+  const removeStrengt = (id) => {
+    const newStrengths = activeTheme.strengths.filter((strengt) => strengt.id !== id);
+    const updatedActiveTheme = { ...activeTheme, strengths: newStrengths };
+    const updatedThemes = themes.map((theme) => (theme.theme === activeTheme.theme ? updatedActiveTheme : theme));
+    setThemes(updatedThemes);
+  };
+
+  const changeStrengt = (value, id) => {
+    const updatedThemes = themes.map((theme) => {
+      if (theme.theme === activeKey) {
+        const updatedStrengt = theme.strengths.map((strengt) => {
+          if (strengt.id === id) {
+            return { ...strengt, strengt: value };
+          } else {
+            return strengt;
+          }
+        });
+        return { ...theme, strengths: updatedStrengt };
+      } else {
+        return theme;
+      }
+    });
+    setThemes(updatedThemes);
+  };
+
   return (
     <section className="searchSection">
       <div className="container">
         <Form>
           <div className="defaultForm">
+            <Title level={4} style={{ marginBottom: "20px" }}>Подраздиление: {user.user.division}</Title>
             <div className="defaultForm__tile">
               <Form.Item
                 name="title"
@@ -181,13 +211,6 @@ const ResultCreate = () => {
               onChange={themesChange}
               options={actualThemesTitle}
             />
-            <Button
-                type="primary"
-                style={{ width: "100%", marginTop: "20px" }}
-                onClick={findTheme}
-              >
-                TEST
-            </Button>
             {selectedThemes.length === 0 && (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
@@ -293,13 +316,50 @@ const ResultCreate = () => {
                       >
                         Добавить
                       </Button>
+
                       <Divider orientation="center">Сильные стороны</Divider>
-                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+
+                      {activeTheme.strengths.length === 0 && (
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                      )}
+
+                      <TransitionGroup>
+                      {activeTheme.strengths.map(({ strengt, id }, index) => (
+                        <CSSTransition key={strengt.id} timeout={500} classNames="point">
+                        <div className="theme_item">
+                          <Form.Item
+                            key={id}
+                            name={id}
+                            label={`Сильная сторона ${index + 1}`}
+                            style={{ width: "100%", margin: "0px 0px 0px 0px" }}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Введите сильную сторону",
+                              },
+                            ]}
+                          >
+                            <Input showCount maxLength={500} allowClear onChange={e => changeStrengt(e.target.value, id)}/>
+                          </Form.Item>
+                          <Button
+                            type="primary"
+                            danger
+                            style={{ marginLeft: "20px" }}
+                            icon={<DeleteOutlined />}
+                            onClick={() => removeStrengt(id)}
+                          >
+                            Удалить
+                          </Button>
+                        </div>
+                        </CSSTransition>
+                      ))}
+                      </TransitionGroup>
+
                       <Button
                         type="primary"
                         style={{ width: "100%", marginBottom: "20px" }}
                         icon={<PlusOutlined />}
-                        // onClick={addTheme}
+                        onClick={addStrengt}
                       >
                         Добавить
                       </Button>
