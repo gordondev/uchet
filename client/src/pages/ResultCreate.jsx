@@ -6,6 +6,7 @@ import { fetchActualThemes, fetchActualChecklists } from "../http/resultAPI";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Context } from "../index";
 import shortid from 'shortid';
+import { debounce } from 'lodash';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -23,8 +24,6 @@ const ResultCreate = () => {
   const [activeKey, setActiveKey] = useState('1');
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useContext(Context);
-
-  console.log(themes);
 
   useEffect(() => {
     setIsLoading(true);
@@ -113,7 +112,7 @@ const ResultCreate = () => {
     setThemes(updatedThemes);
   };
 
-  const changePoint = (value, id) => {
+  const changePoint = debounce((value, id) => {
     const updatedThemes = themes.map((theme) => {
       if (theme.theme === activeKey) {
         const updatedPoint = theme.points_of_growths.map((point) => {
@@ -129,7 +128,7 @@ const ResultCreate = () => {
       }
     });
     setThemes(updatedThemes);
-  };
+  }, 500);
 
   const addStrengt = () => {
     const newStrengths = [...activeTheme.strengths];
@@ -146,7 +145,7 @@ const ResultCreate = () => {
     setThemes(updatedThemes);
   };
 
-  const changeStrengt = (value, id) => {
+  const changeStrengt = debounce((value, id) => {
     const updatedThemes = themes.map((theme) => {
       if (theme.theme === activeKey) {
         const updatedStrengt = theme.strengths.map((strengt) => {
@@ -162,7 +161,7 @@ const ResultCreate = () => {
       }
     });
     setThemes(updatedThemes);
-  };
+  }, 500);
 
   return (
     <section className="searchSection">
