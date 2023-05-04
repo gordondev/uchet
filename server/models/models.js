@@ -4,7 +4,7 @@ const { DataTypes } = require("sequelize");
 const User = sequelize.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, unique: true },
-  password: { type: DataTypes.STRING(500) },
+  password: { type: DataTypes.STRING(600) },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
   division: {
     type: DataTypes.ENUM(
@@ -34,12 +34,16 @@ const User = sequelize.define("user", {
   surname: { type: DataTypes.STRING(600) },
   patronymic: { type: DataTypes.STRING(600) },
   isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
-  activationLink: { type: DataTypes.STRING(500) },
+  isBlocked: { type: DataTypes.BOOLEAN, defaultValue: false },
+  activationLink: { type: DataTypes.STRING(600) },
 });
 
 const ProfilePhotoFiles = sequelize.define("profile_photo_files", {
   id: { type: DataTypes.STRING(600), primaryKey: true, unique: true },
-  name: { type: DataTypes.STRING(600) },
+  fileName: { type: DataTypes.STRING(600) },
+  filePath: { type: DataTypes.STRING(600) },
+  fileSize: { type: DataTypes.STRING(600) },
+  fileExtension: { type: DataTypes.STRING(600) },
   userId: { type: DataTypes.INTEGER },
 });
 
@@ -61,13 +65,19 @@ const VersionChecklist = sequelize.define("version_checklist", {
 
 const HeaderFiles = sequelize.define("header_files", {
   id: { type: DataTypes.STRING(600), primaryKey: true, unique: true },
-  name: { type: DataTypes.STRING(600) },
+  fileName: { type: DataTypes.STRING(600) },
+  filePath: { type: DataTypes.STRING(600) },
+  fileSize: { type: DataTypes.STRING(600) },
+  fileExtension: { type: DataTypes.STRING(600) },
   versionChecklistId: { type: DataTypes.INTEGER },
 });
 
 const CommentFiles = sequelize.define("comment_files", {
   id: { type: DataTypes.STRING(600), primaryKey: true, unique: true },
-  name: { type: DataTypes.STRING(600) },
+  fileName: { type: DataTypes.STRING(600) },
+  filePath: { type: DataTypes.STRING(600) },
+  fileSize: { type: DataTypes.STRING(600) },
+  fileExtension: { type: DataTypes.STRING(600) },
   versionChecklistId: { type: DataTypes.INTEGER },
 });
 
@@ -75,19 +85,22 @@ const Checklist = sequelize.define("checklist", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING },
   versionChecklistId: { type: DataTypes.INTEGER },
-  description: { type: DataTypes.STRING(500) },
+  description: { type: DataTypes.STRING(600) },
   userId: { type: DataTypes.INTEGER },
 });
 
 const ChecklistFiles = sequelize.define("checklist_files", {
   id: { type: DataTypes.STRING(600), primaryKey: true, unique: true },
-  name: { type: DataTypes.STRING(600) },
+  fileName: { type: DataTypes.STRING(600) },
+  filePath: { type: DataTypes.STRING(600) },
+  fileSize: { type: DataTypes.STRING(600) },
+  fileExtension: { type: DataTypes.STRING(600) },
   checklistId: { type: DataTypes.INTEGER },
 });
 
 const ChecklistContent = sequelize.define("checklist_content", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  content: { type: DataTypes.STRING(500) },
+  content: { type: DataTypes.STRING(600) },
   checklistId: { type: DataTypes.INTEGER },
 });
 
@@ -103,12 +116,15 @@ const ObservationResults = sequelize.define("observation_results", {
       "Выше требований"
     ),
   },
-  comment: { type: DataTypes.STRING(500) },
+  comment: { type: DataTypes.STRING(600) },
 });
 
 const ObservationResultsFiles = sequelize.define("observation_results_files", {
   id: { type: DataTypes.STRING(600), primaryKey: true, unique: true },
-  name: { type: DataTypes.STRING(600) },
+  fileName: { type: DataTypes.STRING(600) },
+  filePath: { type: DataTypes.STRING(600) },
+  fileSize: { type: DataTypes.STRING(600) },
+  fileExtension: { type: DataTypes.STRING(600) },
   observationResultId: { type: DataTypes.INTEGER },
 });
 
@@ -127,13 +143,13 @@ const ThemesResults = sequelize.define("themes_results", {
 const Strengths = sequelize.define("strengths", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   themesResultId: { type: DataTypes.INTEGER },
-  strength: { type: DataTypes.STRING(500) },
+  strength: { type: DataTypes.STRING(600) },
 });
 
 const PointsOfGrowth = sequelize.define("points_of_growth", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   themesResultId: { type: DataTypes.INTEGER },
-  point: { type: DataTypes.STRING(500) },
+  point: { type: DataTypes.STRING(600) },
 });
 
 const GradeObservationResults = sequelize.define("grade_observation_results", {

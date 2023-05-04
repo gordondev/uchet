@@ -10,20 +10,34 @@ const ApiError = require("../exceptions/api-error");
 const { Op } = require("sequelize");
 const path = require("path");
 const uuid = require("uuid");
+const mime = require('mime-types')
+const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const fileTypeDoc = "application/msword";
+const filePathHeader = "static/versionChecklist/headerFiles";
 
 async function saveHeaderFile(headerFile, id) {
-  let fileName = uuid.v4() + ".docx";
+  let fileId = uuid.v4();
+  let fileName;
+  if (mime.contentType(headerFile.name) === fileTypeDocx) {
+    fileName = fileId + ".docx";
+  } else {
+    fileName = fileId + ".doc";
+  }
+
   headerFile.mv(
     path.resolve(
       __dirname,
       "..",
-      "static/versionChecklist/headerFiles",
+      filePathHeader,
       fileName
     )
   );
   await HeaderFiles.create({
-    id: fileName,
-    name: headerFile.name,
+    id: fileId,
+    fileName: headerFile.name,
+    filePath: filePathHeader,
+    fileSize: headerFile.size,
+    fileExtension: headerFile.name.split(".").pop(),
     versionChecklistId: id,
   });
 }
@@ -99,6 +113,18 @@ async function destroyCommentFile(id) {
   }
 }
 
+function checkFileExtension(file) {
+  if (file != null) {
+    const fileType = mime.contentType(file.name);
+    console.log(fileType);
+    if (fileType != fileTypeDocx && fileType != fileTypeDoc) {
+      throw ApiError.BadRequest(
+        `Файл не является .doc или docx`
+      );
+    }
+  }
+}
+
 class VersionChecklistService {
   async createVersionChecklist(
     id,
@@ -120,6 +146,10 @@ class VersionChecklistService {
         `Версия чек-листа с номером ${id} уже существует`
       );
     }
+
+    checkFileExtension(headerFile);
+    checkFileExtension(commentFile);
+
     if (actualKey == "Актуально") {
       VersionChecklist.update(
         { actualKey: "Не актуально" },

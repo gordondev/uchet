@@ -1,5 +1,6 @@
 const versionChecklist = require("../service/versionChecklist-service");
 const ApiError = require("../exceptions/api-error");
+const mime = require('mime-types')
 
 class VersionChecklistController {
   async create(req, res, next) {
@@ -16,46 +17,27 @@ class VersionChecklistController {
         title,
       } = req.body;
 
-      if (!req.files) {
-        const versionChecklistData =
-          await versionChecklist.createVersionChecklist(
-            id,
-            actualKey,
-            userId,
-            quanityType,
-            reasonForUse,
-            acceptanceDate,
-            comment,
-            null,
-            null,
-            theme,
-            title
-          );
-        return res.json(versionChecklistData);
-      } else {
-        const { headerFile } = req.files;
-        const { commentFile } = req.files;
+      const { headerFile, commentFile } = req.files || {};
 
-        const versionChecklistData =
-          await versionChecklist.createVersionChecklist(
-            id,
-            actualKey,
-            userId,
-            quanityType,
-            reasonForUse,
-            acceptanceDate,
-            comment,
-            headerFile,
-            commentFile,
-            theme,
-            title
-          );
-        return res.json(versionChecklistData);
-      }
+      const versionChecklistData = await versionChecklist.createVersionChecklist(
+        id,
+        actualKey,
+        userId,
+        quanityType,
+        reasonForUse,
+        acceptanceDate,
+        comment,
+        headerFile || null,
+        commentFile || null,
+        theme,
+        title
+      );
+      
+      return res.json(versionChecklistData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
-  }
+  };
 
   async getAll(req, res, next) {
     try {
@@ -112,48 +94,26 @@ class VersionChecklistController {
         commentIsDeleted,
       } = req.body;
 
-      if (!req.files) {
-        const versionChecklistData = await versionChecklist.updateOne(
-          updateId,
-          id,
-          actualKey,
-          userId,
-          quanityType,
-          reasonForUse,
-          acceptanceDate,
-          comment,
-          theme,
-          title,
-          null,
-          null,
-          headerIsDeleted,
-          commentIsDeleted
-        );
-        return res.json(versionChecklistData);
-      } else {
-        const { headerFile } = req.files;
-        const { commentFile } = req.files;
+      const { headerFile, commentFile } = req.files || {};
 
-        const versionChecklistData = await versionChecklist.updateOne(
-          updateId,
-          id,
-          actualKey,
-          userId,
-          quanityType,
-          reasonForUse,
-          acceptanceDate,
-          comment,
-          theme,
-          title,
-          headerFile,
-          commentFile,
-          headerIsDeleted,
-          commentIsDeleted
-        );
-        return res.json(versionChecklistData);
-      }
+      const versionChecklistData = await versionChecklist.updateOne(
+        updateId,
+        id,
+        actualKey,
+        userId,
+        quanityType,
+        reasonForUse,
+        acceptanceDate,
+        comment,
+        headerFile || null,
+        commentFile || null,
+        theme,
+        title,
+        headerIsDeleted,
+        commentIsDeleted
+      );
 
-      return res.json({ message: `Данные чек-листа - ${id} были обновленны` });
+      return res.json(versionChecklistData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }

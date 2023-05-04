@@ -19,3 +19,6 @@
 
 /server/node_modules
 /server/.env
+/server/static/checklist/contents
+/server/static/versionChecklist/commentFiles
+/server/static/versionChecklist/headerFiles
