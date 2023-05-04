@@ -166,7 +166,7 @@ const ResultCreate = () => {
       <div className="container">
         <Form>
           <div className="defaultForm">
-            <Title level={4} style={{ marginBottom: "20px" }}>Подраздиление: {user.user.division}</Title>
+            <Title level={4} style={{ marginBottom: "20px" }}>Подразделение: {user.user.division}</Title>
             <div className="defaultForm__tile">
               <Form.Item
                 name="title"
@@ -184,7 +184,7 @@ const ResultCreate = () => {
               </Form.Item>
 
               <Form.Item
-                name="select"
+                name="impactOnSafety"
                 label="Влияние на безопасность"
                 hasFeedback
                 style={{ width: "500px", marginLeft: "10px" }}
@@ -406,7 +406,7 @@ const ResultCreate = () => {
                 />
             </Form.Item>
             <Form.Item
-              name="select"
+              name="finalGrade"
               label="Итоговая оценка"
               hasFeedback
               style={{ width: "100%", marginTop: "20px" }}
