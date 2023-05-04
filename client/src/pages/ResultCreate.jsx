@@ -5,6 +5,7 @@ import { SaveOutlined, PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-
 import { fetchActualThemes, fetchActualChecklists } from "../http/resultAPI";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Context } from "../index";
+import shortid from 'shortid';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -22,6 +23,8 @@ const ResultCreate = () => {
   const [activeKey, setActiveKey] = useState('1');
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useContext(Context);
+
+  console.log(themes);
 
   useEffect(() => {
     setIsLoading(true);
@@ -63,7 +66,7 @@ const ResultCreate = () => {
     setSelectedChecklists(value);
     value.forEach(checklist => {
       if (!activeTheme.grades.some(({ checklist: c }) => c === checklist)) {
-        activeTheme.grades.push({ checklist, grade: '', id: Date.now() });
+        activeTheme.grades.push({ checklist, grade: '', id: shortid.generate() });
       }
     });
 
@@ -77,7 +80,7 @@ const ResultCreate = () => {
 
   const addPoint = () => {
     const newPointsOfGrowth = [...activeTheme.points_of_growths];
-    newPointsOfGrowth.push({ point: '', id: Date.now() });
+    newPointsOfGrowth.push({ point: '', id: shortid.generate() });
     const updatedActiveTheme = { ...activeTheme, points_of_growths: newPointsOfGrowth };
     const updatedThemes = themes.map((theme) => (theme.theme === activeTheme.theme ? updatedActiveTheme : theme));
     setThemes(updatedThemes);
@@ -130,7 +133,7 @@ const ResultCreate = () => {
 
   const addStrengt = () => {
     const newStrengths = [...activeTheme.strengths];
-    newStrengths.push({ strengt: '', id: Date.now() });
+    newStrengths.push({ strengt: '', id: shortid.generate() });
     const updatedActiveTheme = { ...activeTheme, strengths: newStrengths };
     const updatedThemes = themes.map((theme) => (theme.theme === activeTheme.theme ? updatedActiveTheme : theme));
     setThemes(updatedThemes);
