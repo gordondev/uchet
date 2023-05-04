@@ -21,8 +21,11 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-const { Dragger } = Upload;
+import shortid from 'shortid';
+import { debounce } from 'lodash';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
+const { Dragger } = Upload;
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -59,7 +62,7 @@ const VersionChecklistCreate = observer(() => {
 
   const addTheme = () => {
     setCount(count + 1);
-    setTheme([...theme, { theme: "", number: Date.now() }]);
+    setTheme([...theme, { theme: "", number: shortid.generate() }]);
   };
 
   const removeTheme = (number) => {
@@ -67,11 +70,13 @@ const VersionChecklistCreate = observer(() => {
     setTheme(theme.filter((i) => i.number !== number));
   };
 
-  const changeTheme = (value, number) => {
+  const changeTheme = debounce((value, number) => {
     setTheme(
       theme.map((i) => (i.number === number ? { ...i, ["theme"]: value } : i))
     );
-  };
+  }, 500);
+
+  console.log(theme);
 
   const addVersion = async () => {
     setDataIsSent(true);
@@ -97,6 +102,7 @@ const VersionChecklistCreate = observer(() => {
   };
 
   const beforeUploadHeaderFile = (file) => {
+    console.log(file);
     const isDocx =
       file.type ===
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -206,11 +212,15 @@ const VersionChecklistCreate = observer(() => {
               {theme.length === 0 && (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
               )}
+
+              <TransitionGroup>
               {theme.map((i) => (
+                <CSSTransition key={i.number} timeout={500} classNames="point">
                 <div className="theme_item">
                   <Form.Item
+                    key={i.number}
                     name={i.number}
-                    label="Название темы"
+                    label="Название темы: "
                     style={{ marginTop: "23px", width: "100%" }}
                     onChange={(e) => changeTheme(e.target.value, i.number)}
                     rules={[
@@ -220,7 +230,7 @@ const VersionChecklistCreate = observer(() => {
                       },
                     ]}
                   >
-                    <Input allowClear />
+                    <Input allowClear showCount maxLength={500}/>
                   </Form.Item>
                   <Button
                     type="primary"
@@ -232,7 +242,9 @@ const VersionChecklistCreate = observer(() => {
                     Удалить
                   </Button>
                 </div>
+                </CSSTransition>
               ))}
+              </TransitionGroup>
 
               <Button
                 type="primary"
