@@ -108,14 +108,16 @@ const ObservationResults = sequelize.define("observation_results", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   userId: { type: DataTypes.INTEGER },
   division: { type: DataTypes.STRING },
-  impact_on_save: { type: DataTypes.ENUM("Нет", "Да") },
-  final_grade: {
+  impactOnSave: { type: DataTypes.ENUM("Нет", "Да") },
+  resultOfChecking: { type: DataTypes.ENUM("Не принято", "Принято") },
+  finalGrade: {
     type: DataTypes.ENUM(
       "Ниже требований",
       "Соответствуют требованиям",
       "Выше требований"
     ),
   },
+  rejectionСomment: { type: DataTypes.STRING(600) },
   comment: { type: DataTypes.STRING(600) },
 });
 
