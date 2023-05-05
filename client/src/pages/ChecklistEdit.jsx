@@ -20,12 +20,21 @@ import {
   DeleteOutlined,
   SaveOutlined,
   UploadOutlined,
-  FileWordOutlined,
+  FileOutlined,
 } from "@ant-design/icons";
 import { fetchOneChecklist } from "../http/checklistAPI";
 import { useParams, useNavigate } from "react-router-dom";
 import { CHECKLIST_ROUTE } from "../utils/consts";
 import { observer } from "mobx-react-lite";
+import shortid from 'shortid';
+import { debounce } from 'lodash';
+import docxImage from "../images/docx.png";
+import docImage from "../images/doc.png";
+import { getConvertedFileSize } from '../utils/getConvertedFileSize';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
+const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const fileTypeDoc = "application/msword";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -43,6 +52,8 @@ const ChecklistEdit = observer(() => {
   const [versionChecklistId, setVersionChecklistId] = useState(null);
   const [file, setFile] = useState("");
   const [nameFile, setNameFile] = useState("");
+  const [fileSize, setFileSize] = useState("");
+  const [fileExtension, setFileExtension] = useState("");
   const [fileIsDeleted, setFileIsDeleted] = useState("");
   const [dataIsSent, setDataIsSent] = useState(false);
   const navigate = useNavigate();
@@ -57,7 +68,9 @@ const ChecklistEdit = observer(() => {
       setDescription(data.description);
       setContent(data.checklist_contents);
       setName(data?.name);
-      setNameFile(data?.checklist_files[0]?.name);
+      setNameFile(data?.checklist_files[0]?.fileName);
+      setFileExtension(data?.checklist_files[0]?.fileExtension);
+      setFileSize(data?.checklist_files[0]?.fileSize);
       setVersionChecklistId(data?.versionChecklistId);
     });
     setIsLoading(false);
@@ -71,11 +84,11 @@ const ChecklistEdit = observer(() => {
     setContent(content.filter((i) => i.id !== id));
   };
 
-  const changeContent = (value, id) => {
+  const changeContent = debounce((value, id) => {
     setContent(
       content.map((i) => (i.id === id ? { ...i, ["content"]: value } : i))
     );
-  };
+  }, 500);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -94,18 +107,23 @@ const ChecklistEdit = observer(() => {
     maxCount: 1,
   };
 
-  const beforeUploadFile = (file_) => {
+  const beforeUploadFile = (file) => {
     const isDocx =
-      file_.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    if (!isDocx) {
-      message.error("Вы можете загрузить только .docx файл");
+      file.type ===
+      fileTypeDocx;
+    const isDoc = file.type ===
+      fileTypeDoc;
+      
+    if (!isDocx && !isDoc) {
+      message.error("Вы можете загрузить только .docx .doc файл");
     } else {
-      setNameFile(file_.name);
-      setFile(file_);
+      setFile(file);
+      setNameFile(file.name);
+      setFileSize(file.size);
+      setFileExtension(file.name.split(".").pop());
       setFileIsDeleted("");
     }
-    return !isDocx;
+    return !isDocx && !isDoc;
   };
 
   const updateChecklist = async () => {
@@ -154,7 +172,7 @@ const ChecklistEdit = observer(() => {
                     name="title"
                     label="Название темы"
                     style={{ width: "100%", marginRight: "10px" }}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={debounce((e) => setName(e.target.value), 500)}
                   >
                     <Input placeholder={name} allowClear />
                   </Form.Item>
@@ -163,7 +181,7 @@ const ChecklistEdit = observer(() => {
                     name="version"
                     label="Версиия"
                     style={{ width: "100%", marginLeft: "10px" }}
-                    onChange={(e) => setVersionChecklistId(e.target.value)}
+                    onChange={debounce((e) => setVersionChecklistId(e.target.value), 500)}
                   >
                     <Input
                       placeholder={versionChecklistId}
@@ -191,8 +209,9 @@ const ChecklistEdit = observer(() => {
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 )}
 
+                <TransitionGroup>
                 {content.map((i) => (
-                  <>
+                  <CSSTransition key={i.id} timeout={500} classNames="point">
                     <div className="theme_item">
                       <Form.Item
                         name={i.id}
@@ -219,8 +238,9 @@ const ChecklistEdit = observer(() => {
                         Удалить
                       </Button>
                     </div>
-                  </>
+                  </CSSTransition>
                 ))}
+                </TransitionGroup>
 
                 <Button
                   type="primary"
@@ -235,9 +255,22 @@ const ChecklistEdit = observer(() => {
                   <List.Item>
                     {nameFile ? (
                       <>
+                      <div className="fileElement">
+                        {fileExtension === "docx" ? (
+                          <img src={docxImage} alt="docx" style={{ marginRight: "5px" }}/>
+                          ) : (
+                            <img src={docImage} alt="doc" style={{ marginRight: "5px" }}/>
+                          )
+                        }
                         <Text type="secondary">
-                          <FileWordOutlined /> {nameFile}
+                          {nameFile}
                         </Text>
+                      </div>
+
+                      <Text type="secondary">
+                        {getConvertedFileSize(fileSize)}
+                      </Text>
+
                         <Button
                           type="primary"
                           danger
@@ -254,7 +287,7 @@ const ChecklistEdit = observer(() => {
                     ) : (
                       <>
                         <Text type="secondary">
-                          <FileWordOutlined /> Прикрепите файл содержания
+                          <FileOutlined /> Прикрепите файл содержания
                         </Text>
                         <Upload {...props} beforeUpload={beforeUploadFile}>
                           <Button icon={<UploadOutlined />}>

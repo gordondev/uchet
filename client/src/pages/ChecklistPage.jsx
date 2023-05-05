@@ -9,6 +9,9 @@ import { useParams } from "react-router-dom";
 import { fetchOneChecklist, download } from "../http/checklistAPI";
 import { observer } from "mobx-react-lite";
 import { saveAs } from "file-saver";
+import docxImage from "../images/docx.png";
+import docImage from "../images/doc.png";
+import { getConvertedFileSize } from '../utils/getConvertedFileSize';
 
 const { Title, Text } = Typography;
 
@@ -45,7 +48,7 @@ const ChecklistPage = observer(() => {
       var blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
-      FileSaver.saveAs(blob, checklist?.checklist_files[0]?.name);
+      FileSaver.saveAs(blob, checklist?.checklist_files[0]?.fileName);
     } catch (e) {
       message.error(e.response?.data?.message);
     }
@@ -108,12 +111,24 @@ const ChecklistPage = observer(() => {
                 renderItem={(item) => <List.Item>{item}</List.Item>}
               >
                 <List.Item>
-                  {checklist?.checklist_files[0]?.name ? (
+                  {checklist?.checklist_files[0]?.fileName ? (
                     <>
+                      <div className="fileElement">
+                        {checklist?.checklist_files[0]?.fileExtension === "docx" ? (
+                          <img src={docxImage} alt="docx" style={{ marginRight: "5px" }}/>
+                          ) : (
+                            <img src={docImage} alt="docx" style={{ marginRight: "5px" }}/>
+                          )
+                        }
+                        <Text type="secondary">
+                          {checklist?.checklist_files[0]?.fileName}
+                        </Text>
+                      </div>
+
                       <Text type="secondary">
-                        <FileWordOutlined />{" "}
-                        {checklist?.checklist_files[0]?.name}
+                        {getConvertedFileSize(checklist?.checklist_files[0]?.fileSize)}
                       </Text>
+
                       <Button
                         type="primary"
                         icon={<DownloadOutlined />}

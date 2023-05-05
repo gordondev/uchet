@@ -10,13 +10,28 @@ const ChecklistDto = require("../dtos/checklist-dto");
 const { Op } = require("sequelize");
 const path = require("path");
 const uuid = require("uuid");
+const mime = require('mime-types')
+const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const fileTypeDoc = "application/msword";
+const filePath = "static/checklist/contents";
 
 async function saveFile(file, id) {
-  let fileName = uuid.v4() + ".docx";
-  file.mv(path.resolve(__dirname, "..", "static/checklist/contents", fileName));
+  let fileId = uuid.v4();
+  let fileName;
+  if (mime.contentType(file.name) === fileTypeDocx) {
+    fileName = fileId + ".docx";
+  } else {
+    fileName = fileId + ".doc";
+  }
+
+  file.mv(path.resolve(__dirname, "..", filePath, fileName));
+
   await ChecklistFiles.create({
-    id: fileName,
-    name: file.name,
+    id: fileId,
+    fileName: file.name,
+    filePath: filePath,
+    fileSize: file.size,
+    fileExtension: file.name.split(".").pop(),
     checklistId: id,
   });
 }
@@ -33,13 +48,26 @@ async function destroyFile(id) {
       where: { checklistId: id },
     });
     fs.unlink(
-      path.resolve(__dirname, "..", "static/checklist/contents", file.id),
+      path.resolve(__dirname, "..", filePath, file.id + "." + file.fileExtension),
       function (err) {
         if (err) {
           console.log(err);
         }
       }
     );
+  }
+}
+
+function checkFileExtension(file) {
+  console.log(file);
+  if (file != null) {
+    const fileType = mime.contentType(file.name);
+    console.log(fileType);
+    if (fileType != fileTypeDocx && fileType != fileTypeDoc) {
+      throw ApiError.BadRequest(
+        `${file.name} не является .doc или docx`
+      );
+    }
   }
 }
 
@@ -52,6 +80,9 @@ class ChecklistService {
     userId,
     contents
   ) {
+
+    checkFileExtension(file);
+
     const versionQuanity = await VersionChecklist.findOne({
       where: { id: versionChecklistId },
     });
@@ -104,45 +135,25 @@ class ChecklistService {
     const pathFile = path.resolve(
       __dirname,
       "..",
-      "static/checklist/contents",
-      fileItem.id
+      filePath,
+      fileItem.id + "." + fileItem.fileExtension
     );
 
     return { pathFile, fileItem };
   }
 
   async getAll(limit, offset, versionChecklistId, name) {
-    let checklist;
-    if (versionChecklistId && name) {
-      checklist = await Checklist.findAndCountAll({
+    const where = {};
+    if (name) where.name = { [Op.iLike]: `%${name}%` };
+    if (versionChecklistId) where.versionChecklistId = versionChecklistId;
+
+    const checklist = await Checklist.findAndCountAll({
         limit,
         offset,
-        where: {
-          name: { [Op.iLike]: `%${name}%` },
-          versionChecklistId: versionChecklistId,
-        },
-      });
-    } else if (name) {
-      checklist = await Checklist.findAndCountAll({
-        limit,
-        offset,
-        where: {
-          name: { [Op.iLike]: `%${name}%` },
-        },
-      });
-    } else if (versionChecklistId) {
-      checklist = await Checklist.findAndCountAll({
-        limit,
-        offset,
-        where: {
-          versionChecklistId: versionChecklistId,
-        },
-      });
-    } else {
-      checklist = await Checklist.findAndCountAll({ limit, offset });
-    }
+        where,
+    });
     return checklist;
-  }
+  } 
 
   async getOne(id) {
     const checklist = await Checklist.findOne({
@@ -171,6 +182,9 @@ class ChecklistService {
     file,
     fileIsDeleted
   ) {
+    
+    checkFileExtension(file);
+    
     const checklist = await Checklist.update(
       {
         name: name,
@@ -200,43 +214,25 @@ class ChecklistService {
 
       if (candidateContent) {
         oldContents.forEach((oldItem) => {
-          if (newContents.find((el) => el.id == oldItem.id)) {
-            console.log("\n\nСОВПАДЕНИЕ!\n\n", `UPDATE ${oldItem.id}`);
-            let updateContent = newContents.find(
-              (el) => el.id == oldItem.id
-            ).content;
+          const newContent = newContents.find((el) => el.id === oldItem.id);
+          if (newContent) {
             ChecklistContent.update(
-              {
-                content: updateContent,
-                checklistId: id,
-              },
-              {
-                where: { id: oldItem.id },
-              }
+              { content: newContent.content, checklistId: id },
+              { where: { id: oldItem.id } }
             );
           } else {
-            console.log(`\n\nУДАЛЯЕМ ${oldItem.id}\n\n`);
-            ChecklistContent.destroy({
-              where: { id: oldItem.id },
-            });
+            ChecklistContent.destroy({ where: { id: oldItem.id } });
           }
         });
         newContents.forEach((item) => {
-          if (!oldContents.find((el) => el.id == item.id)) {
-            console.log(`\n\nCREATE NEW CONTENT ${item.id}\n\n`);
-            ChecklistContent.create({
-              content: item.content,
-              checklistId: id,
-            });
+          if (!oldContents.find((el) => el.id === item.id)) {
+            ChecklistContent.create({ content: item.content, checklistId: id });
           }
         });
       } else {
-        newContents.forEach((i) =>
-          ChecklistContent.create({
-            content: i.content,
-            checklistId: id,
-          })
-        );
+        newContents.forEach((item) => {
+          ChecklistContent.create({ content: item.content, checklistId: id });
+        });
       }
     }
   }

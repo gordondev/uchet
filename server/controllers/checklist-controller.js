@@ -7,28 +7,18 @@ class ChecklistController {
       const { name, versionChecklistId, description, userId, contents } =
         req.body;
 
-      if (!req.files) {
-        const checklistData = await checklist.createChecklist(
-          name,
-          versionChecklistId,
-          description,
-          null,
-          userId,
-          contents
-        );
-        return res.json(checklistData);
-      } else {
-        const { file } = req.files;
-        const checklistData = await checklist.createChecklist(
-          name,
-          versionChecklistId,
-          description,
-          file,
-          userId,
-          contents
-        );
-        return res.json(checklistData);
-      }
+      const file = req.files?.file || null;
+
+      const checklistData = await checklist.createChecklist(
+        name,
+        versionChecklistId,
+        description,
+        file,
+        userId,
+        contents
+      );
+
+      return res.json(checklistData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }

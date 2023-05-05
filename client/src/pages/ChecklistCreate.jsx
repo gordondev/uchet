@@ -18,6 +18,12 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 import { createChecklist } from "../http/checklistAPI";
+import shortid from 'shortid';
+import { debounce } from 'lodash';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
+const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const fileTypeDoc = "application/msword";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -35,8 +41,10 @@ const ChecklistCreate = () => {
   const [dataIsSent, setDataIsSent] = useState(false);
 
   const addContent = () => {
-    setContent([...content, { content: "", id: Date.now() }]);
+    setContent([...content, { content: "", id: shortid.generate() }]);
   };
+
+  console.log(content);
 
   const removeContent = (id) => {
     setContent(content.filter((i) => i.id !== id));
@@ -75,13 +83,16 @@ const ChecklistCreate = () => {
   const beforeUploadFile = (file) => {
     const isDocx =
       file.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    if (!isDocx) {
-      message.error("Вы можете загрузить только .docx файл");
+      fileTypeDocx;
+    const isDoc = file.type ===
+      fileTypeDoc;
+      
+    if (!isDocx && !isDoc) {
+      message.error("Вы можете загрузить только .docx .doc файл");
     } else {
       setFile(file);
     }
-    return !isDocx;
+    return !isDocx && !isDoc;
   };
 
   const removeFile = () => {
@@ -98,7 +109,7 @@ const ChecklistCreate = () => {
                 name="title"
                 label="Название темы"
                 style={{ width: "100%", marginRight: "10px" }}
-                onChange={(e) => setName(e.target.value)}
+                onChange={debounce((e) => setName(e.target.value), 500)}
                 rules={[
                   {
                     required: true,
@@ -113,7 +124,7 @@ const ChecklistCreate = () => {
                 name="version"
                 label="Версиия"
                 style={{ width: "100%", marginLeft: "10px" }}
-                onChange={(e) => setVersionChecklist(e.target.value)}
+                onChange={debounce((e) => setVersionChecklist(e.target.value), 500)}
                 rules={[
                   {
                     required: true,
@@ -142,7 +153,7 @@ const ChecklistCreate = () => {
               <TextArea
                 allowClear
                 rows={4}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={debounce((e) => setDescription(e.target.value), 500)}
                 showCount
                 placeholder="Введите описание"
                 maxLength={500}
@@ -169,15 +180,16 @@ const ChecklistCreate = () => {
             {content.length === 0 && (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
+            <TransitionGroup>
             {content.map((i) => (
-              <>
+              <CSSTransition key={i.id} timeout={500} classNames="point">
                 <div className="theme_item">
                   <Form.Item
                     name={i.id}
                     label="Содержние"
                     rows={4}
                     style={{ marginTop: "23px", width: "100%" }}
-                    onChange={(e) => changeContent(e.target.value, i.id)}
+                    onChange={debounce((e) => changeContent(e.target.value, i.id), 500)}
                     rules={[
                       {
                         required: true,
@@ -198,8 +210,10 @@ const ChecklistCreate = () => {
                     Удалить
                   </Button>
                 </div>
-              </>
+              </CSSTransition>
             ))}
+            </TransitionGroup>
+            
             <Button
               type="primary"
               style={{ width: "100%", marginBottom: "20px" }}
