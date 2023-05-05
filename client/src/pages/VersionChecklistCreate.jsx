@@ -172,7 +172,7 @@ const VersionChecklistCreate = observer(() => {
                     prefix="№"
                     style={{ width: "200px" }}
                     placeholder="Введите № версии"
-                    onChange={(value) => setId(value)}
+                    onChange={debounce((value) => setId(value), 500)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -212,7 +212,7 @@ const VersionChecklistCreate = observer(() => {
                     whitespace: true,
                   },
                 ]}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={debounce((e) => setTitle(e.target.value), 500)}
               >
                 <Input allowClear placeholder="Введите название версии" />
               </Form.Item>
@@ -331,9 +331,9 @@ const VersionChecklistCreate = observer(() => {
                   allowClear
                   placeholder="Выберите дату"
                   style={{ width: "100%" }}
-                  onChange={(date, dateString) => {
+                  onChange={debounce((date, dateString) => {
                     setAcceptanceDate(dateString);
-                  }}
+                  }, 500)}
                 />
               </Form.Item>
               <Form.Item
@@ -349,7 +349,7 @@ const VersionChecklistCreate = observer(() => {
                 <TextArea
                   allowClear
                   rows={4}
-                  onChange={(e) => setReasonForUse(e.target.value)}
+                  onChange={debounce((e) => setReasonForUse(e.target.value), 500)}
                   showCount
                   placeholder="Введите основание использования"
                   maxLength={500}
@@ -368,7 +368,7 @@ const VersionChecklistCreate = observer(() => {
                 <TextArea
                   allowClear
                   rows={4}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={debounce((e) => setComment(e.target.value), 500)}
                   showCount
                   placeholder="Введите примечание"
                   maxLength={500}

@@ -19,7 +19,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
   SaveOutlined,
-  FileWordOutlined,
+  FileOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
@@ -33,6 +33,7 @@ import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
 import docxImage from "../images/docx.png";
 import docImage from "../images/doc.png";
 import { getConvertedFileSize } from '../utils/getConvertedFileSize';
+import { debounce } from 'lodash';
 
 const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const fileTypeDoc = "application/msword";
@@ -160,9 +161,9 @@ const VersionChecklistEdit = observer(() => {
     setTheme(theme.filter((i) => i.id !== id));
   };
 
-  const changeTheme = (value, id) => {
+  const changeTheme = debounce((value, id) => {
     setTheme(theme.map((i) => (i.id === id ? { ...i, ["title"]: value } : i)));
-  };
+  }, 500);
 
   const props = {
     name: "file",
@@ -239,7 +240,7 @@ const VersionChecklistEdit = observer(() => {
                         min={1}
                         placeholder={updateId}
                         prefix="№"
-                        onChange={(value) => setUpdateId(value)}
+                        onChange={debounce((value) => setUpdateId(value), 500)}
                         style={{ width: "200px" }}
                         rules={[
                           {
@@ -286,7 +287,7 @@ const VersionChecklistEdit = observer(() => {
                   <Form.Item
                     name="title"
                     label="Название версии"
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={debounce((e) => setTitle(e.target.value), 500)}
                   >
                     <Input allowClear placeholder={title} />
                   </Form.Item>
@@ -376,7 +377,7 @@ const VersionChecklistEdit = observer(() => {
                         ) : (
                           <>
                             <Text type="secondary">
-                              <FileWordOutlined /> Прикрепите файл шапки
+                              <FileOutlined /> Прикрепите файл шапки
                             </Text>
                             <Upload
                               {...props}
@@ -425,7 +426,7 @@ const VersionChecklistEdit = observer(() => {
                         ) : (
                           <>
                             <Text type="secondary">
-                              <FileWordOutlined /> Прикрепите файл комментария
+                              <FileOutlined /> Прикрепите файл комментария
                             </Text>
                             <Upload
                               {...props}
