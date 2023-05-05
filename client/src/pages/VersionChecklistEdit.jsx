@@ -30,6 +30,12 @@ import {
 } from "../http/versionChecklistAPI";
 import { observer } from "mobx-react-lite";
 import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
+import docxImage from "../images/docx.png";
+import docImage from "../images/doc.png";
+import { getConvertedFileSize } from '../utils/getConvertedFileSize';
+
+const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const fileTypeDoc = "application/msword";
 
 const { Option } = Select;
 const { Title, Text, Paragraph } = Typography;
@@ -64,7 +70,11 @@ const VersionChecklistEdit = observer(() => {
   const [reasonForUse, setReasonForUse] = useState("");
   const [comment, setComment] = useState("");
   const [headerFileName, setHeaderFileName] = useState("");
+  const [headerFileSize, setHeaderFileSize] = useState("");
+  const [headerFileExtension, setHeaderFileExtension] = useState("");
   const [commentFileName, setCommentFileName] = useState("");
+  const [commentFileSize, setCommentFileSize] = useState("");
+  const [commentFileExtension, setCommentFileExtension] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [headerIsDeleted, setHeaderIsDeleted] = useState("");
   const [commentIsDeleted, setCommentIsDeleted] = useState("");
@@ -120,6 +130,7 @@ const VersionChecklistEdit = observer(() => {
   useEffect(() => {
     setIsLoading(true);
     fetchOneVersion(id).then((data) => {
+      console.log(data);
       setVersion(data);
       setActualKey(data.actualKey);
       setTheme(data.themes);
@@ -128,8 +139,12 @@ const VersionChecklistEdit = observer(() => {
       setReasonForUse(data.reasonForUse);
       setAcceptanceDate(data.acceptanceDate);
       setComment(data.comment);
-      setHeaderFileName(data?.header_files[0]?.name);
-      setCommentFileName(data?.comment_files[0]?.name);
+      setHeaderFileName(data?.header_files[0]?.fileName);
+      setHeaderFileSize(data?.header_files[0]?.fileSize);
+      setHeaderFileExtension(data?.header_files[0]?.fileExtension);
+      setCommentFileName(data?.comment_files[0]?.fileName);
+      setCommentFileSize(data?.comment_files[0]?.fileSize);
+      setCommentFileExtension(data?.comment_files[0]?.fileExtension);
       setTitle(data.title);
     });
     setIsLoading(false);
@@ -158,29 +173,39 @@ const VersionChecklistEdit = observer(() => {
   const beforeUploadHeaderFile = (file) => {
     const isDocx =
       file.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    if (!isDocx) {
-      message.error("Вы можете загрузить только .docx файл");
+      fileTypeDocx;
+    const isDoc = file.type ===
+      fileTypeDoc;
+
+    if (!isDocx && !isDoc) {
+      message.error("Вы можете загрузить только .docx .doc файл");
     } else {
-      setHeaderFileName(file.name);
       setHeaderFile(file);
+      setHeaderFileName(file.name);
+      setHeaderFileSize(file.size);
+      setHeaderFileExtension(file.name.split(".").pop());
       setHeaderIsDeleted("");
     }
-    return !isDocx;
+    return !isDocx && !isDoc;
   };
 
   const beforeUploadCommentFile = (file) => {
     const isDocx =
       file.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    if (!isDocx) {
-      message.error("Вы можете загрузить только .docx файл");
+      fileTypeDocx;
+    const isDoc = file.type ===
+      fileTypeDoc;
+      
+    if (!isDocx && !isDoc) {
+      message.error("Вы можете загрузить только .docx .doc файл");
     } else {
-      setCommentFileName(file.name);
       setCommentFile(file);
+      setCommentFileName(file.name);
+      setCommentFileSize(file.size);
+      setCommentFileExtension(file.name.split(".").pop());
       setCommentIsDeleted("");
     }
-    return !isDocx;
+    return !isDocx && !isDoc;
   };
 
   return (
@@ -319,9 +344,22 @@ const VersionChecklistEdit = observer(() => {
                       <List.Item>
                         {headerFileName ? (
                           <>
+                          <div className="fileElement">
+                          {headerFileExtension === "docx" ? (
+                            <img src={docxImage} alt="docx" style={{ marginRight: "5px" }}/>
+                            ) : (
+                              <img src={docImage} alt="docx" style={{ marginRight: "5px" }}/>
+                            )
+                          }
                             <Text type="secondary">
-                              <FileWordOutlined /> {headerFileName}
+                              {headerFileName}
                             </Text>
+                          </div>
+
+                          <Text type="secondary">
+                            {getConvertedFileSize(headerFileSize)}
+                          </Text>
+
                             <Button
                               type="primary"
                               danger
@@ -355,9 +393,22 @@ const VersionChecklistEdit = observer(() => {
                       <List.Item>
                         {commentFileName ? (
                           <>
+                          <div className="fileElement">
+                          {commentFileExtension === "docx" ? (
+                            <img src={docxImage} alt="docx" style={{ marginRight: "5px" }}/>
+                            ) : (
+                              <img src={docImage} alt="docx" style={{ marginRight: "5px" }}/>
+                            )
+                          }
                             <Text type="secondary">
-                              <FileWordOutlined /> {commentFileName}
+                              {commentFileName}
                             </Text>
+                          </div>
+
+                          <Text type="secondary">
+                            {getConvertedFileSize(commentFileSize)}
+                          </Text>
+
                             <Button
                               type="primary"
                               danger

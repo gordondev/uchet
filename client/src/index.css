@@ -338,3 +338,8 @@ ul {
   transform: translateY(-20px);
   transition: all 500ms;
 }
+
+.fileElement {
+  display: flex;
+  align-items: center;
+}

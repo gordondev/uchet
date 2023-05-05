@@ -32,6 +32,9 @@ const { Option } = Select;
 const ReachableContext = createContext(null);
 const UnreachableContext = createContext(null);
 
+const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const fileTypeDoc = "application/msword";
+
 const config = {
   title: "Предупреждение!",
   content: (
@@ -102,16 +105,18 @@ const VersionChecklistCreate = observer(() => {
   };
 
   const beforeUploadHeaderFile = (file) => {
-    console.log(file);
     const isDocx =
       file.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    if (!isDocx) {
-      message.error("Вы можете загрузить только .docx файл");
+      fileTypeDocx;
+    const isDoc = file.type ===
+      fileTypeDoc;
+
+    if (!isDocx && !isDoc) {
+      message.error("Вы можете загрузить только .docx .doc файл");
     } else {
       setHeaderFile(file);
     }
-    return !isDocx;
+    return !isDocx && !isDoc;
   };
 
   const removeHeaderFile = () => {
@@ -121,13 +126,16 @@ const VersionChecklistCreate = observer(() => {
   const beforeUploadCommentFile = (file) => {
     const isDocx =
       file.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    if (!isDocx) {
-      message.error("Вы можете загрузить только .docx файл");
+      fileTypeDocx;
+    const isDoc = file.type ===
+      fileTypeDoc;
+      
+    if (!isDocx && !isDoc) {
+      message.error("Вы можете загрузить только .docx .doc файл");
     } else {
       setCommentFile(file);
     }
-    return !isDocx;
+    return !isDocx && !isDoc;
   };
 
   const removeCommentFile = () => {

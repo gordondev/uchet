@@ -14,6 +14,7 @@ const mime = require('mime-types')
 const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const fileTypeDoc = "application/msword";
 const filePathHeader = "static/versionChecklist/headerFiles";
+const filePathComment = "static/versionChecklist/commentFiles";
 
 async function saveHeaderFile(headerFile, id) {
   let fileId = uuid.v4();
@@ -43,13 +44,13 @@ async function saveHeaderFile(headerFile, id) {
 }
 
 async function destroyHeaderFile(id) {
-  const nameHeaderFile = await HeaderFiles.findOne({
+  const file = await HeaderFiles.findOne({
     where: { versionChecklistId: id },
   });
 
   var fs = require("fs");
 
-  if (nameHeaderFile) {
+  if (file) {
     await HeaderFiles.destroy({
       where: { versionChecklistId: id },
     });
@@ -57,8 +58,8 @@ async function destroyHeaderFile(id) {
       path.resolve(
         __dirname,
         "..",
-        "static/versionChecklist/headerFiles",
-        nameHeaderFile.id
+        filePathHeader,
+        file.id + "." + file.fileExtension
       ),
       function (err) {
         if (err) {
@@ -70,30 +71,41 @@ async function destroyHeaderFile(id) {
 }
 
 async function saveCommentFile(commentFile, id) {
-  let fileName = uuid.v4() + ".docx";
+  let fileId = uuid.v4();
+  let fileName;
+  if (mime.contentType(commentFile.name) === fileTypeDocx) {
+    fileName = fileId + ".docx";
+  } else {
+    fileName = fileId + ".doc";
+  }
+
   commentFile.mv(
     path.resolve(
       __dirname,
       "..",
-      "static/versionChecklist/commentFiles",
+      filePathComment,
       fileName
     )
   );
+
   await CommentFiles.create({
-    id: fileName,
-    name: commentFile.name,
+    id: fileId,
+    fileName: commentFile.name,
+    filePath: filePathHeader,
+    fileSize: commentFile.size,
+    fileExtension: commentFile.name.split(".").pop(),
     versionChecklistId: id,
   });
 }
 
 async function destroyCommentFile(id) {
-  const nameCommentFile = await CommentFiles.findOne({
+  const file = await CommentFiles.findOne({
     where: { versionChecklistId: id },
   });
 
   var fs = require("fs");
 
-  if (nameCommentFile) {
+  if (file) {
     await CommentFiles.destroy({
       where: { versionChecklistId: id },
     });
@@ -101,8 +113,8 @@ async function destroyCommentFile(id) {
       path.resolve(
         __dirname,
         "..",
-        "static/versionChecklist/commentFiles",
-        nameCommentFile.id
+        filePathComment,
+        file.id + "." + file.fileExtension
       ),
       function (err) {
         if (err) {
@@ -114,12 +126,13 @@ async function destroyCommentFile(id) {
 }
 
 function checkFileExtension(file) {
+  console.log(file);
   if (file != null) {
     const fileType = mime.contentType(file.name);
     console.log(fileType);
     if (fileType != fileTypeDocx && fileType != fileTypeDoc) {
       throw ApiError.BadRequest(
-        `Файл не является .doc или docx`
+        `${file.name} не является .doc или docx`
       );
     }
   }
@@ -192,39 +205,21 @@ class VersionChecklistService {
   }
 
   async getAll(limit, offset, actualKey, title) {
-    let versionChecklists;
+    const where = {};
 
-    if (actualKey && title) {
-      versionChecklists = await VersionChecklist.findAndCountAll({
-        limit,
-        offset,
-        where: {
-          title: { [Op.iLike]: `%${title}%` },
-          actualKey: actualKey,
-        },
-      });
-    } else if (actualKey) {
-      versionChecklists = await VersionChecklist.findAndCountAll({
-        limit,
-        offset,
-        where: {
-          actualKey: actualKey,
-        },
-      });
-    } else if (title) {
-      versionChecklists = await VersionChecklist.findAndCountAll({
-        limit,
-        offset,
-        where: {
-          title: { [Op.iLike]: `%${title}%` },
-        },
-      });
-    } else {
-      versionChecklists = await VersionChecklist.findAndCountAll({
-        limit,
-        offset,
-      });
+    if (actualKey) {
+      where.actualKey = actualKey;
     }
+
+    if (title) {
+      where.title = { [Op.iLike]: `%${title}%` };
+    }
+
+    const versionChecklists = await VersionChecklist.findAndCountAll({
+      limit,
+      offset,
+      where,
+    });
 
     return versionChecklists;
   }
@@ -259,8 +254,8 @@ class VersionChecklistService {
     const pathHeaderFile = path.resolve(
       __dirname,
       "..",
-      "static/versionChecklist/headerFiles",
-      file.id
+      filePathHeader,
+      file.id + "." + file.fileExtension
     );
 
     return { pathHeaderFile, file };
@@ -274,8 +269,8 @@ class VersionChecklistService {
     const pathCommentFile = path.resolve(
       __dirname,
       "..",
-      "static/versionChecklist/commentFiles",
-      file.id
+      filePathComment,
+      file.id + "." + file.fileExtension
     );
 
     return { pathCommentFile, file };
@@ -290,10 +285,10 @@ class VersionChecklistService {
     reasonForUse,
     acceptanceDate,
     comment,
-    theme,
-    title,
     headerFile,
     commentFile,
+    theme,
+    title,
     headerIsDeleted,
     commentIsDeleted
   ) {
@@ -310,6 +305,10 @@ class VersionChecklistService {
         `Версия чек-листа с номером ${id} уже существует`
       );
     }
+
+    checkFileExtension(headerFile);
+    checkFileExtension(commentFile);
+
     if (actualKey == "Актуально") {
       VersionChecklist.update(
         { actualKey: "Не актуально" },
@@ -358,12 +357,11 @@ class VersionChecklistService {
 
       if (candidateTheme) {
         oldThemes.forEach((oldItem) => {
-          if (newThemes.find((el) => el.id == oldItem.id)) {
-            console.log("\n\nСОВПАДЕНИЕ!\n\n", `UPDATE ${oldItem.id}`);
-            let updateTitle = newThemes.find((el) => el.id == oldItem.id).title;
+          const newItem = newThemes.find((el) => el.id == oldItem.id);
+          if (newItem) {
             Themes.update(
               {
-                title: updateTitle,
+                title: newItem.title,
                 versionChecklistId: updateId,
               },
               {
@@ -371,7 +369,6 @@ class VersionChecklistService {
               }
             );
           } else {
-            console.log(`\n\nУДАЛЯЕМ ${oldItem.id}\n\n`);
             Themes.destroy({
               where: { id: oldItem.id },
             });
@@ -379,7 +376,6 @@ class VersionChecklistService {
         });
         newThemes.forEach((item) => {
           if (!oldThemes.find((el) => el.id == item.id)) {
-            console.log(`\N\NCREATE NEW THEME ${item.id}\n\n`);
             Themes.create({
               title: item.title,
               versionChecklistId: updateId,
@@ -387,9 +383,9 @@ class VersionChecklistService {
           }
         });
       } else {
-        newThemes.forEach((i) =>
+        newThemes.forEach((item) =>
           Themes.create({
-            title: i.title,
+            title: item.title,
             versionChecklistId: updateId,
           })
         );

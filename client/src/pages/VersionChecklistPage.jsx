@@ -9,7 +9,6 @@ import {
   message,
 } from "antd";
 import {
-  FileWordOutlined,
   DownloadOutlined,
   CheckOutlined,
 } from "@ant-design/icons";
@@ -21,6 +20,9 @@ import {
 } from "../http/versionChecklistAPI";
 import { observer } from "mobx-react-lite";
 import { saveAs } from "file-saver";
+import docxImage from "../images/docx.png";
+import docImage from "../images/doc.png";
+import { getConvertedFileSize } from '../utils/getConvertedFileSize';
 
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
@@ -67,7 +69,7 @@ const VersionChecklistPage = observer(() => {
       var blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
-      FileSaver.saveAs(blob, version?.header_files[0]?.name);
+      FileSaver.saveAs(blob, version?.header_files[0]?.fileName);
     } catch (e) {
       message.error(e.response?.data?.message);
     }
@@ -80,7 +82,7 @@ const VersionChecklistPage = observer(() => {
       var blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
-      FileSaver.saveAs(blob, version?.comment_files[0]?.name);
+      FileSaver.saveAs(blob, version?.comment_files[0]?.fileName);
     } catch (e) {
       message.error(e.response?.data?.message);
     }
@@ -150,11 +152,24 @@ const VersionChecklistPage = observer(() => {
                 renderItem={(item) => <List.Item>{item}</List.Item>}
               >
                 <List.Item>
-                  {version?.header_files[0]?.name ? (
+                  {version?.header_files[0]?.fileName ? (
                     <>
+                      <div className="fileElement">
+                      {version?.header_files[0]?.fileExtension === "docx" ? (
+                        <img src={docxImage} alt="docx" style={{ marginRight: "5px" }}/>
+                        ) : (
+                          <img src={docImage} alt="docx" style={{ marginRight: "5px" }}/>
+                        )
+                      }
+                        <Text type="secondary">
+                          {version?.header_files[0]?.fileName}
+                        </Text>
+                      </div>
+
                       <Text type="secondary">
-                        <FileWordOutlined /> {version?.header_files[0]?.name}
+                        {getConvertedFileSize(version?.header_files[0]?.fileSize)}
                       </Text>
+
                       <Button
                         type="primary"
                         icon={<DownloadOutlined />}
@@ -171,11 +186,24 @@ const VersionChecklistPage = observer(() => {
                 </List.Item>
 
                 <List.Item>
-                  {version?.comment_files[0]?.name ? (
+                  {version?.comment_files[0]?.fileName ? (
                     <>
+                      <div className="fileElement">
+                      {version?.comment_files[0]?.fileExtension === "docx" ? (
+                        <img src={docxImage} alt="docx" style={{ marginRight: "5px" }}/>
+                        ) : (
+                          <img src={docImage} alt="docx" style={{ marginRight: "5px" }}/>
+                        )
+                      }
+                        <Text type="secondary">
+                          {version?.comment_files[0]?.fileName}
+                        </Text>
+                      </div>
+
                       <Text type="secondary">
-                        <FileWordOutlined /> {version?.comment_files[0]?.name}
+                        {getConvertedFileSize(version?.comment_files[0]?.fileSize)}
                       </Text>
+
                       <Button
                         type="primary"
                         icon={<DownloadOutlined />}
