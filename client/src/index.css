@@ -263,11 +263,17 @@ ul {
   color: rgba(0, 0, 0, 0.88);
   font-weight: 600;
   font-size: 16px;
+  max-height: 26px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .item__title-block {
   text-align: center;
   margin-top: 10px;
+/*  max-height: 26px;
+  overflow: hidden;
+  text-overflow: ellipsis;*/
 }
 
 .counter {

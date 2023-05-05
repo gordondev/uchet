@@ -33,6 +33,7 @@ const Checklists = ({ checklists }) => {
         }}
         style={{
           minWidth: 300,
+          maxWidth: 300,
           marginTop: 16,
         }}
       >

@@ -27,6 +27,7 @@ const VersionsList = ({ versions }) => {
         hoverable
         style={{
           minWidth: 300,
+          minWidth: 300,
           marginTop: 16,
         }}
         onClick={(event) => {
