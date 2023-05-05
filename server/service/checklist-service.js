@@ -91,6 +91,14 @@ class ChecklistService {
       throw ApiError.BadRequest(`Данной версии не существует`);
     }
 
+    const nameChecklist = await Checklist.findOne({
+      where: { name: name, versionChecklistId: versionChecklistId },
+    });
+
+    if (nameChecklist) {
+      throw ApiError.BadRequest(`Название с темы с данной версией уже существует`);
+    }
+
     const numberOfRecordsAvailable = await Checklist.count({
       where: { versionChecklistId: versionChecklistId },
     });

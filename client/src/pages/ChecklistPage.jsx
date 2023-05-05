@@ -34,8 +34,6 @@ const ChecklistPage = observer(() => {
     setIsLoading(false);
   }, [file]);
 
-  console.log(checklist);
-
   const data = [
     `Автор: ${checklist.user.name + " " + checklist.user.patronymic}`,
     `Дата создания: ${new Date(checklist?.createdAt).toLocaleString("ru-RU")}`,
