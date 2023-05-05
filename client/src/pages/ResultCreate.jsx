@@ -254,7 +254,7 @@ const ResultCreate = () => {
                             name={id}
                             label="Оценка"
                             hasFeedback
-                            style={{ width: "100%", margin: "0px 0px 0px 20px" }}
+                            style={{ width: "100%", marginTop: "23px" }}
                             rules={[
                               {
                                 required: true,
@@ -266,6 +266,7 @@ const ResultCreate = () => {
                               <Option value="Ниже требований">Ниже требований</Option>
                               <Option value="Соответствуют требованиям">Соответствуют требованиям</Option>
                               <Option value="Выше требований">Выше требований</Option>
+                              <Option value="Не наблюдалось">Не наблюдалось</Option>
                             </Select>
                           </Form.Item>
                         </div>
@@ -287,7 +288,7 @@ const ResultCreate = () => {
                             key={id}
                             name={id}
                             label={`Точка роста ${index + 1}`}
-                            style={{ width: "100%", margin: "0px 0px 0px 0px" }}
+                            style={{ width: "100%", marginTop: "23px" }}
                             rules={[
                               {
                                 required: true,
@@ -333,7 +334,7 @@ const ResultCreate = () => {
                             key={id}
                             name={id}
                             label={`Сильная сторона ${index + 1}`}
-                            style={{ width: "100%", margin: "0px 0px 0px 0px" }}
+                            style={{ width: "100%", marginTop: "23px" }}
                             rules={[
                               {
                                 required: true,

@@ -21,8 +21,6 @@ class ResultService {
       where: { versionChecklistId: actualId }
     });
 
-    console.log(actualThemes);
-
     return actualThemes;
   }
   async getActualChecklists() {
