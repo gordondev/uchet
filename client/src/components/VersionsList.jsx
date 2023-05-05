@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Card, Empty, Button } from "antd";
+import { Col, Card, Empty, Button, Tooltip } from "antd";
 import { EditOutlined, CheckOutlined } from "@ant-design/icons";
 import {
   VERSION_CHECKLIST_ROUTE,
@@ -23,6 +23,7 @@ const VersionsList = ({ versions }) => {
       span={versions.length >= 4 ? 6 : versions.length === 2 ? 12 : 8}
       key={data.id}
     >
+    <Tooltip title={data.title} arrow={false}>
       <Card
         hoverable
         style={{
@@ -66,6 +67,7 @@ const VersionsList = ({ versions }) => {
           )}
         </div>
       </Card>
+    </Tooltip>
     </Col>
   ));
 };

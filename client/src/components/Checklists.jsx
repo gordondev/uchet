@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Card, Empty, Button } from "antd";
+import { Col, Card, Empty, Button, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { CHECKLIST_ROUTE, CHECKLIST_EDIT_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ const Checklists = ({ checklists }) => {
       span={checklists.length >= 4 ? 6 : checklists.length === 2 ? 12 : 8}
       key={data.id}
     >
+    <Tooltip title={data.name} arrow={false}>
       <Card
         hoverable
         onClick={(event) => {
@@ -51,6 +52,7 @@ const Checklists = ({ checklists }) => {
           </div>
         </div>
       </Card>
+    </Tooltip>
     </Col>
   ));
 };
