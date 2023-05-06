@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import { Form, Input, Select, Divider, Button, Tabs, Empty, Upload, Typography } from "antd";
+import { Form, Input, Select, Divider, Button, Tabs, Empty, Upload, Typography, message } from "antd";
 import { SaveOutlined, PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
-import { fetchActualThemes, fetchActualChecklists } from "../http/resultAPI";
+import { fetchActualThemes, fetchActualChecklists, createResult } from "../http/resultAPI";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Context } from "../index";
 import shortid from 'shortid';
@@ -24,6 +24,7 @@ const ResultCreate = () => {
   const [activeKey, setActiveKey] = useState('1');
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useContext(Context);
+  const [dataIsSent, setDataIsSent] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -40,11 +41,16 @@ const ResultCreate = () => {
     setIsLoading(false);
   }, []);
 
+  const getIdByValue = (value) => {
+    const themeObj = actualThemesTitle.find(obj => obj.value === value);
+    return themeObj ? themeObj.id : null;
+  };
+
   const themesChange = (value) => {
     setSelectedThemes(value);
     value.forEach(theme => {
       if (!themes.find(obj => obj.theme === theme)) {
-        themes.push({ theme: theme, grades: [], points_of_growths: [], strengths: [] });
+        themes.push({ theme: theme, id: getIdByValue(theme), grades: [], points_of_growths: [], strengths: [] });
       }
     });
     setThemes(themes.filter(theme => value.includes(theme.theme)));
@@ -163,10 +169,26 @@ const ResultCreate = () => {
     setThemes(updatedThemes);
   }, 500);
 
+  const addResult = async () => {
+    setDataIsSent(true);
+    const formData = new FormData();
+    formData.append("themes", JSON.stringify(themes));
+    try {
+      await createResult(formData);
+      message.success(`Результат наблюдения успешно добавлена`);
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+    setDataIsSent(false);
+  };
+
+  console.log(themes);
+  console.log(actualThemesTitle);
+
   return (
     <section className="searchSection">
       <div className="container">
-        <Form>
+        <Form onFinish={addResult}>
           <div className="defaultForm">
             <Title level={4} style={{ marginBottom: "20px" }}>Подразделение: {user.user.division}</Title>
             <div className="defaultForm__tile">
@@ -431,6 +453,7 @@ const ResultCreate = () => {
             <Form.Item style={{ width: "100%" }}>
               <Button
                 type="primary"
+                loading={dataIsSent}
                 htmlType="submit"
                 icon={<SaveOutlined />}
                 style={{ width: "100%" }}

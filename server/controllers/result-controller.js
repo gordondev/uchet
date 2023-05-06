@@ -22,7 +22,8 @@ class ResultController {
     try {
       const { workInProgress, impactOnSave, themes, comment, finalGrade } =
         req.body;
-      return res.json(themes);
+      console.log(themes);
+      return res.json("SUCCESS");
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
