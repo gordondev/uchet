@@ -25,6 +25,10 @@ const ResultCreate = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useContext(Context);
   const [dataIsSent, setDataIsSent] = useState(false);
+  const [workInProgress, setWorkInProgress] = useState("");
+  const [impactOnSave, setImpactOnSave] = useState("");
+  const [comment, setComment] = useState("");
+  const [finalGrade, setFinalGrade] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
@@ -172,6 +176,11 @@ const ResultCreate = () => {
   const addResult = async () => {
     setDataIsSent(true);
     const formData = new FormData();
+    formData.append("finalGrade", finalGrade);
+    formData.append("comment", comment);
+    formData.append("division", user.user.division);
+    formData.append("workInProgress", workInProgress);
+    formData.append("impactOnSave", impactOnSave);
     formData.append("themes", JSON.stringify(themes));
     try {
       await createResult(formData);
@@ -196,7 +205,7 @@ const ResultCreate = () => {
                 name="title"
                 label="Выпоняемая работа"
                 style={{ width: "100%", marginRight: "10px" }}
-                // onChange={(e) => setName(e.target.value)}
+                onChange={debounce((e) => setWorkInProgress(e.target.value), 500)}
                 rules={[
                   {
                     required: true,
@@ -219,7 +228,10 @@ const ResultCreate = () => {
                   },
                 ]}
               >
-                <Select>
+                <Select 
+                onChange={(value) => {
+                  setImpactOnSave(value);
+                }}>
                   <Option value="Да">Да</Option>
                   <Option value="Нет">Нет</Option>
                 </Select>
@@ -424,7 +436,7 @@ const ResultCreate = () => {
                 <TextArea
                   allowClear
                   rows={4}
-                  // onChange={(e) => setReasonForUse(e.target.value)}
+                  onChange={debounce((e) => setComment(e.target.value), 500)}
                   showCount
                   placeholder="Введите комментарий"
                   maxLength={500}
@@ -442,7 +454,10 @@ const ResultCreate = () => {
                 },
               ]}
             >
-              <Select>
+              <Select
+                onChange={(value) => {
+                  setFinalGrade(value);
+                }}>>
                 <Option value="Ниже требований">Ниже требований</Option>
                 <Option value="Соответствуют требованиям">
                   Соответствуют требованиям
