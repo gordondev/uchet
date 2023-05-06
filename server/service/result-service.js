@@ -13,6 +13,11 @@ async function getActualId() {
 }
 
 class ResultService {
+
+  // async create() {
+    
+  // }
+
   async getActualThemes() {
     const actualId = await getActualId();
 

@@ -106,6 +106,7 @@ const ChecklistContent = sequelize.define("checklist_content", {
 
 const ObservationResults = sequelize.define("observation_results", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  workInProgress: { type: DataTypes.STRING(600) },
   userId: { type: DataTypes.INTEGER },
   division: { type: DataTypes.STRING },
   impactOnSave: { type: DataTypes.ENUM("Нет", "Да") },

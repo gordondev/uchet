@@ -18,6 +18,15 @@ class ResultController {
       next(ApiError.BadRequest(e.message));
     }
   }
+  async create(req, res, next) {
+    try {
+      const { workInProgress, impactOnSave, themes, comment, finalGrade } =
+        req.body;
+      return res.json(themes);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
 }
 
 module.exports = new ResultController();
