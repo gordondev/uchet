@@ -1,16 +1,66 @@
-import React from "react";
-import { Input, FloatButton, Select } from "antd";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { Input, Row, FloatButton, Spin, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { RESULT_CREATE_ROUTE } from "../utils/consts";
 import { Collapse } from "antd";
+import { fetchResult } from "../http/resultAPI";
+import Checklists from "../components/Results";
+import { observer } from "mobx-react-lite";
+import { useObserver } from "../hooks/useObserver";
+import Results from "../components/Results";
 
 const { Panel } = Collapse;
-
 const { Search } = Input;
 
-const Result = () => {
+const Result = observer(() => {
   const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchWorkInProgressQuery, setSearchWorkInProgressQuery] = useState("");
+  const [searchImpactOnSaveQuery, setSearchImpactOnSaveQuery] = useState("");
+  const [searchDivisionQuery, setSearchDivisionQuery] = useState("");
+  const [isLoadind, setIsLoading] = useState(true);
+
+  const currentPage = useRef(1);
+  const lastElement = useRef();
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  useObserver(lastElement, data.length < totalCount, isLoadind, () => {
+    setIsLoading(true);
+    currentPage.current += 1;
+    fetchResult(
+      16,
+      currentPage.current,
+      searchWorkInProgressQuery,
+      searchImpactOnSaveQuery,
+      searchDivisionQuery
+    ).then((response) => {
+      console.log(response);
+      setData([...data, ...response.rows]);
+      setTotalCount(response.count);
+    });
+    setIsLoading(false);
+  });
+
+  useEffect(() => {
+    setIsLoading(true);
+    currentPage.current = 1;
+    fetchResult(
+      16,
+      currentPage.current,
+      searchWorkInProgressQuery,
+      searchImpactOnSaveQuery,
+      searchDivisionQuery
+    ).then((response) => {
+      setData(response.rows);
+      setTotalCount(response.count);
+    });
+    setIsLoading(false);
+  }, []);
 
   return (
     <section className="searchSection">
@@ -145,6 +195,20 @@ const Result = () => {
           </Panel>
         </Collapse>
 
+        <Row gutter={[40, 16]} justify="left">
+          {isLoadind ? (
+            <Spin size="large" style={{ marginTop: "20px" }} />
+          ) : (
+            <>
+              <Results results={data} />
+              <div
+                ref={lastElement}
+                style={{ height: "1px", width: "100%" }}
+              ></div>
+            </>
+          )}
+        </Row>
+
         <FloatButton.Group
           shape="circle"
           style={{
@@ -152,6 +216,7 @@ const Result = () => {
           }}
         >
           <FloatButton
+            tooltip={<div>Создать результат наблюдения</div>}
             icon={<PlusOutlined />}
             type="primary"
             onClick={() => navigate(RESULT_CREATE_ROUTE)}
@@ -161,6 +226,6 @@ const Result = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Result;

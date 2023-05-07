@@ -14,3 +14,10 @@ export const createResult = async (result) => {
   const { data } = await $authHost.post("api/result/create", result);
   return data;
 };
+
+export const fetchResult = async (limit, page, workInProgress, impactOnSave, division) => {
+  const { data } = await $authHost.get("api/result/", {
+    params: { limit, page, workInProgress, impactOnSave, division },
+  });
+  return data;
+};
