@@ -163,6 +163,31 @@ class ResultService {
     return result;
   }
 
-}
+  async getOne(id) {
+    const observationResult = await ObservationResults.findByPk(id, {
+      include: [
+        {
+          model: ObservationResultsFiles,
+        },
+        {
+          model: ThemesResults,
+          include: [
+            {
+              model: GradeObservationResults,
+            },
+            {
+              model: PointsOfGrowth,
+            },
+            {
+              model: Strengths,
+            }
+          ]
+        }
+      ]
+    });
 
+    return observationResult;
+  }
+
+}
 module.exports = new ResultService();

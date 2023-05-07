@@ -62,6 +62,66 @@ const Result = observer(() => {
     setIsLoading(false);
   }, []);
 
+  const searchWorkInProgress = async (value) => {
+    setIsLoading(true);
+    currentPage.current = 1;
+    setSearchWorkInProgressQuery(value);
+    fetchResult(
+      16,
+      currentPage.current,
+      value,
+      searchImpactOnSaveQuery,
+      searchDivisionQuery
+      ).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
+    await sleep(1 * 50);
+    setIsLoading(false);
+  };
+
+  const searchImpactOnSave = async (value) => {
+    setIsLoading(true);
+    currentPage.current = 1;
+    setSearchImpactOnSaveQuery(value);
+    fetchResult(
+      16,
+      currentPage.current,
+      searchWorkInProgressQuery,
+      value,
+      searchDivisionQuery
+      ).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
+    await sleep(1 * 50);
+    setIsLoading(false);
+  };
+
+  const searchDivision = async (value) => {
+    setIsLoading(true);
+    currentPage.current = 1;
+    setSearchDivisionQuery(value);
+    fetchResult(
+      16,
+      currentPage.current,
+      searchWorkInProgressQuery,
+      searchImpactOnSaveQuery,
+      value
+      ).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
+    await sleep(1 * 50);
+    setIsLoading(false);
+  };
+
   return (
     <section className="searchSection">
       <div className="container">
@@ -77,9 +137,16 @@ const Result = observer(() => {
               enterButton="Поиск"
               size="default"
               style={{ width: "100%" }}
+              onSearch={(value) => {
+                searchWorkInProgress(value);
+              }}
             />
             <Select
+              onChange={(value) => {
+                searchImpactOnSave(value);
+              }}
               showSearch
+              allowClear
               placeholder="Влияние на безопасность"
               optionFilterProp="children"
               style={{ width: "100%", marginTop: "20px" }}
@@ -100,7 +167,11 @@ const Result = observer(() => {
               ]}
             />
             <Select
+              onChange={(value) => {
+                searchDivision(value);
+              }}
               showSearch
+              allowClear
               placeholder="Подразделение"
               optionFilterProp="children"
               style={{ width: "100%", marginTop: "20px" }}
@@ -221,7 +292,7 @@ const Result = observer(() => {
             type="primary"
             onClick={() => navigate(RESULT_CREATE_ROUTE)}
           />
-          <FloatButton type="primary" />
+          <FloatButton type="primary" tooltip={<div>Экспортировать</div>}/>
         </FloatButton.Group>
       </div>
     </section>

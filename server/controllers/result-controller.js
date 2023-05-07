@@ -43,6 +43,16 @@ class ResultController {
     }
   }
 
+  async getOne(req, res, next) {
+    try {
+      const { id } = req.params;
+      const resultData = await result.getOne(id);
+      return res.json(resultData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
   async create(req, res, next) {
     try {
       const { workInProgress, impactOnSave, themes, comment, finalGrade, division, userId } =
