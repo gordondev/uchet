@@ -6,6 +6,7 @@ const { VersionChecklist,
  PointsOfGrowth,
  Strengths,
  ObservationResultsFiles,
+ User,
  GradeObservationResults } = require("../models/models");
 
 const ApiError = require("../exceptions/api-error");
@@ -168,6 +169,7 @@ class ResultService {
       include: [
         {
           model: ObservationResultsFiles,
+          model: User,
         },
         {
           model: ThemesResults,
