@@ -18,6 +18,31 @@ class ResultController {
       next(ApiError.BadRequest(e.message));
     }
   }
+
+  async getAll(req, res, next) {
+    try {
+      let { limit, page, workInProgress, impactOnSave, division } = req.query;
+      page = page || 1;
+      limit = limit || 16;
+      let offset = page * limit - limit;
+
+      if (isNaN(limit) || isNaN(page) || limit <= 0 || page <= 0) {
+        throw new Error('Invalid limit or page');
+      }
+
+      const resultData = await result.getAll(
+        limit, offset, workInProgress, impactOnSave, division
+      );
+
+      return res.json(resultData);
+    } catch (e) {
+      if (e.message === 'Invalid limit or page') {
+        return next(ApiError.BadRequest(e.message));
+      }
+      next(e);
+    }
+  }
+
   async create(req, res, next) {
     try {
       const { workInProgress, impactOnSave, themes, comment, finalGrade, division, userId } =

@@ -149,6 +149,20 @@ class ResultService {
     return actualChecklists;
   }
 
+  async getAll(limit, offset, workInProgress, impactOnSave, division) {
+    const where = {};
+    if (workInProgress) where.workInProgress = { [Op.iLike]: `%${workInProgress}%` };
+    if (impactOnSave) where.impactOnSave = impactOnSave;
+    if (division) where.division = division;
+
+    const result = await ObservationResults.findAndCountAll({
+        limit,
+        offset,
+        where,
+    });
+    return result;
+  }
+
 }
 
 module.exports = new ResultService();
