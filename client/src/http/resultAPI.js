@@ -21,3 +21,8 @@ export const fetchResult = async (limit, page, workInProgress, impactOnSave, div
   });
   return data;
 };
+
+export const fetchOneResult = async (id) => {
+  const { data } = await $host.get("api/result/" + id);
+  return data;
+};

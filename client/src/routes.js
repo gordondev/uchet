@@ -13,6 +13,7 @@ import ChecklistCreate from "./pages/ChecklistCreate";
 import ChecklistPage from "./pages/ChecklistPage";
 import ChecklistEdit from "./pages/ChecklistEdit";
 import ResultCreate from "./pages/ResultCreate";
+import ResultPage from "./pages/ResultPage";
 
 import {
   LOGIN_ROUTE,
@@ -82,6 +83,10 @@ export const authRoutes = [
   {
     path: RESULT_CREATE_ROUTE,
     Component: ResultCreate
+  },
+  {
+    path: RESULT_ROUTE + "/:id",
+    Component: ResultPage
   },
 ];
 

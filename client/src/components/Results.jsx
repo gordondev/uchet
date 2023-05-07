@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Card, Empty, Button, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { CHECKLIST_ROUTE, CHECKLIST_EDIT_ROUTE } from "../utils/consts";
+import { RESULT_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 import resultImage from "../images/result.png";
 
@@ -22,17 +22,18 @@ const Results = ({ results }) => {
     <Tooltip title={data.workInProgress} arrow={false}>
       <Card
         hoverable
-        // onClick={(event) => {
-        //   if (
-        //     event.target.tagName === "BUTTON" ||
-        //     event.target.tagName === "svg" ||
-        //     event.target.tagName === "path"
-        //   ) {
-        //     navigate(CHECKLIST_EDIT_ROUTE + "/" + data.id);
-        //   } else {
-        //     navigate(CHECKLIST_ROUTE + "/" + data.id);
-        //   }
-        // }}
+        onClick={(event) => {
+          if (
+            event.target.tagName === "BUTTON" ||
+            event.target.tagName === "svg" ||
+            event.target.tagName === "path"
+          ) {
+            console.log("click edit");
+            // navigate(CHECKLIST_EDIT_ROUTE + "/" + data.id);
+          } else {
+            navigate(RESULT_ROUTE + "/" + data.id);
+          }
+        }}
         style={{
           minWidth: 300,
           maxWidth: 300,
