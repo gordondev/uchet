@@ -173,7 +173,15 @@ class ResultService {
           model: ThemesResults,
           include: [
             {
+              model: Themes,
+            },
+            {
               model: GradeObservationResults,
+              include: [
+                {
+                  model: Checklist,
+                }
+              ]
             },
             {
               model: PointsOfGrowth,
