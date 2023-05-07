@@ -8,6 +8,10 @@ import { Context } from "../index";
 import shortid from 'shortid';
 import { debounce } from 'lodash';
 
+const fileTypePDF = "application/pdf";
+const fileTypeJPG = "image/jpeg";
+const fileTypeTIFF = "image/tiff";
+
 const { Title } = Typography;
 const { Option } = Select;
 const { Dragger } = Upload;
@@ -29,6 +33,7 @@ const ResultCreate = () => {
   const [impactOnSave, setImpactOnSave] = useState("");
   const [comment, setComment] = useState("");
   const [finalGrade, setFinalGrade] = useState("");
+  const [file, setFile] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
@@ -41,11 +46,12 @@ const ResultCreate = () => {
       label: item.name,
       value: item.name,
       disabled: false,
-    }))));
+      id: item.id,
+    }))) );
     setIsLoading(false);
   }, []);
 
-  const getIdByValue = (value) => {
+  const getIdThemeByValue = (value) => {
     const themeObj = actualThemesTitle.find(obj => obj.value === value);
     return themeObj ? themeObj.id : null;
   };
@@ -54,7 +60,7 @@ const ResultCreate = () => {
     setSelectedThemes(value);
     value.forEach(theme => {
       if (!themes.find(obj => obj.theme === theme)) {
-        themes.push({ theme: theme, id: getIdByValue(theme), grades: [], points_of_growths: [], strengths: [] });
+        themes.push({ theme: theme, id: getIdThemeByValue(theme), grades: [], points_of_growths: [], strengths: [] });
       }
     });
     setThemes(themes.filter(theme => value.includes(theme.theme)));
@@ -71,11 +77,16 @@ const ResultCreate = () => {
     }
   };
 
+  const getIdChecklistByValue = (value) => {
+    const checklistObj = checklists.find(obj => obj.value === value);
+    return checklistObj ? checklistObj.id : null;
+  };
+
   const checklistsChange = (value) => {
     setSelectedChecklists(value);
     value.forEach(checklist => {
       if (!activeTheme.grades.some(({ checklist: c }) => c === checklist)) {
-        activeTheme.grades.push({ checklist, grade: '', id: shortid.generate() });
+        activeTheme.grades.push({ checklist, grade: '', id: getIdChecklistByValue(checklist) });
       }
     });
 
@@ -176,6 +187,8 @@ const ResultCreate = () => {
   const addResult = async () => {
     setDataIsSent(true);
     const formData = new FormData();
+    formData.append("userId", user.user.id);
+    formData.append("file", file);
     formData.append("finalGrade", finalGrade);
     formData.append("comment", comment);
     formData.append("division", user.user.division);
@@ -191,8 +204,33 @@ const ResultCreate = () => {
     setDataIsSent(false);
   };
 
-  console.log(themes);
-  console.log(actualThemesTitle);
+  const beforeUploadFile = (file) => {
+    const isPDF = file.type ===
+      fileTypePDF;
+
+    const isJPG = file.type ===
+      fileTypeJPG;
+
+    const isTIFF = file.type ===
+      fileTypeTIFF;
+      
+    if (!isPDF && !isJPG && !isTIFF) {
+      message.error("Вы можете загрузить только .pdf .jpg .tiff файл");
+    } else {
+      setFile(file);
+    }
+    return !isPDF && !isJPG && !isTIFF;
+  };
+
+  const removeFile = () => {
+    setFile("");
+  };
+
+  const props = {
+    name: "file",
+    multiple: false,
+    maxCount: 1,
+  };
 
   return (
     <section className="searchSection">
@@ -407,9 +445,9 @@ const ResultCreate = () => {
             />
             <div className="defaultForm__dragBlock">
               <Dragger
-                  // {...props}
-                  // beforeUpload={beforeUploadCommentFile}
-                  // onRemove={removeCommentFile}
+                  {...props}
+                  beforeUpload={beforeUploadFile}
+                  onRemove={removeFile}
                 >
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -418,7 +456,7 @@ const ResultCreate = () => {
                     Нажмите или перетащите файл в область загрузки
                   </p>
                   <p className="ant-upload-hint">
-                    Прикрепите файл с отчетом
+                    Прикрепите файл с отчетом в формате .pdf .tiff .jpg
                   </p>
               </Dragger>
             </div>

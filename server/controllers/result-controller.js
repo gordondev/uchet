@@ -20,15 +20,23 @@ class ResultController {
   }
   async create(req, res, next) {
     try {
-      const { workInProgress, impactOnSave, themes, comment, finalGrade, division } =
+      const { workInProgress, impactOnSave, themes, comment, finalGrade, division, userId } =
         req.body;
-      console.log(finalGrade);
-      console.log(comment);
-      console.log(division);
-      console.log(workInProgress);
-      console.log(impactOnSave);
-      console.log(themes);
-      return res.json("SUCCESS");
+
+      const file = req.files?.file || null;
+
+      const resultData = await result.createResult(
+        division,
+        workInProgress,
+        impactOnSave,
+        JSON.parse(themes),
+        file,
+        comment,
+        finalGrade,
+        userId
+      );
+
+      return res.json(resultData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
