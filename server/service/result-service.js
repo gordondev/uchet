@@ -98,6 +98,20 @@ async function saveFile(file, id) {
 
 class ResultService {
 
+  async updateResultOfChecking(resultOfChecking, rejectionСomment, id) {
+    const result = await ObservationResults.update(
+      {
+        resultOfChecking,
+        rejectionСomment,
+      },
+      {
+        where: { id },
+      }
+    );
+    console.log(result);
+    return result;
+  }
+
   async createResult(
     division,
     workInProgress,

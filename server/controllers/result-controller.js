@@ -67,6 +67,16 @@ class ResultController {
     }
   }
 
+  async updateResultOfChecking(req, res, next) {
+    try {
+      const { resultOfChecking, rejectionСomment, id } = req.body;
+      const resultOfCheckingData = await result.updateResultOfChecking(resultOfChecking, rejectionСomment, id);
+      return res.json(resultOfCheckingData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
   async create(req, res, next) {
     try {
       const { workInProgress, impactOnSave, themes, comment, finalGrade, division, userId } =

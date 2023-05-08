@@ -9,5 +9,6 @@ router.post("/create", resultController.create);
 router.get("/", resultController.getAll);
 router.get("/:id", resultController.getOne);
 router.get("/:id/download", resultController.downloadFile);
+router.put("/:id", resultController.updateResultOfChecking);
 
 module.exports = router;
