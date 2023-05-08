@@ -53,6 +53,20 @@ class ResultController {
     }
   }
 
+  async downloadFile(req, res, next) {
+    try {
+      const { file } = req.query;
+
+      console.log(req.query);
+
+      const path = await result.downloadFile(file);
+
+      return res.download(path.pathFile, path.fileItem.id);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
   async create(req, res, next) {
     try {
       const { workInProgress, impactOnSave, themes, comment, finalGrade, division, userId } =

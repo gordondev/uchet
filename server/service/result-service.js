@@ -128,6 +128,21 @@ class ResultService {
 
   }
 
+  async downloadFile(file) {
+    const fileItem = await ObservationResultsFiles.findOne({
+      where: { id: file },
+    });
+
+    const pathFile = path.resolve(
+      __dirname,
+      "..",
+      filePath,
+      fileItem.id + "." + fileItem.fileExtension
+    );
+
+    return { pathFile, fileItem };
+  }
+
   async getActualThemes() {
     const actualId = await getActualId();
 

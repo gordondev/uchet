@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { fetchOneResult } from "../http/resultAPI";
+import { fetchOneResult, download } from "../http/resultAPI";
 import { useParams } from "react-router-dom";
 import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty } from "antd";
+import { saveAs } from "file-saver";
+import {
+  FileWordOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
+
+import pdfImage from "../images/pdf.png";
+import jpgImage from "../images/jpg.png";
+import tiffImage from "../images/tiff.png";
+
+import { getConvertedFileSize } from '../utils/getConvertedFileSize';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -12,21 +23,34 @@ const ResultPage = observer(() => {
 	const { id } = useParams();
 	const [isLoadind, setIsLoading] = useState(true);
 	const [themes, setThemes] = useState([]);
+	const [file, setFile] = useState("");
 
 	useEffect(() => {
 	    setIsLoading(true);
 	    fetchOneResult(id).then((data) => {
 	      setThemes(data);
+	      setFile(data?.observation_results_files[0]?.id);
 	    });
 	    setIsLoading(false);
 	}, []);
-
-	console.log(themes);
 
 	const data = [
 	  `Автор: ${themes?.user?.name + " " + themes?.user?.patronymic}`,
 	  `Дата создания: ${new Date(themes?.createdAt).toLocaleString("ru-RU")}`,
 	];
+
+	const downloadFile = async () => {
+	    try {
+	      const response = await download(id, file);
+	      var FileSaver = require("file-saver");
+	      var blob = new Blob([response], {
+	        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	      });
+	      FileSaver.saveAs(blob, themes?.observation_results_files[0]?.fileName);
+	    } catch (e) {
+	      message.error(e.response?.data?.message);
+	    }
+	};
 
 	const tabPanes = themes?.themes_results?.map((theme, index) => (
 	  <TabPane tab={theme?.theme?.title} key={index}>
@@ -73,7 +97,7 @@ const ResultPage = observer(() => {
 			            </>
 			          ) : (
 			            <>
-			            	<div className="defaultForm__tile">
+			              <div className="defaultForm__tile">
 			                <Title level={3} style={{ color: "#0e78ff" }}>
 			                  {themes?.workInProgress}
 			                </Title>
@@ -84,7 +108,7 @@ const ResultPage = observer(() => {
 
 			              <Title level={4} style={{ color: "#ff4d4f" }}>
 			                Подразделение: {themes?.division}
-			               </Title>
+			              </Title>
 
 			              <Divider orientation="center">Информация</Divider>
 			              <List
@@ -100,7 +124,68 @@ const ResultPage = observer(() => {
 				          )}
 
 			              <Tabs>{tabPanes}</Tabs>
-				           
+				          
+				          <List
+			                size="large"
+			                className="block-file"
+			                bordered
+			              >
+			                <List.Item>
+			                  {themes?.observation_results_files[0]?.fileName ? (
+			                    <>
+			                      <div className="fileElement">
+			                        {themes?.observation_results_files[0]?.fileExtension === "pdf" ? (
+			                            <img src={pdfImage} alt="docx" style={{ marginRight: "5px" }}/>
+			                          ) : themes?.observation_results_files[0]?.fileExtension === "jpg" ? (
+			                            <img src={jpgImage} alt="jpg" style={{ marginRight: "5px" }}/>
+			                          ) : (
+			                          	<img src={tiffImage} alt="tiff" style={{ marginRight: "5px" }}/>
+			                          )
+			                        }
+			                        <Text type="secondary">
+			                          {themes?.observation_results_files[0]?.fileName}
+			                        </Text>
+			                      </div>
+
+			                      <Text type="secondary">
+			                        {getConvertedFileSize(themes?.observation_results_files[0]?.fileSize)}
+			                      </Text>
+
+			                      <Button
+			                        type="primary"
+			                        icon={<DownloadOutlined />}
+			                        onClick={downloadFile}
+			                      >
+			                        Скачать
+			                      </Button>
+			                    </>
+			                  ) : (
+			                    <>
+			                      <Text type="secondary">Файл отчета не найден</Text>
+			                    </>
+			                  )}
+			                </List.Item>
+			              </List> 
+
+			              <Divider orientation="center">Комментарий</Divider>
+			              
+			              <List>
+			              	<List.Item>
+			              		{themes?.comment}
+			              	</List.Item>
+			              </List>
+
+			              <div style={{ display: "flex" }}>
+				              <Text type="danger" style={{ marginRight: "5px" }}>
+				                Итоговая оценка: 
+				              </Text>
+				              <Text>
+				              	{themes?.finalGrade} 
+				              </Text>
+			              </div>
+
+
+
 			            </>
           			)}
         		</div>

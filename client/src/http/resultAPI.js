@@ -26,3 +26,10 @@ export const fetchOneResult = async (id) => {
   const { data } = await $host.get("api/result/" + id);
   return data;
 };
+
+export const download = async (id, file) => {
+  const { data } = await $download.get("api/result/" + id + "/download/", {
+    params: { file },
+  });
+  return data;
+};
