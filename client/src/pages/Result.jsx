@@ -39,7 +39,6 @@ const Result = observer(() => {
       searchImpactOnSaveQuery,
       searchDivisionQuery
     ).then((response) => {
-      console.log(response);
       setData([...data, ...response.rows]);
       setTotalCount(response.count);
     });

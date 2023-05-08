@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { fetchOneResult, download } from "../http/resultAPI";
 import { useParams } from "react-router-dom";
-import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty, Form, Select } from "antd";
+import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty, Form, Select, Input } from "antd";
 import { saveAs } from "file-saver";
 import {
   FileWordOutlined,
@@ -13,12 +13,14 @@ import {
 import pdfImage from "../images/pdf.png";
 import jpgImage from "../images/jpg.png";
 import tiffImage from "../images/tiff.png";
+import { debounce } from 'lodash';
 
 import { getConvertedFileSize } from '../utils/getConvertedFileSize';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 const { Option } = Select;
+const { TextArea } = Input;
 
 const ResultPage = observer(() => {
 
@@ -27,6 +29,9 @@ const ResultPage = observer(() => {
 	const [themes, setThemes] = useState([]);
 	const [file, setFile] = useState("");
 	const [dataIsSent, setDataIsSent] = useState(false);
+	const [rejectionСomment, setRejectionСomment] = useState("");
+	const [resultOfChecking, setResultOfChecking] = useState("");
+	const [showTextArea, setShowTextArea] = useState(false);
 
 	useEffect(() => {
 	    setIsLoading(true);
@@ -35,7 +40,7 @@ const ResultPage = observer(() => {
 	      setFile(data?.observation_results_files[0]?.id);
 	    });
 	    setIsLoading(false);
-	}, []);
+	}, [file]);
 
 	const data = [
 	  `Автор: ${themes?.user?.name + " " + themes?.user?.patronymic}`,
@@ -55,6 +60,15 @@ const ResultPage = observer(() => {
 	    }
 	};
 
+	const handleSelectChange = (value) => {
+	  setResultOfChecking(value);
+	  if (value === "Не принято") {
+	    setShowTextArea(true);
+	  } else {
+	    setShowTextArea(false);
+	  }
+	};
+
 	const tabPanes = themes?.themes_results?.map((theme, index) => (
 	  <TabPane tab={theme?.theme?.title} key={index}>
 	  	<Divider orientation="center">Оценки</Divider>
@@ -62,7 +76,7 @@ const ResultPage = observer(() => {
 	        dataSource={theme?.grade_observation_results}
 	        renderItem={item => (
 	          <List.Item>
-	            <div>{item.checklist.name}</div>
+	            <div style={{ width: "400px" }}>{item.checklist.name}</div>
 	            <div>{item.grade}</div>
 	          </List.Item>
 	        )}
@@ -135,7 +149,7 @@ const ResultPage = observer(() => {
 			                bordered
 			              >
 			                <List.Item>
-			                  {themes?.observation_results_files[0]?.fileName ? (
+			                  {themes && themes.observation_results_files && themes.observation_results_files.length > 0 ? (
 			                    <>
 			                      <div className="fileElement">
 			                        {themes?.observation_results_files[0]?.fileExtension === "pdf" ? (
@@ -204,14 +218,37 @@ const ResultPage = observer(() => {
 				                  <Select
 				                    allowClear
 				                    placeholder="Выберите результат"
-				                    onChange={(value) => {
-				                      // setActualKey(value);
-				                    }}
+				                    onChange={handleSelectChange}
 				                  >
-				                    <Option value="Актуально">Принято</Option>
-				                    <Option value="Не актуально">Не принято</Option>
+				                    <Option value="Принято">Принято</Option>
+				                    <Option value="Не принято">Не принято</Option>
 				                  </Select>
 				              </Form.Item>
+
+				              {
+				              	showTextArea &&
+
+				              	<Form.Item
+					                label="Комментарий отклонения: "
+					                name="comment"
+					                rules={[
+					                  {
+					                    required: true,
+					                    message: "Введите комментарий отклонения",
+					                  },
+					                ]}
+					              >
+					                <TextArea
+					                  allowClear
+					                  rows={4}
+					                  onChange={debounce((e) => setRejectionСomment(e.target.value), 500)}
+					                  showCount
+					                  placeholder="Введите комментарий отклонения"
+					                  maxLength={500}
+					                />
+					              </Form.Item>
+				              }
+
 				              <Form.Item style={{ width: "100%" }}>
 				                <Button
 				                  type="primary"
