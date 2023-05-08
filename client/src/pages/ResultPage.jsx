@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { fetchOneResult, download } from "../http/resultAPI";
 import { useParams } from "react-router-dom";
-import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty } from "antd";
+import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty, Form, Select } from "antd";
 import { saveAs } from "file-saver";
 import {
   FileWordOutlined,
+  SaveOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
 
@@ -17,6 +18,7 @@ import { getConvertedFileSize } from '../utils/getConvertedFileSize';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
+const { Option } = Select;
 
 const ResultPage = observer(() => {
 
@@ -24,6 +26,7 @@ const ResultPage = observer(() => {
 	const [isLoadind, setIsLoading] = useState(true);
 	const [themes, setThemes] = useState([]);
 	const [file, setFile] = useState("");
+	const [dataIsSent, setDataIsSent] = useState(false);
 
 	useEffect(() => {
 	    setIsLoading(true);
@@ -98,7 +101,7 @@ const ResultPage = observer(() => {
 			          ) : (
 			            <>
 			              <div className="defaultForm__tile">
-			                <Title level={3} style={{ color: "#0e78ff" }}>
+			                <Title level={4} style={{ color: "#0e78ff" }}>
 			                  {themes?.workInProgress}
 			                </Title>
 			                <Text type="secondary">
@@ -106,7 +109,7 @@ const ResultPage = observer(() => {
 			                </Text>
 			              </div>
 
-			              <Title level={4} style={{ color: "#ff4d4f" }}>
+			              <Title level={5} style={{ color: "#ff4d4f" }}>
 			                Подразделение: {themes?.division}
 			              </Title>
 
@@ -126,6 +129,7 @@ const ResultPage = observer(() => {
 			              <Tabs>{tabPanes}</Tabs>
 				          
 				          <List
+				          	style={{ marginTop: "20px" }}
 			                size="large"
 			                className="block-file"
 			                bordered
@@ -168,14 +172,14 @@ const ResultPage = observer(() => {
 			              </List> 
 
 			              <Divider orientation="center">Комментарий</Divider>
-			              
+
 			              <List>
 			              	<List.Item>
 			              		{themes?.comment}
 			              	</List.Item>
 			              </List>
 
-			              <div style={{ display: "flex" }}>
+			              <div style={{ display: "flex", marginTop: "20px" }}>
 				              <Text type="danger" style={{ marginRight: "5px" }}>
 				                Итоговая оценка: 
 				              </Text>
@@ -184,8 +188,42 @@ const ResultPage = observer(() => {
 				              </Text>
 			              </div>
 
-
-
+			              <Form style={{ marginTop: "20px" }}>
+				              <Form.Item
+				                  name="select"
+				                  label="Результат проверки"
+				                  hasFeedback
+				                  style={{ width: "400px" }}
+				                  rules={[
+				                    {
+				                      required: true,
+				                      message: "Выберите результат",
+				                    },
+				                  ]}
+				                >
+				                  <Select
+				                    allowClear
+				                    placeholder="Выберите результат"
+				                    onChange={(value) => {
+				                      // setActualKey(value);
+				                    }}
+				                  >
+				                    <Option value="Актуально">Принято</Option>
+				                    <Option value="Не актуально">Не принято</Option>
+				                  </Select>
+				              </Form.Item>
+				              <Form.Item style={{ width: "100%" }}>
+				                <Button
+				                  type="primary"
+				                  loading={dataIsSent}
+				                  htmlType="submit"
+				                  icon={<SaveOutlined />}
+				                  style={{ width: "100%" }}
+				                >
+				                  Сохранить
+				                </Button>
+				              </Form.Item>
+			              </Form>
 			            </>
           			)}
         		</div>
