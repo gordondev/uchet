@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { fetchOneResult } from "../http/resultAPI";
 import { useParams } from "react-router-dom";
-import { List, Typography, Button, Divider, Skeleton, message } from "antd";
+import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty } from "antd";
 
 const { Title, Text } = Typography;
+const { TabPane } = Tabs;
 
 const ResultPage = observer(() => {
 
@@ -23,9 +24,42 @@ const ResultPage = observer(() => {
 	console.log(themes);
 
 	const data = [
-	  `Автор: ${themes.user.name + " " + themes.user.patronymic}`,
+	  `Автор: ${themes?.user?.name + " " + themes?.user?.patronymic}`,
 	  `Дата создания: ${new Date(themes?.createdAt).toLocaleString("ru-RU")}`,
 	];
+
+	const tabPanes = themes?.themes_results?.map((theme, index) => (
+	  <TabPane tab={theme?.theme?.title} key={index}>
+	  	<Divider orientation="center">Оценки</Divider>
+	   	<List
+	        dataSource={theme?.grade_observation_results}
+	        renderItem={item => (
+	          <List.Item>
+	            <div>{item.checklist.name}</div>
+	            <div>{item.grade}</div>
+	          </List.Item>
+	        )}
+      	/>
+      	<Divider orientation="center">Точки роста</Divider>
+	   	<List
+	        dataSource={theme?.points_of_growths}
+	        renderItem={item => (
+	          <List.Item>
+	            <div>{item.point}</div>
+	          </List.Item>
+	        )}
+      	/>
+      	<Divider orientation="center">Сильные стороны</Divider>
+	   	<List
+	        dataSource={theme?.strengths}
+	        renderItem={item => (
+	          <List.Item>
+	            <div>{item.strength}</div>
+	          </List.Item>
+	        )}
+      	/>
+	  </TabPane>
+	));
 
 	return (
 		<section className="searchSection" id="print-section">
@@ -60,6 +94,13 @@ const ResultPage = observer(() => {
 			                style={{ marginBottom: "20px" }}
 			                renderItem={(item) => <List.Item>{item}</List.Item>}
 			              />
+
+			              {themes?.themes_results?.length === 0 && (
+				            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+				          )}
+
+			              <Tabs>{tabPanes}</Tabs>
+				           
 			            </>
           			)}
         		</div>

@@ -167,10 +167,8 @@ class ResultService {
   async getOne(id) {
     const observationResult = await ObservationResults.findByPk(id, {
       include: [
-        {
-          model: ObservationResultsFiles,
-          model: User,
-        },
+          { model: ObservationResultsFiles, },
+          { model: User, },
         {
           model: ThemesResults,
           include: [
