@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Card, Empty, Button, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { RESULT_ROUTE, RESULT_EDIT_ROUTE } from "../utils/consts";
+import { RESULT_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 import resultImage from "../images/result.png";
 
@@ -23,15 +23,7 @@ const Results = ({ results }) => {
       <Card
         hoverable
         onClick={(event) => {
-          if (
-            event.target.tagName === "BUTTON" ||
-            event.target.tagName === "svg" ||
-            event.target.tagName === "path"
-          ) {
-            navigate(RESULT_EDIT_ROUTE + "/" + data.id);
-          } else {
-            navigate(RESULT_ROUTE + "/" + data.id);
-          }
+          navigate(RESULT_ROUTE + "/" + data.id);
         }}
         style={{
           minWidth: 300,
@@ -41,13 +33,6 @@ const Results = ({ results }) => {
       >
         <div className="item-content">
           <p className="item-id">{data.id}</p>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="btnEdit"
-            style={{ width: "40px", height: "40px", borderRadius: "100%" }}
-            icon={<EditOutlined />}
-          ></Button>
           <img src={resultImage} alt="resultImage" />
           <div className="item__title-block">
             <p className="item-title">{data.division}</p>
