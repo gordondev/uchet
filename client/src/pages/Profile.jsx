@@ -5,17 +5,18 @@ import {
   Input,
   Button,
   Checkbox,
-  Modal,
   message,
   Typography,
+  Avatar,
+  Modal
 } from "antd";
 import { Context } from "../index";
-import { deleteAccount, updateAccount } from "../http/userAPI";
+import { updateAccount } from "../http/userAPI";
 import { MAIN_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
+import { UserOutlined } from '@ant-design/icons';
 
-const { Title } = Typography;
-const { Paragraph } = Typography;
+const { Paragraph, Text, Title } = Typography;
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -29,41 +30,16 @@ const Profile = () => {
   const [editableStrSecondName, setEditableSecondName] = useState(
     `${user?.user?.patronymic}`
   );
-
   const [componentDisabled, setComponentDisabled] = useState(true);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-    deleteThisAccount();
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
   const [messageApi, contextHolder] = message.useMessage();
+  const [modal2Open, setModal2Open] = useState(false);
+
   const success = () => {
     updateProfile();
     messageApi.open({
       type: "success",
       content: "Данные были обновленны",
     });
-  };
-
-  const deleteThisAccount = async () => {
-    try {
-      await deleteAccount(user.user.id);
-      user.setUser({});
-      user.setIsAuth(false);
-      localStorage.removeItem("token");
-      navigate(MAIN_ROUTE);
-    } catch (e) {
-      message.error(e.response?.data?.message);
-    }
   };
 
   const updateProfile = async () => {
@@ -86,15 +62,50 @@ const Profile = () => {
             level={4}
             style={{ margin: "0px 0px 20px 0px", textAlign: "center" }}
           >
-            Личные данные
+            Профиль
           </Title>
-          <Paragraph
+
+          <div className="profile-container">
+              <Avatar
+              size={{
+                xs: 24,
+                sm: 32,
+                md: 40,
+                lg: 64,
+                xl: 80,
+                xxl: 100,
+              }}
+              icon={<UserOutlined />}
+            />
+
+            <div style={{ marginTop: "20px" }}>
+              <Text style={{ marginRight: "4px" }}>{editableStrSerName}</Text>
+              <Text style={{ marginRight: "4px" }}>{editableStrFirstName}</Text>
+              <Text>{editableStrSecondName}</Text>
+            </div>
+
+            <Text>{"Подразделение: " + user.user.division}</Text>
+
+            <Button style={{ marginTop: "20px" }} type="primary" onClick={() => setModal2Open(true)}>
+              Изменить данные
+            </Button>
+          </div>
+
+      <Modal
+        title="Редактирование"
+        centered
+        open={modal2Open}
+        footer={() => null}
+        onCancel={() => setModal2Open(false)}
+      >
+        <Paragraph
             editable={{
               onChange: setEditableSerName,
             }}
           >
             {editableStrSerName}
           </Paragraph>
+
           <Paragraph
             editable={{
               onChange: setEditableFirstName,
@@ -102,6 +113,7 @@ const Profile = () => {
           >
             {editableStrFirstName}
           </Paragraph>
+
           <Paragraph
             editable={{
               onChange: setEditableSecondName,
@@ -114,27 +126,13 @@ const Profile = () => {
           <Button
             type="primary"
             htmlType="submit"
-            style={{ width: "100%", marginBottom: "20px" }}
             onClick={success}
           >
             Сохранить
           </Button>
-          <Button
-            type="primary"
-            danger
-            style={{ width: "100%" }}
-            onClick={showModal}
-          >
-            Удалить аккаунт
-          </Button>
-          <Modal
-            title="Удаление учетной записи!"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
-          >
-            <p>Данная учетная запись будет удалена безвозвратно, продолжить?</p>
-          </Modal>
+      </Modal>
+
+          
         </div>
       </div>
     </section>
