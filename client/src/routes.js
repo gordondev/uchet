@@ -14,6 +14,7 @@ import ChecklistPage from "./pages/ChecklistPage";
 import ChecklistEdit from "./pages/ChecklistEdit";
 import ResultCreate from "./pages/ResultCreate";
 import ResultPage from "./pages/ResultPage";
+import ResultEdit from "./pages/ResultEdit";
 
 import {
   LOGIN_ROUTE,
@@ -28,7 +29,8 @@ import {
   RESULT_ROUTE,
   CHECKLIST_CREATE_ROUTE,
   CHECKLIST_EDIT_ROUTE,
-  RESULT_CREATE_ROUTE
+  RESULT_CREATE_ROUTE,
+  RESULT_EDIT_ROUTE,
 } from "./utils/consts";
 
 export const authRoutes = [
@@ -87,6 +89,10 @@ export const authRoutes = [
   {
     path: RESULT_ROUTE + "/:id",
     Component: ResultPage
+  },
+  {
+    path: RESULT_EDIT_ROUTE + "/:id",
+    Component: ResultEdit
   },
 ];
 

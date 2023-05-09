@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Card, Empty, Button, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { RESULT_ROUTE } from "../utils/consts";
+import { RESULT_ROUTE, RESULT_EDIT_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 import resultImage from "../images/result.png";
 
@@ -28,8 +28,7 @@ const Results = ({ results }) => {
             event.target.tagName === "svg" ||
             event.target.tagName === "path"
           ) {
-            console.log("click edit");
-            // navigate(CHECKLIST_EDIT_ROUTE + "/" + data.id);
+            navigate(RESULT_EDIT_ROUTE + "/" + data.id);
           } else {
             navigate(RESULT_ROUTE + "/" + data.id);
           }
