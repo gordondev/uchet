@@ -8,19 +8,29 @@ import {
   message,
   Typography,
   Avatar,
-  Modal
+  Modal,
+  Upload
 } from "antd";
 import { Context } from "../index";
 import { updateAccount } from "../http/userAPI";
 import { MAIN_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 
 const { Paragraph, Text, Title } = Typography;
+
+const fileTypeJPG = "image/jpeg";
+const fileTypePNG = "image/png";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user } = useContext(Context);
+
+  const [file, setFile] = useState("");
+  const [nameFile, setNameFile] = useState("");
+  const [fileSize, setFileSize] = useState("");
+  const [fileExtension, setFileExtension] = useState("");
+
   const [editableStrSerName, setEditableSerName] = useState(
     `${user?.user?.surname}`
   );
@@ -52,6 +62,30 @@ const Profile = () => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
+  };
+
+  const props = {
+    name: "file",
+    multiple: false,
+    maxCount: 1,
+  };
+
+  const beforeUploadFile = (file) => {
+    const isJPG =
+      file.type ===
+      fileTypeJPG;
+    const isPNG = file.type ===
+      fileTypePNG;
+      
+    if (!isJPG && !isPNG) {
+      message.error("Вы можете загрузить только .jpg .png файл");
+    } else {
+      setFile(file);
+      setNameFile(file.name);
+      setFileSize(file.size);
+      setFileExtension(file.name.split(".").pop());
+    }
+    return !isJPG && !isPNG;
   };
 
   return (
@@ -122,8 +156,15 @@ const Profile = () => {
             {editableStrSecondName}
           </Paragraph>
 
+          <Upload {...props} beforeUpload={beforeUploadFile}>
+            <Button icon={<UploadOutlined />}>
+              Нажмите для загрузки .jpg .png
+            </Button>
+          </Upload>
+
           {contextHolder}
           <Button
+            style={{ marginTop: "20px"}}
             type="primary"
             htmlType="submit"
             onClick={success}
