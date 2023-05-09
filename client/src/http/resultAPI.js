@@ -33,3 +33,8 @@ export const download = async (id, file) => {
   });
   return data;
 };
+
+export const updateResultOfChecking = async (resultOfCheckingData, id) => {
+  const { data } = await $host.put("api/result/" + id + "/update-result-of-checking/",  resultOfCheckingData);
+  return data;
+};

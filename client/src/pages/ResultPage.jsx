@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { fetchOneResult, download } from "../http/resultAPI";
+import { fetchOneResult, download, updateResultOfChecking } from "../http/resultAPI";
 import { useParams } from "react-router-dom";
 import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty, Form, Select, Input } from "antd";
 import { saveAs } from "file-saver";
@@ -8,6 +8,7 @@ import {
   FileWordOutlined,
   SaveOutlined,
   DownloadOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 
 import pdfImage from "../images/pdf.png";
@@ -40,7 +41,7 @@ const ResultPage = observer(() => {
 	      setFile(data?.observation_results_files[0]?.id);
 	    });
 	    setIsLoading(false);
-	}, [file]);
+	}, [file, dataIsSent]);
 
 	const data = [
 	  `Автор: ${themes?.user?.name + " " + themes?.user?.patronymic}`,
@@ -68,6 +69,20 @@ const ResultPage = observer(() => {
 	    setShowTextArea(false);
 	  }
 	};
+
+	const updateResultOfCheckingData = async () => {
+		setDataIsSent(true);
+		const formData = new FormData();
+		formData.append("resultOfChecking", resultOfChecking);
+		formData.append("rejectionComment", rejectionСomment);
+		formData.append("id", id);
+		try {
+	      await updateResultOfChecking(formData, id);
+	    } catch (e) {
+	      message.error(e.response?.data?.message);
+	    }
+		setDataIsSent(false);
+	}
 
 	const tabPanes = themes?.themes_results?.map((theme, index) => (
 	  <TabPane tab={theme?.theme?.title} key={index}>
@@ -194,73 +209,108 @@ const ResultPage = observer(() => {
 			              </List>
 
 			              <div style={{ display: "flex", marginTop: "20px" }}>
-				              <Text type="danger" style={{ marginRight: "5px" }}>
+				              <Title level={5} style={{ marginRight: "5px" }}>
 				                Итоговая оценка: 
-				              </Text>
-				              <Text>
+				              </Title>
+				              <Text style={{ marginTop: "2px" }}>
 				              	{themes?.finalGrade} 
 				              </Text>
 			              </div>
 
-			              <Form style={{ marginTop: "20px" }}>
-				              <Form.Item
-				                  name="select"
-				                  label="Результат проверки"
-				                  hasFeedback
-				                  style={{ width: "400px" }}
-				                  rules={[
-				                    {
-				                      required: true,
-				                      message: "Выберите результат",
-				                    },
-				                  ]}
-				                >
-				                  <Select
-				                    allowClear
-				                    placeholder="Выберите результат"
-				                    onChange={handleSelectChange}
-				                  >
-				                    <Option value="Принято">Принято</Option>
-				                    <Option value="Не принято">Не принято</Option>
-				                  </Select>
-				              </Form.Item>
+			              {
+							  !themes?.resultOfChecking ? (
+							    <Form style={{ marginTop: "20px" }} onFinish={updateResultOfCheckingData}>
+							      <Form.Item
+							        name="select"
+							        label="Результат проверки"
+							        hasFeedback
+							        style={{ width: "400px" }}
+							        rules={[
+							          {
+							            required: true,
+							            message: "Выберите результат",
+							          },
+							        ]}
+							      >
+							        <Select
+							          allowClear
+							          placeholder="Выберите результат"
+							          onChange={handleSelectChange}
+							        >
+							          <Option value="Принято">Принято</Option>
+							          <Option value="Не принято">Не принято</Option>
+							        </Select>
+							      </Form.Item>
 
-				              {
-				              	showTextArea &&
-
-				              	<Form.Item
-					                label="Комментарий отклонения: "
-					                name="comment"
-					                rules={[
-					                  {
-					                    required: true,
-					                    message: "Введите комментарий отклонения",
-					                  },
-					                ]}
-					              >
-					                <TextArea
-					                  allowClear
-					                  rows={4}
-					                  onChange={debounce((e) => setRejectionСomment(e.target.value), 500)}
-					                  showCount
-					                  placeholder="Введите комментарий отклонения"
-					                  maxLength={500}
-					                />
-					              </Form.Item>
-				              }
-
-				              <Form.Item style={{ width: "100%" }}>
-				                <Button
-				                  type="primary"
-				                  loading={dataIsSent}
-				                  htmlType="submit"
-				                  icon={<SaveOutlined />}
-				                  style={{ width: "100%" }}
-				                >
-				                  Сохранить
-				                </Button>
-				              </Form.Item>
-			              </Form>
+							      {showTextArea && (
+							        <Form.Item
+							          label="Комментарий отклонения: "
+							          name="comment"
+							          rules={[
+							            {
+							              required: true,
+							              message: "Введите комментарий отклонения",
+							            },
+							          ]}
+							        >
+							          <TextArea
+							            allowClear
+							            rows={4}
+							            onChange={debounce((e) =>
+							              setRejectionСomment(e.target.value)
+							            )}
+							            showCount
+							            placeholder="Введите комментарий отклонения"
+							            maxLength={500}
+							          />
+							        </Form.Item>
+							      )}
+							      {
+							        resultOfChecking &&
+							        	<Form.Item style={{ width: "100%" }}>
+							                <Button
+							                  type="primary"
+							                  loading={dataIsSent}
+							                  htmlType="submit"
+							                  icon={<SaveOutlined />}
+							                  style={{ width: "100%" }}
+							                >
+							                  Сохранить
+							                </Button>
+							            </Form.Item>
+							      }
+							    </Form>
+							  ) : (
+							    <>
+							      <div style={{ display: "flex" }}>
+						              <Text style={{ marginRight: "5px" }}>
+						                Результат проверки:  
+						              </Text>
+						              {
+						              	themes?.resultOfChecking === "Не принято" ?
+						              	<Text type="danger">
+						              		{themes?.resultOfChecking}
+						              	</Text> :
+						              	<Text type="success">
+						              		{themes?.resultOfChecking} <CheckOutlined />
+						              	</Text>
+						              }
+					              </div>
+					              {
+					              	themes?.resultOfChecking !== "Принято" &&
+					              	<div>
+						              <Text style={{ marginRight: "5px" }}>
+						                Комментарий:  
+						              </Text>
+						              <br/>
+						              <Text type="secondary">
+						              	{themes?.rejectionСomment}
+						              </Text>
+					              	</div>
+					              }
+							    </>
+							  )
+							}
 			            </>
           			)}
         		</div>
