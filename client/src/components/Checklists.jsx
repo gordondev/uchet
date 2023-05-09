@@ -39,6 +39,7 @@ const Checklists = ({ checklists }) => {
         }}
       >
         <div className="item-content">
+          <p className="item-id">{data.id}</p>
           <Button
             type="primary"
             htmlType="submit"

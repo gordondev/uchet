@@ -289,6 +289,13 @@ ul {
   border-radius: 100%;
 }
 
+.item-id {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  color: #d9d9d9;
+}
+
 @media print {
   .header {
     display: none;

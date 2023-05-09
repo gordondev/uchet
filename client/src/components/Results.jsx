@@ -41,6 +41,7 @@ const Results = ({ results }) => {
         }}
       >
         <div className="item-content">
+          <p className="item-id">{data.id}</p>
           <Button
             type="primary"
             htmlType="submit"
@@ -50,6 +51,7 @@ const Results = ({ results }) => {
           ></Button>
           <img src={resultImage} alt="resultImage" />
           <div className="item__title-block">
+            <p className="item-title">{data.division}</p>
             <p className="item-title">{data.workInProgress}</p>
           </div>
         </div>
