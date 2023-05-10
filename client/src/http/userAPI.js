@@ -44,6 +44,11 @@ export const deleteAccount = async (id) => {
   await $host.delete("api/user/delete/" + id);
 };
 
+export const getImageInfo = async (id) => {
+  const { data } = await $host.get("api/user/profile-image/" + id);
+  return data;
+};
+
 export const updateAccount = async (id, newData) => {
   await $host.put("api/user/update/" + id, newData);
 };

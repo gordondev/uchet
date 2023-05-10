@@ -1,10 +1,71 @@
-const { User } = require("../models/models");
+const { User, ProfilePhotoFiles } = require("../models/models");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
 const mailService = require("./mail-service");
 const tokenService = require("./token-service");
 const UserDto = require("../dtos/user-dto");
 const ApiError = require("../exceptions/api-error");
+
+const path = require("path");
+const mime = require('mime-types')
+
+const fileTypeJPG = "image/jpeg";
+const fileTypePNG = "image/png";
+const filePath = "static/user/profile-image";
+
+async function saveFile(file, id) {
+  let fileId = uuid.v4();
+  let fileName;
+  if (mime.contentType(file.name) === fileTypeJPG) {
+    fileName = fileId + ".jpg";
+  } else {
+    fileName = fileId + ".png";
+  }
+
+  file.mv(path.resolve(__dirname, "..", filePath, fileName));
+
+  await ProfilePhotoFiles.create({
+    id: fileId,
+    fileName: file.name,
+    filePath: filePath,
+    fileSize: file.size,
+    fileExtension: file.name.split(".").pop(),
+    userId: id,
+  });
+}
+
+async function destroyFile(id) {
+  const file = await ProfilePhotoFiles.findOne({
+    where: { userId: id },
+  });
+
+  var fs = require("fs");
+
+  if (file) {
+    await ProfilePhotoFiles.destroy({
+      where: { userId: id },
+    });
+    fs.unlink(
+      path.resolve(__dirname, "..", filePath, file.id + "." + file.fileExtension),
+      function (err) {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
+  }
+}
+
+function checkFileExtension(file) {
+  if (file != null) {
+    const fileType = mime.contentType(file.name);
+    if (fileType != fileTypeJPG && fileType != fileTypePNG) {
+      throw ApiError.BadRequest(
+        `${file.name} не является .jpg или .png`
+      );
+    }
+  }
+}
 
 class UserService {
   async registration(
@@ -105,7 +166,15 @@ class UserService {
     return users;
   }
 
-  async updateAccount(id, name, surname, patronymic) {
+  async getProfileImage(id) {
+    const image = await ProfilePhotoFiles.findOne({ where: { userId: id } });
+    return image;
+  }
+
+  async updateAccount(id, name, surname, patronymic, file) {
+
+    checkFileExtension(file);
+
     const user = await User.update(
       {
         name: name,
@@ -116,6 +185,15 @@ class UserService {
         where: { id: id },
       }
     );
+
+    if (file != null) {
+      const findImage = await ProfilePhotoFiles.findOne({ where: { userId: id } });
+      if (findImage) {
+        await destroyFile(id);
+      }
+      await saveFile(file, id);
+    }
+
     return user;
   }
 }

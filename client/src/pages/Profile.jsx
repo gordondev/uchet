@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import {
   Form,
@@ -12,7 +12,7 @@ import {
   Upload
 } from "antd";
 import { Context } from "../index";
-import { updateAccount } from "../http/userAPI";
+import { updateAccount, getImageInfo } from "../http/userAPI";
 import { MAIN_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
@@ -27,9 +27,6 @@ const Profile = () => {
   const { user } = useContext(Context);
 
   const [file, setFile] = useState("");
-  const [nameFile, setNameFile] = useState("");
-  const [fileSize, setFileSize] = useState("");
-  const [fileExtension, setFileExtension] = useState("");
 
   const [editableStrSerName, setEditableSerName] = useState(
     `${user?.user?.surname}`
@@ -43,6 +40,7 @@ const Profile = () => {
   const [componentDisabled, setComponentDisabled] = useState(true);
   const [messageApi, contextHolder] = message.useMessage();
   const [modal2Open, setModal2Open] = useState(false);
+  const [dataIsSent, setDataIsSent] = useState(false);
 
   const success = () => {
     updateProfile();
@@ -53,16 +51,27 @@ const Profile = () => {
   };
 
   const updateProfile = async () => {
+    setDataIsSent(true);
     const formData = new FormData();
     formData.append("name", editableStrFirstName);
     formData.append("surname", editableStrSerName);
     formData.append("patronymic", editableStrSecondName);
+    formData.append("file", file);
     try {
-      await updateAccount(user.user.id, formData);
+      const userData = await updateAccount(user.user.id, formData);
     } catch (e) {
       message.error(e.response?.data?.message);
     }
+    setDataIsSent(false);
   };
+
+  useEffect(() => {
+    getImageInfo(user.user.id).then((data) => {
+      setFile(data);
+    });
+  }, [dataIsSent]);
+
+  const imageURL = `${process.env.REACT_APP_API_URL}/${file.id}.${file.fileExtension}`;
 
   const props = {
     name: "file",
@@ -81,9 +90,6 @@ const Profile = () => {
       message.error("Вы можете загрузить только .jpg .png файл");
     } else {
       setFile(file);
-      setNameFile(file.name);
-      setFileSize(file.size);
-      setFileExtension(file.name.split(".").pop());
     }
     return !isJPG && !isPNG;
   };
@@ -101,6 +107,7 @@ const Profile = () => {
 
           <div className="profile-container">
               <Avatar
+              src={imageURL}
               size={{
                 xs: 24,
                 sm: 32,
@@ -164,6 +171,7 @@ const Profile = () => {
 
           {contextHolder}
           <Button
+            loading={dataIsSent}
             style={{ marginTop: "20px"}}
             type="primary"
             htmlType="submit"

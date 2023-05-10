@@ -30,6 +30,16 @@ class UserController {
     }
   }
 
+  async getProfileImage(req, res, next) {
+    try {
+      const { id } = req.params;
+      const image = await userService.getProfileImage(id);
+      return res.json(image);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
@@ -110,8 +120,9 @@ class UserController {
     try {
       const { id } = req.params;
       const { name, surname, patronymic } = req.body;
-      console.log(name, surname, patronymic);
-      await userService.updateAccount(id, name, surname, patronymic);
+      const file = req.files?.file || null;
+
+      await userService.updateAccount(id, name, surname, patronymic, file);
       return res.json({ message: `Данные были обновленны` });
     } catch (e) {
       next(e);

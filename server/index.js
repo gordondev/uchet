@@ -20,7 +20,7 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(express.static(path.resolve(__dirname, "static")));
+app.use(express.static(path.resolve(__dirname, "static/user/profile-image")));
 app.use(fileUpload({}));
 app.use(cookieParser());
 app.use("/api", router);
