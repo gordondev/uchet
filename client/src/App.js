@@ -13,7 +13,7 @@ const App = observer(() => {
   const { user } = useContext(Context);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(() => { 
     check()
       .then((data) => {
         user.setUser(data);

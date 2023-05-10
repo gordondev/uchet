@@ -4,7 +4,7 @@ export default class UserStore {
   constructor() {
     this._isAuth = false;
     this._isActivated = false;
-    this._isLocked = false;
+    this._isLocked = true;
     this._user = {};
     makeAutoObservable(this);
   }
@@ -13,6 +13,9 @@ export default class UserStore {
   }
   setUser(user) {
     this._user = user;
+  }
+  setLocked(bool) {
+    this._isLocked = bool;
   }
   get isAuth() {
     return this._isAuth;
