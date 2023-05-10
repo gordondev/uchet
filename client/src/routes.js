@@ -14,6 +14,7 @@ import ChecklistPage from "./pages/ChecklistPage";
 import ChecklistEdit from "./pages/ChecklistEdit";
 import ResultCreate from "./pages/ResultCreate";
 import ResultPage from "./pages/ResultPage";
+import AccountLock from "./pages/AccountLock";
 
 import {
   LOGIN_ROUTE,
@@ -29,6 +30,7 @@ import {
   CHECKLIST_CREATE_ROUTE,
   CHECKLIST_EDIT_ROUTE,
   RESULT_CREATE_ROUTE,
+  ACCOUNT_LOCK_ROUTE,
 } from "./utils/consts";
 
 export const authRoutes = [
@@ -98,5 +100,12 @@ export const publicRoutes = [
   {
     path: REGISTRATION_ROUTE,
     Component: Registration,
+  },
+];
+
+export const lockedRoutes = [
+  {
+    path: ACCOUNT_LOCK_ROUTE,
+    Component: AccountLock,
   },
 ];

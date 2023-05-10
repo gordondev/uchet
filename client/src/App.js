@@ -12,6 +12,7 @@ import { Spin } from "antd";
 const App = observer(() => {
   const { user } = useContext(Context);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     check()
       .then((data) => {
@@ -33,13 +34,19 @@ const App = observer(() => {
 
   return (
     <BrowserRouter>
-      {user.isAuth ? (
+      {(user._isAuth && user._isLocked) ? (
+        <>
+          <AppRouter />
+        </>
+      ) : user._isAuth ? (
         <>
           <NavBar />
           <AppRouter />
         </>
       ) : (
-        <AppRouter />
+        <>
+          <AppRouter />
+        </>
       )}
     </BrowserRouter>
   );
