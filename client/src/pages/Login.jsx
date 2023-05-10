@@ -18,7 +18,9 @@ const Login = observer(() => {
     setIsLoading(true);
     try {
       const data = await login(values.email, values.password);
+      console.log(data);
       user.setIsAuth(true);
+      user.setLocked(data.isBlocked);
       user.setUser(data);
       navigate(MAIN_ROUTE);
     } catch (e) {

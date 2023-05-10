@@ -18,6 +18,7 @@ const App = observer(() => {
       .then((data) => {
         user.setUser(data);
         user.setIsAuth(true);
+        user.setLocked(data.isBlocked);
       })
       .finally(() => setLoading(false));
   }, []);

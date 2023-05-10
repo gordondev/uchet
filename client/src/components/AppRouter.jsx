@@ -8,17 +8,19 @@ import { observer } from "mobx-react-lite";
 const AppRouter = observer(() => {
   const { user } = useContext(Context);
 
+  console.log(user);
+
   return (
     <Routes>
-      {(user._isAuth && user._isLocked) && lockedRoutes.map(({ path, Component }) => (
+      {(user.isAuth && user.isLocked) && lockedRoutes.map(({ path, Component }) => (
         <Route key={path} path={path} element={<Component />} exact />
       ))}
       ,
-      {!user._isLocked && publicRoutes.map(({ path, Component }) => (
+      {(!user.isAuth && !user.isLocked) && publicRoutes.map(({ path, Component }) => (
         <Route key={path} path={path} element={<Component />} exact />
       ))}
       ,
-      {(user._isAuth && !user._isLocked) &&
+      {(user.isAuth && !user.isLocked) &&
         authRoutes.map(({ path, Component }) => (
           <Route key={path} path={path} element={<Component />} exact />
       ))}
@@ -26,9 +28,9 @@ const AppRouter = observer(() => {
       <Route
         path="*"
         element={
-          (user._isAuth && user._isLocked) ? (
+          (user.isAuth && user.isLocked) ? (
             <Navigate to={ACCOUNT_LOCK_ROUTE} />
-          ) : user._isAuth ? (
+          ) : user.isAuth ? (
             <Navigate to={MAIN_ROUTE} />
           ) : (
             <Navigate to={LOGIN_ROUTE} />

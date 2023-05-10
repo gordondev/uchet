@@ -48,6 +48,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
+      console.log(userData);
       return res.json(userData);
     } catch (e) {
       next(e);
@@ -101,6 +102,14 @@ class UserController {
   async check(req, res, next) {
     try {
       return res.json({ message: "all right" });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async checkAccountStatus(req, res, next) {
+    try {
+      console.log(req);
     } catch (e) {
       next(e);
     }
