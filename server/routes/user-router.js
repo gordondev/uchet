@@ -12,14 +12,14 @@ router.post(
   body("password").isLength({ min: 5, max: 32 }),
   userController.registration
 );
-router.post("/login", checkBlockedMiddleware, userController.login);
+router.post("/login", userController.login);
 router.post("/logout", userController.logout);
 router.get("/activate/:link", userController.activate);
 router.get("/refresh", userController.refresh);
 router.get("/users", authMiddleware, userController.getUsers);
 router.get("/auth", authMiddleware, userController.check);
 router.delete("/delete/:id", userController.deleteAccount);
-router.put("/update/:id", userController.updateAccount);
+router.put("/update/:id", checkBlockedMiddleware, userController.updateAccount);
 router.get("/profile-image/:id", userController.getProfileImage);
 
 

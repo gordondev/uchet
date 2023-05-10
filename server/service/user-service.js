@@ -171,6 +171,11 @@ class UserService {
     return image;
   }
 
+  async getUser(id) {
+    const user = await User.findOne({ where: { id } });
+    return user;
+  }
+
   async updateAccount(id, name, surname, patronymic, file) {
 
     checkFileExtension(file);

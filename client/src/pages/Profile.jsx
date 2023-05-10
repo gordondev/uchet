@@ -38,17 +38,8 @@ const Profile = () => {
     `${user?.user?.patronymic}`
   );
   const [componentDisabled, setComponentDisabled] = useState(true);
-  const [messageApi, contextHolder] = message.useMessage();
   const [modal2Open, setModal2Open] = useState(false);
   const [dataIsSent, setDataIsSent] = useState(false);
-
-  const success = () => {
-    updateProfile();
-    messageApi.open({
-      type: "success",
-      content: "Данные были обновленны",
-    });
-  };
 
   const updateProfile = async () => {
     setDataIsSent(true);
@@ -59,6 +50,7 @@ const Profile = () => {
     formData.append("file", file);
     try {
       const userData = await updateAccount(user.user.id, formData);
+      message.success(`Данные обновленны...`);
     } catch (e) {
       message.error(e.response?.data?.message);
     }
@@ -169,13 +161,12 @@ const Profile = () => {
             </Button>
           </Upload>
 
-          {contextHolder}
           <Button
             loading={dataIsSent}
             style={{ marginTop: "20px"}}
             type="primary"
             htmlType="submit"
-            onClick={success}
+            onClick={updateProfile}
           >
             Сохранить
           </Button>
