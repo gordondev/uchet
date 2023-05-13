@@ -20,10 +20,13 @@ const Admin = observer(() => {
     {
       title: "Email",
       dataIndex: "email",
+      editable: true,
     },
     {
       title: "Роль",
       dataIndex: "role",
+      key: 'role',
+      editable: true,
       filters: [
         {
           text: "USER",
@@ -34,11 +37,14 @@ const Admin = observer(() => {
           value: "ADMIN",
         },
       ],
+      onFilter: (value, record) => record.role === value,
     },
     {
       title: "Подразделение",
       dataIndex: "division",
+      key: 'division',
       width: 170,
+      editable: true,
       filters: [
         {
           text: "ТЦ-3",
@@ -121,22 +127,26 @@ const Admin = observer(() => {
           value: "УТП",
         },
       ],
-      onFilter: (value, record) => record.address.indexOf(value) === 0,
+      onFilter: (value, record) => record.division === value,
     },
     {
       title: "Имя",
       dataIndex: "name",
+      editable: true,
     },
     {
       title: "Фамилия",
       dataIndex: "surname",
+      editable: true,
     },
     {
       title: "Отчество",
       dataIndex: "patronymic",
+      editable: true,
     },
     {
       title: "Действие",
+      editable: true,
       dataIndex: "",
       key: "x",
       width: 165,
