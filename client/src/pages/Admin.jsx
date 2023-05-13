@@ -151,16 +151,6 @@ const Admin = observer(() => {
       dataIndex: "",
       key: "x",
       render: () => (
-        <Button type="primary" danger icon={<DeleteOutlined />}>
-          Удалить
-        </Button>
-      ),
-    },
-    {
-      title: "Действие",
-      dataIndex: "",
-      key: "x",
-      render: () => (
         <Button type="primary" danger icon={<LockOutlined />}>
           Заблокировать
         </Button>
@@ -172,6 +162,7 @@ const Admin = observer(() => {
     <section className="searchSection">
       <div className="container">
         <Table
+          style={{ marginTop: "20px" }}
           columns={columns}
           size="middle"
           dataSource={users}
