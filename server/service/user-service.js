@@ -176,9 +176,15 @@ class UserService {
     return user;
   }
 
-  async updateAccount(id, name, surname, patronymic, email, division, role, file) {
+  async updateAccount(id, name, surname, patronymic, email, division, role, password, file) {
 
     checkFileExtension(file);
+
+    const findUser = await User.findOne({ where: { id } });
+    let hashPassword = password;
+    if (findUser.password !== hashPassword) {
+      hashPassword = await bcrypt.hash(password, 3);
+    }
 
     const user = await User.update(
       {
@@ -187,7 +193,8 @@ class UserService {
         patronymic: patronymic,
         email: email,
         division: division,
-        role: role
+        role: role,
+        password: hashPassword,
       },
       {
         where: { id: id },

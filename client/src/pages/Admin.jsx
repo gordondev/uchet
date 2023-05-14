@@ -4,6 +4,7 @@ import { getAllUsers } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { DeleteOutlined, LockOutlined, EditOutlined } from "@ant-design/icons";
 import { debounce } from 'lodash';
+import { updateAccount } from "../http/userAPI";
 
 const { Option } = Select;
 
@@ -20,17 +21,46 @@ const Admin = observer(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [dataIsSent, setDataIsSent] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
     getAllUsers().then((data) => setUsers(data));
     setIsLoading(false);
-  }, []);
+  }, [dataIsSent]);
 
   const onEditUser = (record) => {
+    setDivision(record?.division);
+    setName(record?.name);
+    setSurname(record?.surname);
+    setPatronymic(record?.patronymic);
+    setEmail(record?.email);
+    setPassword(record?.password);
+    setRole(record?.role);
     setIsEditing(true);
+    console.log(record);
     setEditingUser({...record});
   }
+
+  const updateProfile = async () => {
+    setDataIsSent(true);
+    console.log(division, role, name, surname, patronymic, email, password);
+    const formData = new FormData();
+    formData.append("division", division);
+    formData.append("role", role);
+    formData.append("name", name);
+    formData.append("surname", surname);
+    formData.append("patronymic", patronymic);
+    formData.append("email", email);
+    formData.append("password", password);
+    try {
+      const userData = await updateAccount(editingUser?.id, formData);
+      message.success(`Данные обновленны...`);
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+    setDataIsSent(false);
+  };
 
   const resetEditing = () => {
     setIsEditing(false);
@@ -216,11 +246,10 @@ const Admin = observer(() => {
         <Modal
           centered
           title="Редактирование пользователя"
-          okText="Сохранить"
           cancelText="Отмена"
           visible={isEditing}
+          footer={() => null}
           onCancel={() => resetEditing()}
-          onOk={() => resetEditing()}
         >
           <Form
             className="formWindow"
@@ -235,12 +264,13 @@ const Admin = observer(() => {
               name="division"
               label="Подразделение"
               hasFeedback
-              onChange={(e) => setDivision(e.target.value)}
             >
               <Select
-                defaultValue={division === "" && null}
                 placeholder={editingUser?.division}
                 allowClear
+                onChange={(value) => {
+                  setDivision(value);
+                }}
               >
                 <Option value="ТЦ-3">ТЦ-3</Option>
                 <Option value="РЦ-2">РЦ-2</Option>
@@ -269,12 +299,13 @@ const Admin = observer(() => {
               name="role"
               label="Роль"
               hasFeedback
-              onChange={(e) => setRole(e.target.value)}
             >
               <Select
-                defaultValue={role === "" && null}
                 placeholder={editingUser?.role}
                 allowClear
+                onChange={(value) => {
+                  setRole(value);
+                }}
               >
                 <Option value="USER">USER</Option>
                 <Option value="ADMIN">ADMIN</Option>
@@ -325,8 +356,17 @@ const Admin = observer(() => {
               onChange={debounce((e) => setPassword(e.target.value), 500)}
               hasFeedback
             >
-              <Input.Password allowClear />
+              <Input.Password allowClear placeholder="Придумайте пароль"/>
             </Form.Item>
+            <Button
+              loading={dataIsSent}
+              style={{ marginTop: "20px"}}
+              type="primary"
+              htmlType="submit"
+              onClick={updateProfile}
+            >
+              Сохранить
+            </Button>
           </Form>
         </Modal>
       </div>
