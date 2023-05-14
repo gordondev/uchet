@@ -61,3 +61,7 @@ export const getAllUsers = async () => {
   const { data } = await $authHost.get("api/user/users/");
   return data;
 };
+
+export const blockUser = async (id, isBlocked) => {
+  await $host.put("api/user/admin/block/" + id, isBlocked);
+};

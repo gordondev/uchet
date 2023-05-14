@@ -211,6 +211,18 @@ class UserService {
     return user;
   }
 
+  async blockUser(id, isBlocked) {
+    const user = await User.update(
+      {
+        isBlocked: isBlocked
+      },
+      {
+        where: { id: id },
+      }
+    );
+    return user;
+  }
+
   async updateProfile(id, name, surname, patronymic, file) {
     checkFileExtension(file);
 

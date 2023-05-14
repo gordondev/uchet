@@ -4,7 +4,7 @@ import { getAllUsers } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { DeleteOutlined, LockOutlined, EditOutlined, UnlockOutlined } from "@ant-design/icons";
 import { debounce } from 'lodash';
-import { updateProfile } from "../http/userAPI";
+import { updateProfile, blockUser } from "../http/userAPI";
 
 const { Option } = Select;
 
@@ -44,7 +44,6 @@ const Admin = observer(() => {
 
   const updateProfile_ = async () => {
     setDataIsSent(true);
-    console.log(division, role, name, surname, patronymic, email, password);
     const formData = new FormData();
     formData.append("division", division);
     formData.append("role", role);
@@ -221,18 +220,25 @@ const Admin = observer(() => {
       key: "x",
       render: (record) => (
         record.isBlocked
-        ? <Button type="primary" style={{ backgroundColor: "#52c41a" }} icon={<UnlockOutlined />} onClick={() => { setBlockStatus(record) }}>
-            
+        ? <Button type="primary" loading={dataIsSent} style={{ backgroundColor: "#52c41a" }} icon={<UnlockOutlined />} onClick={() => { setBlockStatus(record) }}>
           </Button>
-        : <Button type="primary" danger icon={<LockOutlined />} onClick={() => { setBlockStatus(record) }}>
-            
+        : <Button type="primary" loading={dataIsSent} danger icon={<LockOutlined />} onClick={() => { setBlockStatus(record) }}>
           </Button>
       ),
     },
   ];
 
-  const setBlockStatus = (record) => {
-    alert("click", record);
+  const setBlockStatus = async (record) => {
+    console.log(!record?.isBlocked);
+    setDataIsSent(true);
+    const formData = new FormData();
+    formData.append("isBlocked", !record?.isBlocked);
+    try {
+      const userData = await blockUser(record?.id, formData);
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+    setDataIsSent(false);
   }
 
   return (

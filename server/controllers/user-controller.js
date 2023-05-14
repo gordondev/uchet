@@ -138,6 +138,14 @@ class UserController {
     }
   }
 
+  async blockUser(req, res, next) {
+    const { id } = req.params;
+    const { isBlocked } = req.body;
+    console.log("DATA = ", id, isBlocked);
+    await userService.blockUser(id, isBlocked);
+    return res.json({ message: `Данные были обновленны` });
+  }
+
   async updateProfile(req, res, next) {
     try {
       const { id } = req.params;

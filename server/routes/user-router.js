@@ -21,6 +21,7 @@ router.get("/auth", authMiddleware, userController.check);
 router.delete("/delete/:id", userController.deleteAccount);
 router.put("/update/:id", checkBlockedMiddleware, userController.updateProfile);
 router.put("/admin/update/:id", checkBlockedMiddleware, userController.updateAccount);
+router.put("/admin/block/:id", checkBlockedMiddleware, userController.blockUser);
 router.get("/profile-image/:id", userController.getProfileImage);
 
 module.exports = router;
