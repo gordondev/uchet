@@ -63,7 +63,7 @@ const Profile = () => {
     });
   }, [dataIsSent]);
 
-  const imageURL = `${process.env.REACT_APP_API_URL}/${file.id}.${file.fileExtension}`;
+  const imageURL = `${process.env.REACT_APP_API_URL}/${file?.id}.${file?.fileExtension}`;
 
   const props = {
     name: "file",
