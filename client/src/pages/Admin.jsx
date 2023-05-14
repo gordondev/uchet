@@ -209,7 +209,6 @@ const Admin = observer(() => {
       editable: true,
       dataIndex: "",
       key: "x",
-      width: 165,
       render: (record) => (
         <Button type="primary" icon={<EditOutlined />} onClick={() => { onEditUser(record) }}>
           
