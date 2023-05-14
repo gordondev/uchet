@@ -4,7 +4,7 @@ import { getAllUsers } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { DeleteOutlined, LockOutlined, EditOutlined } from "@ant-design/icons";
 import { debounce } from 'lodash';
-import { updateAccount } from "../http/userAPI";
+import { updateProfile } from "../http/userAPI";
 
 const { Option } = Select;
 
@@ -42,7 +42,7 @@ const Admin = observer(() => {
     setEditingUser({...record});
   }
 
-  const updateProfile = async () => {
+  const updateProfile_ = async () => {
     setDataIsSent(true);
     console.log(division, role, name, surname, patronymic, email, password);
     const formData = new FormData();
@@ -54,7 +54,7 @@ const Admin = observer(() => {
     formData.append("email", email);
     formData.append("password", password);
     try {
-      const userData = await updateAccount(editingUser?.id, formData);
+      const userData = await updateProfile(editingUser?.id, formData);
       message.success(`Данные обновленны...`);
     } catch (e) {
       message.error(e.response?.data?.message);
@@ -363,7 +363,7 @@ const Admin = observer(() => {
               style={{ marginTop: "20px"}}
               type="primary"
               htmlType="submit"
-              onClick={updateProfile}
+              onClick={updateProfile_}
             >
               Сохранить
             </Button>

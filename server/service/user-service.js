@@ -177,7 +177,6 @@ class UserService {
   }
 
   async updateAccount(id, name, surname, patronymic, email, division, role, password, file) {
-
     checkFileExtension(file);
 
     const findUser = await User.findOne({ where: { id } });
@@ -211,6 +210,33 @@ class UserService {
 
     return user;
   }
+
+  async updateProfile(id, name, surname, patronymic, file) {
+    checkFileExtension(file);
+
+    const user = await User.update(
+      {
+        name: name,
+        surname: surname,
+        patronymic: patronymic,
+      },
+      {
+        where: { id: id },
+      }
+    );
+
+    if (file != null) {
+      const findImage = await ProfilePhotoFiles.findOne({ where: { userId: id } });
+      if (findImage) {
+        await destroyFile(id);
+      }
+      await saveFile(file, id);
+    }
+
+    return user;
+  }
+
+
 }
 
 module.exports = new UserService();

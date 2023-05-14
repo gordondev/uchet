@@ -53,6 +53,10 @@ export const updateAccount = async (id, newData) => {
   await $host.put("api/user/update/" + id, newData);
 };
 
+export const updateProfile = async (id, newData) => {
+  await $host.put("api/user/admin/update/" + id, newData);
+};
+
 export const getAllUsers = async () => {
   const { data } = await $authHost.get("api/user/users/");
   return data;

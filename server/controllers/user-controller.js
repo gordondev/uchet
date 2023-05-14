@@ -137,6 +137,19 @@ class UserController {
       next(e);
     }
   }
+
+  async updateProfile(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { name, surname, patronymic } = req.body;
+      const file = req.files?.file || null;
+
+      await userService.updateProfile(id, name, surname, patronymic, file);
+      return res.json({ message: `Данные были обновленны` });
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = new UserController();
