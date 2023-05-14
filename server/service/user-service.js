@@ -176,7 +176,7 @@ class UserService {
     return user;
   }
 
-  async updateAccount(id, name, surname, patronymic, file) {
+  async updateAccount(id, name, surname, patronymic, email, division, role, file) {
 
     checkFileExtension(file);
 
@@ -185,6 +185,9 @@ class UserService {
         name: name,
         surname: surname,
         patronymic: patronymic,
+        email: email,
+        division: division,
+        role: role
       },
       {
         where: { id: id },

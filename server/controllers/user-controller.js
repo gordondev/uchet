@@ -128,10 +128,10 @@ class UserController {
   async updateAccount(req, res, next) {
     try {
       const { id } = req.params;
-      const { name, surname, patronymic } = req.body;
+      const { name, surname, patronymic, email, division, role } = req.body;
       const file = req.files?.file || null;
 
-      await userService.updateAccount(id, name, surname, patronymic, file);
+      await userService.updateAccount(id, name, surname, patronymic, email, division, role, file);
       return res.json({ message: `Данные были обновленны` });
     } catch (e) {
       next(e);
