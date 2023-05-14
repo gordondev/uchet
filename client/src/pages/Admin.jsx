@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, Select, message } from "antd";
 import { getAllUsers } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
-import { DeleteOutlined, LockOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LockOutlined, EditOutlined, UnlockOutlined } from "@ant-design/icons";
 import { debounce } from 'lodash';
 import { updateProfile } from "../http/userAPI";
 
@@ -79,6 +79,7 @@ const Admin = observer(() => {
     {
       title: "Email",
       dataIndex: "email",
+      width: 270,
       editable: true,
     },
     {
@@ -204,28 +205,36 @@ const Admin = observer(() => {
       editable: true,
     },
     {
-      title: "Действие",
+      title: "Редактирование",
       editable: true,
       dataIndex: "",
       key: "x",
       width: 165,
       render: (record) => (
         <Button type="primary" icon={<EditOutlined />} onClick={() => { onEditUser(record) }}>
-          Редактировать
+          
         </Button>
       ),
     },
     {
-      title: "Действие",
+      title: "Блокировка",
       dataIndex: "",
       key: "x",
-      render: () => (
-        <Button type="primary" danger icon={<LockOutlined />}>
-          Заблокировать
-        </Button>
+      render: (record) => (
+        record.isBlocked
+        ? <Button type="primary" style={{ backgroundColor: "#52c41a" }} icon={<UnlockOutlined />} onClick={() => { setBlockStatus(record) }}>
+            
+          </Button>
+        : <Button type="primary" danger icon={<LockOutlined />} onClick={() => { setBlockStatus(record) }}>
+            
+          </Button>
       ),
     },
   ];
+
+  const setBlockStatus = (record) => {
+    alert("click", record);
+  }
 
   return (
     <section className="searchSection">
