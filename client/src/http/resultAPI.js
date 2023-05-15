@@ -15,9 +15,9 @@ export const createResult = async (result) => {
   return data;
 };
 
-export const fetchResult = async (limit, page, workInProgress, impactOnSave, division) => {
+export const fetchResult = async (limit, page, workInProgress, impactOnSave, division, startDate, endDate) => {
   const { data } = await $authHost.get("api/result/", {
-    params: { limit, page, workInProgress, impactOnSave, division },
+    params: { limit, page, workInProgress, impactOnSave, division, startDate, endDate },
   });
   return data;
 };

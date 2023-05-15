@@ -179,11 +179,12 @@ class ResultService {
     return actualChecklists;
   }
 
-  async getAll(limit, offset, workInProgress, impactOnSave, division) {
+  async getAll(limit, offset, workInProgress, impactOnSave, division, startDate, endDate) {
     const where = {};
     if (workInProgress) where.workInProgress = { [Op.iLike]: `%${workInProgress}%` };
     if (impactOnSave) where.impactOnSave = impactOnSave;
     if (division) where.division = division;
+    if (startDate && endDate) where.createdAt = { [Op.between]: [startDate, endDate] };
 
     const result = await ObservationResults.findAndCountAll({
         limit,
@@ -191,7 +192,7 @@ class ResultService {
         where,
     });
     return result;
-  }
+}
 
   async getOne(id) {
     const observationResult = await ObservationResults.findByPk(id, {

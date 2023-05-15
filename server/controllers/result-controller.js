@@ -21,7 +21,7 @@ class ResultController {
 
   async getAll(req, res, next) {
     try {
-      let { limit, page, workInProgress, impactOnSave, division } = req.query;
+      let { limit, page, workInProgress, impactOnSave, division, startDate, endDate } = req.query;
       page = page || 1;
       limit = limit || 16;
       let offset = page * limit - limit;
@@ -31,7 +31,7 @@ class ResultController {
       }
 
       const resultData = await result.getAll(
-        limit, offset, workInProgress, impactOnSave, division
+        limit, offset, workInProgress, impactOnSave, division, startDate, endDate
       );
 
       return res.json(resultData);

@@ -22,6 +22,9 @@ const Result = observer(() => {
   const [searchImpactOnSaveQuery, setSearchImpactOnSaveQuery] = useState("");
   const [searchDivisionQuery, setSearchDivisionQuery] = useState("");
   const [isLoadind, setIsLoading] = useState(true);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
 
   const currentPage = useRef(1);
   const lastElement = useRef();
@@ -38,7 +41,9 @@ const Result = observer(() => {
       currentPage.current,
       searchWorkInProgressQuery,
       searchImpactOnSaveQuery,
-      searchDivisionQuery
+      searchDivisionQuery,
+      startDate,
+      endDate
     ).then((response) => {
       setData([...data, ...response.rows]);
       setTotalCount(response.count);
@@ -54,7 +59,9 @@ const Result = observer(() => {
       currentPage.current,
       searchWorkInProgressQuery,
       searchImpactOnSaveQuery,
-      searchDivisionQuery
+      searchDivisionQuery,
+      startDate,
+      endDate
     ).then((response) => {
       setData(response.rows);
       setTotalCount(response.count);
@@ -71,7 +78,9 @@ const Result = observer(() => {
       currentPage.current,
       value,
       searchImpactOnSaveQuery,
-      searchDivisionQuery
+      searchDivisionQuery,
+      startDate,
+      endDate
       ).then(
       (response) => {
         setData(response.rows);
@@ -91,7 +100,9 @@ const Result = observer(() => {
       currentPage.current,
       searchWorkInProgressQuery,
       value,
-      searchDivisionQuery
+      searchDivisionQuery,
+      startDate,
+      endDate
       ).then(
       (response) => {
         setData(response.rows);
@@ -111,7 +122,9 @@ const Result = observer(() => {
       currentPage.current,
       searchWorkInProgressQuery,
       searchImpactOnSaveQuery,
-      value
+      value,
+      startDate,
+      endDate
       ).then(
       (response) => {
         setData(response.rows);
@@ -122,6 +135,30 @@ const Result = observer(() => {
     setIsLoading(false);
   };
 
+  const handleRangePickerChange = async (dates, dateStrings) => {
+    setIsLoading(true);
+    currentPage.current = 1;
+    setStartDate(dateStrings[0]);
+    setEndDate(dateStrings[1]);
+    fetchResult(
+      16,
+      currentPage.current,
+      searchWorkInProgressQuery,
+      searchImpactOnSaveQuery,
+      searchDivisionQuery,
+      dateStrings[0],
+      dateStrings[1]
+      ).then(
+      (response) => {
+        setData(response.rows);
+        setTotalCount(response.count);
+      }
+    );
+    await sleep(1 * 50);
+    setIsLoading(false);
+  };
+
+  console.log("s: ", startDate, "e: ", endDate);
   return (
     <section className="searchSection">
       <div className="container">
@@ -265,7 +302,7 @@ const Result = observer(() => {
                 ]}
               />
               <Space direction="vertical" size={12}>
-                <RangePicker showTime style={{ width: "100%", marginTop: "20px" }}/>
+                <RangePicker showTime style={{ width: "100%", marginTop: "20px" }} onChange={handleRangePickerChange}/>
               </Space>
             </div>
           </Panel>
