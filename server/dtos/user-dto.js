@@ -7,6 +7,7 @@ module.exports = class UserDto {
   surname;
   patronymic;
   isBlocked;
+  role;
 
   constructor(model) {
     this.email = model.email;
@@ -17,5 +18,6 @@ module.exports = class UserDto {
     this.surname = model.surname;
     this.patronymic = model.patronymic;
     this.isBlocked = model.isBlocked;
+    this.role = model.role;
   }
 };
