@@ -220,9 +220,9 @@ const Admin = observer(() => {
       key: "x",
       render: (record) => (
         record.isBlocked
-        ? <Button type="primary" loading={dataIsSent} style={{ backgroundColor: "#52c41a" }} icon={<UnlockOutlined />} onClick={() => { setBlockStatus(record) }}>
+        ? <Button type="primary" style={{ backgroundColor: "#52c41a" }} icon={<UnlockOutlined />} onClick={() => { setBlockStatus(record) }}>
           </Button>
-        : <Button type="primary" loading={dataIsSent} danger icon={<LockOutlined />} onClick={() => { setBlockStatus(record) }}>
+        : <Button type="primary" danger icon={<LockOutlined />} onClick={() => { setBlockStatus(record) }}>
           </Button>
       ),
     },
