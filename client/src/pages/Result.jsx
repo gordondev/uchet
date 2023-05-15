@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { Input, Row, FloatButton, Spin, Select } from "antd";
+import { Input, Row, FloatButton, Spin, Select, DatePicker, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { RESULT_CREATE_ROUTE } from "../utils/consts";
@@ -9,7 +9,9 @@ import Checklists from "../components/Results";
 import { observer } from "mobx-react-lite";
 import { useObserver } from "../hooks/useObserver";
 import Results from "../components/Results";
+import ru_RU from 'antd/lib/locale/ru_RU';
 
+const { RangePicker } = DatePicker;
 const { Panel } = Collapse;
 const { Search } = Input;
 
@@ -140,128 +142,133 @@ const Result = observer(() => {
                 searchWorkInProgress(value);
               }}
             />
-            <Select
-              onChange={(value) => {
-                searchImpactOnSave(value);
-              }}
-              showSearch
-              allowClear
-              placeholder="Влияние на безопасность"
-              optionFilterProp="children"
-              style={{ width: "100%", marginTop: "20px" }}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={[
-                {
-                  value: "Да",
-                  label: "Да",
-                },
-                {
-                  value: "Нет",
-                  label: "Нет",
-                },
-              ]}
-            />
-            <Select
-              onChange={(value) => {
-                searchDivision(value);
-              }}
-              showSearch
-              allowClear
-              placeholder="Подразделение"
-              optionFilterProp="children"
-              style={{ width: "100%", marginTop: "20px" }}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={[
-                {
-                  value: "ТЦ-3",
-                  label: "ТЦ-3",
-                },
-                {
-                  value: "РЦ-2",
-                  label: "РЦ-2",
-                },
-                {
-                  value: "РЦ-3",
-                  label: "РЦ-3",
-                },
-                {
-                  value: "ЦЦР",
-                  label: "ЦЦР",
-                },
-                {
-                  value: "ЦОРО",
-                  label: "ЦОРО",
-                },
-                {
-                  value: "ЭЦ",
-                  label: "ЭЦ",
-                },
-                {
-                  value: "ЦТАИ",
-                  label: "ЦТАИ",
-                },
-                {
-                  value: "ЦВ",
-                  label: "ЦВ",
-                },
-                {
-                  value: "ОРБ",
-                  label: "ОРБ",
-                },
-                {
-                  value: "ХЦ",
-                  label: "ХЦ",
-                },
-                {
-                  value: "ТЦ-2",
-                  label: "ТЦ-2",
-                },
-                {
-                  value: "РТЦ-1",
-                  label: "РТЦ-1",
-                },
-                {
-                  value: "ЦОС",
-                  label: "ЦОС",
-                },
-                {
-                  value: "ОПБ",
-                  label: "ОПБ",
-                },
-                {
-                  value: "ОЯБиН",
-                  label: "ОЯБиН",
-                },
-                {
-                  value: "Управление",
-                  label: "Управление",
-                },
-                {
-                  value: "ОТИиПБ",
-                  label: "ОТИиПБ",
-                },
-                {
-                  value: "ОИиКОБ",
-                  label: "ОИиКОБ",
-                },
-                {
-                  value: "ООТ",
-                  label: "ООТ",
-                },
-                {
-                  value: "УТП",
-                  label: "УТП",
-                },
-              ]}
-            />
+            <div style={{ display: "flex" }}>
+              <Select
+                onChange={(value) => {
+                  searchImpactOnSave(value);
+                }}
+                showSearch
+                allowClear
+                placeholder="Влияние на безопасность"
+                optionFilterProp="children"
+                style={{ width: "35%", marginTop: "20px", marginRight: "20px" }}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={[
+                  {
+                    value: "Да",
+                    label: "Да",
+                  },
+                  {
+                    value: "Нет",
+                    label: "Нет",
+                  },
+                ]}
+              />
+              <Select
+                onChange={(value) => {
+                  searchDivision(value);
+                }}
+                showSearch
+                allowClear
+                placeholder="Подразделение"
+                optionFilterProp="children"
+                style={{ width: "35%", marginTop: "20px", marginRight: "20px" }}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={[
+                  {
+                    value: "ТЦ-3",
+                    label: "ТЦ-3",
+                  },
+                  {
+                    value: "РЦ-2",
+                    label: "РЦ-2",
+                  },
+                  {
+                    value: "РЦ-3",
+                    label: "РЦ-3",
+                  },
+                  {
+                    value: "ЦЦР",
+                    label: "ЦЦР",
+                  },
+                  {
+                    value: "ЦОРО",
+                    label: "ЦОРО",
+                  },
+                  {
+                    value: "ЭЦ",
+                    label: "ЭЦ",
+                  },
+                  {
+                    value: "ЦТАИ",
+                    label: "ЦТАИ",
+                  },
+                  {
+                    value: "ЦВ",
+                    label: "ЦВ",
+                  },
+                  {
+                    value: "ОРБ",
+                    label: "ОРБ",
+                  },
+                  {
+                    value: "ХЦ",
+                    label: "ХЦ",
+                  },
+                  {
+                    value: "ТЦ-2",
+                    label: "ТЦ-2",
+                  },
+                  {
+                    value: "РТЦ-1",
+                    label: "РТЦ-1",
+                  },
+                  {
+                    value: "ЦОС",
+                    label: "ЦОС",
+                  },
+                  {
+                    value: "ОПБ",
+                    label: "ОПБ",
+                  },
+                  {
+                    value: "ОЯБиН",
+                    label: "ОЯБиН",
+                  },
+                  {
+                    value: "Управление",
+                    label: "Управление",
+                  },
+                  {
+                    value: "ОТИиПБ",
+                    label: "ОТИиПБ",
+                  },
+                  {
+                    value: "ОИиКОБ",
+                    label: "ОИиКОБ",
+                  },
+                  {
+                    value: "ООТ",
+                    label: "ООТ",
+                  },
+                  {
+                    value: "УТП",
+                    label: "УТП",
+                  },
+                ]}
+              />
+              <Space direction="vertical" size={12}>
+                <RangePicker locale={ru_RU} showTime style={{ width: "100%", marginTop: "20px" }}/>
+              </Space>
+            </div>
           </Panel>
         </Collapse>
 
