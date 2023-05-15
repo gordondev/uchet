@@ -33,7 +33,7 @@ import {
   ACCOUNT_LOCK_ROUTE,
 } from "./utils/consts";
 
-export const authRoutes = [
+export const adminRoutes = [
   {
     path: MAIN_ROUTE,
     Component: Main,
@@ -81,6 +81,29 @@ export const authRoutes = [
   {
     path: CHECKLIST_EDIT_ROUTE + "/:id",
     Component: ChecklistEdit
+  },
+  {
+    path: RESULT_CREATE_ROUTE,
+    Component: ResultCreate
+  },
+  {
+    path: RESULT_ROUTE + "/:id",
+    Component: ResultPage
+  },
+];
+
+export const userRoutes = [
+  {
+    path: MAIN_ROUTE,
+    Component: Main,
+  },
+  {
+    path: PROFILE_ROUTE,
+    Component: Profile,
+  },
+  {
+    path: RESULT_ROUTE,
+    Component: Result
   },
   {
     path: RESULT_CREATE_ROUTE,

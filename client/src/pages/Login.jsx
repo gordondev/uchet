@@ -21,6 +21,7 @@ const Login = observer(() => {
       console.log(data);
       user.setIsAuth(true);
       user.setLocked(data.isBlocked);
+      user.setRole(data.role);
       user.setUser(data);
       navigate(MAIN_ROUTE);
     } catch (e) {

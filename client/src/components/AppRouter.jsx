@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Context } from "../index";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { publicRoutes, authRoutes, lockedRoutes } from "../routes";
+import { userRoutes, publicRoutes, adminRoutes, lockedRoutes } from "../routes";
 import { MAIN_ROUTE, LOGIN_ROUTE, ACCOUNT_LOCK_ROUTE } from "../utils/consts";
 import { observer } from "mobx-react-lite";
 
@@ -20,8 +20,13 @@ const AppRouter = observer(() => {
         <Route key={path} path={path} element={<Component />} exact />
       ))}
       ,
-      {(user.isAuth && !user.isLocked) &&
-        authRoutes.map(({ path, Component }) => (
+      {(user.isAuth && !user.isLocked && user.role === "ADMIN") &&
+        adminRoutes.map(({ path, Component }) => (
+          <Route key={path} path={path} element={<Component />} exact />
+      ))}
+      , 
+      {(user.isAuth && !user.isLocked && user.role === "USER") &&
+        userRoutes.map(({ path, Component }) => (
           <Route key={path} path={path} element={<Component />} exact />
       ))}
       ,

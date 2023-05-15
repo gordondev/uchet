@@ -65,6 +65,7 @@ const Registration = observer(() => {
       );
       user.setUser(data.user);
       user.setIsAuth(true);
+      user.setRole(data.role);
       message.success(`Мы отправили письмо вам на почту`);
       navigate(MAIN_ROUTE);
     } catch (e) {
