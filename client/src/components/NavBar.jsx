@@ -115,12 +115,17 @@ const NavBar = observer(() => {
           selectedKeys={currentPage}
           className="navmenu"
         >
-          <Menu.Item key={VERSION_CHECKLIST_ROUTE} icon={<FileDoneOutlined />}>
-            <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
-          </Menu.Item>
-          <Menu.Item key={CHECKLIST_ROUTE} icon={<UnorderedListOutlined />}>
-            <Link to={CHECKLIST_ROUTE}>Чек-листы</Link>
-          </Menu.Item>
+        {
+          user.role === "ADMIN" &&
+          <>
+            <Menu.Item key={VERSION_CHECKLIST_ROUTE} icon={<FileDoneOutlined />}>
+              <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
+            </Menu.Item>
+            <Menu.Item key={CHECKLIST_ROUTE} icon={<UnorderedListOutlined />}>
+              <Link to={CHECKLIST_ROUTE}>Чек-листы</Link>
+            </Menu.Item>
+          </>
+        }
           <Menu.Item key={RESULT_ROUTE} icon={<FileSearchOutlined />}>
             <Link to={RESULT_ROUTE}>Результаты</Link>
           </Menu.Item>
@@ -130,9 +135,12 @@ const NavBar = observer(() => {
           <Menu.Item disabled={true} icon={<BarChartOutlined />}>
             <Link>Статистика</Link>
           </Menu.Item>
-          <Menu.Item key={ADMIN_ROUTE} icon={<TeamOutlined />}>
-            <Link to={ADMIN_ROUTE}>Админ</Link>
-          </Menu.Item>
+          {
+            user.role === "ADMIN" &&
+            <Menu.Item key={ADMIN_ROUTE} icon={<TeamOutlined />}>
+              <Link to={ADMIN_ROUTE}>Админ</Link>
+            </Menu.Item>
+          }
           <Menu.Item key={PROFILE_ROUTE} icon={<UserOutlined />}>
             <Dropdown
               menu={{
