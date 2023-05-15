@@ -9,7 +9,6 @@ import Checklists from "../components/Results";
 import { observer } from "mobx-react-lite";
 import { useObserver } from "../hooks/useObserver";
 import Results from "../components/Results";
-import ru_RU from 'antd/lib/locale/ru_RU';
 
 const { RangePicker } = DatePicker;
 const { Panel } = Collapse;
@@ -266,7 +265,7 @@ const Result = observer(() => {
                 ]}
               />
               <Space direction="vertical" size={12}>
-                <RangePicker locale={ru_RU} showTime style={{ width: "100%", marginTop: "20px" }}/>
+                <RangePicker showTime style={{ width: "100%", marginTop: "20px" }}/>
               </Space>
             </div>
           </Panel>

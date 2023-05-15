@@ -8,6 +8,8 @@ import { Context } from "./index";
 import { check } from "./http/userAPI";
 import { LOGIN_ROUTE, MAIN_ROUTE } from "./utils/consts";
 import { Spin } from "antd";
+import { ConfigProvider } from 'antd';
+import localeRu from 'antd/locale/ru_RU';
 
 const App = observer(() => {
   const { user } = useContext(Context);
@@ -34,22 +36,24 @@ const App = observer(() => {
   }
 
   return (
-    <BrowserRouter>
-      {(user._isAuth && user._isLocked) ? (
-        <>
-          <AppRouter />
-        </>
-      ) : user._isAuth ? (
-        <>
-          <NavBar />
-          <AppRouter />
-        </>
-      ) : (
-        <>
-          <AppRouter />
-        </>
-      )}
-    </BrowserRouter>
+    <ConfigProvider locale={localeRu}>
+      <BrowserRouter>
+        {(user._isAuth && user._isLocked) ? (
+          <>
+            <AppRouter />
+          </>
+        ) : user._isAuth ? (
+          <>
+            <NavBar />
+            <AppRouter />
+          </>
+        ) : (
+          <>
+            <AppRouter />
+          </>
+        )}
+      </BrowserRouter>
+    </ConfigProvider>
   );
 });
 
