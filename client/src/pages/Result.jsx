@@ -9,6 +9,7 @@ import Checklists from "../components/Results";
 import { observer } from "mobx-react-lite";
 import { useObserver } from "../hooks/useObserver";
 import Results from "../components/Results";
+import * as XLSX from 'xlsx';
 
 const { RangePicker } = DatePicker;
 const { Panel } = Collapse;
@@ -31,6 +32,13 @@ const Result = observer(() => {
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  const handleExport = async () => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, "Результаты.xlsx");
   }
 
   useObserver(lastElement, data.length < totalCount, isLoadind, () => {
@@ -334,7 +342,7 @@ const Result = observer(() => {
             type="primary"
             onClick={() => navigate(RESULT_CREATE_ROUTE)}
           />
-          <FloatButton type="primary" tooltip={<div>Экспортировать</div>}/>
+          <FloatButton type="primary" tooltip={<div>Экспортировать</div>} onClick={handleExport}/>
         </FloatButton.Group>
       </div>
     </section>
