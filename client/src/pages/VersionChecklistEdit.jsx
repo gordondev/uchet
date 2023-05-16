@@ -131,7 +131,6 @@ const VersionChecklistEdit = observer(() => {
   useEffect(() => {
     setIsLoading(true);
     fetchOneVersion(id).then((data) => {
-      console.log(data);
       setVersion(data);
       setActualKey(data.actualKey);
       setTheme(data.themes);

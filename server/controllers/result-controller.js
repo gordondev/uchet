@@ -57,8 +57,6 @@ class ResultController {
     try {
       const { file } = req.query;
 
-      console.log(req.query);
-
       const path = await result.downloadFile(file);
 
       return res.download(path.pathFile, path.fileItem.id);

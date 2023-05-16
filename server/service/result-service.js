@@ -108,7 +108,6 @@ class ResultService {
         where: { id },
       }
     );
-    console.log(result);
     return result;
   }
 

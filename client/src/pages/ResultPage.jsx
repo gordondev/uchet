@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { fetchOneResult, download, updateResultOfChecking } from "../http/resultAPI";
 import { useParams } from "react-router-dom";
@@ -15,8 +15,8 @@ import pdfImage from "../images/pdf.png";
 import jpgImage from "../images/jpg.png";
 import tiffImage from "../images/tiff.png";
 import { debounce } from 'lodash';
-
 import { getConvertedFileSize } from '../utils/getConvertedFileSize';
+import { Context } from "../index";
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -33,6 +33,7 @@ const ResultPage = observer(() => {
 	const [rejectionСomment, setRejectionСomment] = useState("");
 	const [resultOfChecking, setResultOfChecking] = useState("");
 	const [showTextArea, setShowTextArea] = useState(false);
+	const { user } = useContext(Context);
 
 	useEffect(() => {
 	    setIsLoading(true);
@@ -218,7 +219,7 @@ const ResultPage = observer(() => {
 			              </div>
 
 			              {
-							  !themes?.resultOfChecking ? (
+							  !themes?.resultOfChecking && user.role === "ADMIN" ? (
 							    <Form style={{ marginTop: "20px" }} onFinish={updateResultOfCheckingData}>
 							      <Form.Item
 							        name="select"
@@ -280,6 +281,12 @@ const ResultPage = observer(() => {
 							            </Form.Item>
 							      }
 							    </Form>
+							  ) : themes?.resultOfChecking === null && user.role === "USER" ? (
+
+							  	<Text>
+						        Нет результата
+						      </Text>
+
 							  ) : (
 							    <>
 							      <div style={{ display: "flex" }}>

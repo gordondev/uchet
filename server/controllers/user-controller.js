@@ -48,7 +48,6 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-      console.log(userData);
       return res.json(userData);
     } catch (e) {
       next(e);
@@ -141,7 +140,6 @@ class UserController {
   async blockUser(req, res, next) {
     const { id } = req.params;
     const { isBlocked } = req.body;
-    console.log("DATA = ", id, isBlocked);
     await userService.blockUser(id, isBlocked);
     return res.json({ message: `Данные были обновленны` });
   }

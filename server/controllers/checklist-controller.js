@@ -67,8 +67,6 @@ class ChecklistController {
     try {
       const { file } = req.query;
 
-      console.log(req.query);
-
       const path = await checklist.downloadFile(file);
 
       return res.download(path.pathFile, path.fileItem.id);

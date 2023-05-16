@@ -4,7 +4,7 @@ import { Button, Typography, Skeleton } from "antd";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
 import { check } from "../http/userAPI";
-import { VERSION_CHECKLIST_ROUTE } from "../utils/consts";
+import { VERSION_CHECKLIST_ROUTE, RESULT_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
@@ -70,13 +70,25 @@ const Main = observer(() => {
                 наблюдений. <br />
                 Формируйте графики и выводите результаты на печать.
               </Title>
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={() => navigate(VERSION_CHECKLIST_ROUTE)}
-              >
-                Начать
-              </Button>
+              {
+                user.role === "USER" ? (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => navigate(RESULT_ROUTE)}
+                  >
+                    Начать
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => navigate(VERSION_CHECKLIST_ROUTE)}
+                  >
+                    Начать
+                  </Button>
+                )
+              }
             </div>
           </div>
         )}

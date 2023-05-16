@@ -20,6 +20,7 @@ const App = observer(() => {
       .then((data) => {
         user.setUser(data);
         user.setIsAuth(true);
+        user.setRole(data.role);
         user.setLocked(data.isBlocked);
       })
       .finally(() => setLoading(false));

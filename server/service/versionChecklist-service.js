@@ -126,10 +126,8 @@ async function destroyCommentFile(id) {
 }
 
 function checkFileExtension(file) {
-  console.log(file);
   if (file != null) {
     const fileType = mime.contentType(file.name);
-    console.log(fileType);
     if (fileType != fileTypeDocx && fileType != fileTypeDoc) {
       throw ApiError.BadRequest(
         `${file.name} не является .doc или docx`
