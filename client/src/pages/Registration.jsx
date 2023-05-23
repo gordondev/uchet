@@ -5,6 +5,7 @@ import { registration } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import { debounce } from 'lodash';
 
 const { Option } = Select;
 const formItemLayout = {
@@ -139,7 +140,7 @@ const Registration = observer(() => {
           <Form.Item
             name="name"
             label="Имя"
-            onChange={(e) => setName(e.target.value)}
+            onChange={debounce((e) => setName(e.target.value), 500)}
             rules={[
               {
                 required: true,
@@ -154,7 +155,7 @@ const Registration = observer(() => {
           <Form.Item
             name="surname"
             label="Фамилия"
-            onChange={(e) => setSurname(e.target.value)}
+            onChange={debounce((e) => setSurname(e.target.value), 500)}
             rules={[
               {
                 required: true,
@@ -169,7 +170,7 @@ const Registration = observer(() => {
           <Form.Item
             name="patronymic"
             label="Отчество"
-            onChange={(e) => setPatronymic(e.target.value)}
+            onChange={debounce((e) => setPatronymic(e.target.value), 500)}
             rules={[
               {
                 required: true,
@@ -184,7 +185,7 @@ const Registration = observer(() => {
           <Form.Item
             name="email"
             label="Почта"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={debounce((e) => setEmail(e.target.value), 500)}
             rules={[
               {
                 type: "email",
@@ -202,7 +203,7 @@ const Registration = observer(() => {
           <Form.Item
             name="password"
             label="Пароль"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={debounce((e) => setPassword(e.target.value), 500)}
             rules={[
               {
                 required: true,

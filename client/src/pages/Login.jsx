@@ -6,6 +6,7 @@ import { Context } from "../index";
 import { observer } from "mobx-react-lite";
 import { login } from "../http/userAPI";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { debounce } from 'lodash';
 
 const Login = observer(() => {
   const { user } = useContext(Context);
@@ -55,7 +56,7 @@ const Login = observer(() => {
           <Form.Item
             label="Почта"
             name="email"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={debounce((e) => setEmail(e.target.value), 500)}
             rules={[
               {
                 required: true,
@@ -73,7 +74,7 @@ const Login = observer(() => {
           <Form.Item
             label="Пароль"
             name="password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={debounce((e) => setPassword(e.target.value), 500)}
             rules={[
               {
                 required: true,
