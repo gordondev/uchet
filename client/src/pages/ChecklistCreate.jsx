@@ -44,8 +44,6 @@ const ChecklistCreate = () => {
     setContent([...content, { content: "", id: shortid.generate() }]);
   };
 
-  console.log(content);
-
   const removeContent = (id) => {
     setContent(content.filter((i) => i.id !== id));
   };

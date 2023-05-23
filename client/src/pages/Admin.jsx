@@ -38,7 +38,6 @@ const Admin = observer(() => {
     setPassword(record?.password);
     setRole(record?.role);
     setIsEditing(true);
-    console.log(record);
     setEditingUser({...record});
   }
 
@@ -229,7 +228,6 @@ const Admin = observer(() => {
   ];
 
   const setBlockStatus = async (record) => {
-    console.log(!record?.isBlocked);
     setDataIsSent(true);
     const formData = new FormData();
     formData.append("isBlocked", !record?.isBlocked);

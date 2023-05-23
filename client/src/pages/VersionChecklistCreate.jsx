@@ -79,8 +79,6 @@ const VersionChecklistCreate = observer(() => {
     );
   }, 500);
 
-  console.log(theme);
-
   const addVersion = async () => {
     setDataIsSent(true);
     const formData = new FormData();

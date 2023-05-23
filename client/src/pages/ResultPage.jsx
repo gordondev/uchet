@@ -134,7 +134,7 @@ const ResultPage = observer(() => {
 			                <Title level={4} style={{ color: "#0e78ff" }}>
 			                  {themes?.workInProgress}
 			                </Title>
-			                <Text type="secondary">
+			                <Text type="secondary" style={{ minWidth: "200px" }}>
 			                  Влияние на безопасность: {themes?.impactOnSave}
 			                </Text>
 			              </div>
