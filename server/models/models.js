@@ -118,7 +118,7 @@ const ObservationResults = sequelize.define("observation_results", {
       "Выше требований"
     ),
   },
-  rejectionСomment: { type: DataTypes.STRING(600) },
+  rejectionComment: { type: DataTypes.STRING(600) },
   comment: { type: DataTypes.STRING(600) },
 });
 

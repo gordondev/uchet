@@ -102,7 +102,7 @@ class ResultService {
     const result = await ObservationResults.update(
       {
         resultOfChecking,
-        rejectionСomment: rejectionComment,
+        rejectionComment,
       },
       {
         where: { id },
