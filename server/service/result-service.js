@@ -51,7 +51,7 @@ async function createThemes(themes, resultId) {
   await Promise.all(theme.grades.map(async (checklist) => {
     const gradeResult = await GradeObservationResults.create({
       themesResultId: themeResult.id,
-      checklistId: checklist.id,
+      checklistId: checklist.checklistId,
       grade: checklist.grade
     });
   }));

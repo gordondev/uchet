@@ -86,7 +86,7 @@ const ResultCreate = () => {
     setSelectedChecklists(value);
     value.forEach(checklist => {
       if (!activeTheme.grades.some(({ checklist: c }) => c === checklist)) {
-        activeTheme.grades.push({ checklist, grade: '', id: getIdChecklistByValue(checklist) });
+        activeTheme.grades.push({ checklist, grade: '', checklistId: getIdChecklistByValue(checklist), id: shortid.generate() });
       }
     });
 
@@ -97,6 +97,8 @@ const ResultCreate = () => {
     setActiveKey(key);
     setActiveIndex(selectedThemes.indexOf(key));
   };
+
+  console.log(themes);
 
   const addPoint = () => {
     const newPointsOfGrowth = [...activeTheme.points_of_growths];
