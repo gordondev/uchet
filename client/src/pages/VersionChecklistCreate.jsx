@@ -212,7 +212,7 @@ const VersionChecklistCreate = observer(() => {
                 ]}
                 onChange={debounce((e) => setTitle(e.target.value), 500)}
               >
-                <Input allowClear placeholder="Введите название версии" />
+                <Input allowClear placeholder="Введите название версии" showCount maxLength={1000}/>
               </Form.Item>
               <Divider orientation="center">Темы</Divider>
               {theme.length === 0 && (
@@ -236,7 +236,7 @@ const VersionChecklistCreate = observer(() => {
                       },
                     ]}
                   >
-                    <Input allowClear showCount maxLength={500}/>
+                    <Input allowClear showCount maxLength={1000}/>
                   </Form.Item>
                   <Button
                     type="primary"
@@ -350,7 +350,7 @@ const VersionChecklistCreate = observer(() => {
                   onChange={debounce((e) => setReasonForUse(e.target.value), 500)}
                   showCount
                   placeholder="Введите основание использования"
-                  maxLength={500}
+                  maxLength={1000}
                 />
               </Form.Item>
               <Form.Item
@@ -369,7 +369,7 @@ const VersionChecklistCreate = observer(() => {
                   onChange={debounce((e) => setComment(e.target.value), 500)}
                   showCount
                   placeholder="Введите примечание"
-                  maxLength={500}
+                  maxLength={1000}
                 />
               </Form.Item>
               <Form.Item style={{ width: "100%" }}>

@@ -40,6 +40,7 @@ const fileTypeDoc = "application/msword";
 
 const { Option } = Select;
 const { Title, Text, Paragraph } = Typography;
+const { TextArea } = Input;
 
 const ReachableContext = createContext(null);
 const UnreachableContext = createContext(null);
@@ -233,14 +234,14 @@ const VersionChecklistEdit = observer(() => {
                   <>
                     <Form.Item
                       label="Номер версии"
-                      style={{ marginBottom: "20px" }}
+                      style={{ marginBottom: "20px", width: "100%", marginRight: "10px" }}
                     >
                       <InputNumber
                         min={1}
                         placeholder={updateId}
                         prefix="№"
                         onChange={debounce((value) => setUpdateId(value), 500)}
-                        style={{ width: "200px" }}
+                        style={{ width: "100%", marginRight: "10px" }}
                         rules={[
                           {
                             required: true,
@@ -253,7 +254,7 @@ const VersionChecklistEdit = observer(() => {
                       name="selectActualKey"
                       label="Ключ актуальности"
                       hasFeedback
-                      style={{ width: "400px" }}
+                      style={{ width: "100%", marginLeft: "10px" }}
                     >
                       <Select
                         name="selectActualKey"
@@ -288,7 +289,7 @@ const VersionChecklistEdit = observer(() => {
                     label="Название версии"
                     onChange={debounce((e) => setTitle(e.target.value), 500)}
                   >
-                    <Input allowClear placeholder={title} />
+                    <Input allowClear placeholder={title} showCount maxLength={1000}/>
                   </Form.Item>
                 </>
               )}
@@ -317,6 +318,7 @@ const VersionChecklistEdit = observer(() => {
                         <Input
                           placeholder={`${i.title ? i.title : ""}`}
                           allowClear
+                          showCount maxLength={1000}
                         />
                       </Form.Item>
                       <Button
@@ -466,57 +468,64 @@ const VersionChecklistEdit = observer(() => {
                     Основание использования
                   </Divider>
 
-                  <Paragraph
-                    editable={{
-                      onChange: setReasonForUse,
-                      maxLength: 500,
-                      autoSize: {
-                        maxRows: 5,
-                        minRows: 4,
-                      },
-                    }}
+                  <Form.Item
+                    name="reasonForUse"
+                    label="Основание использования"
                   >
-                    {reasonForUse}
-                  </Paragraph>
+                    <TextArea
+                      allowClear
+                      rows={4}
+                      onChange={debounce((e) => setReasonForUse(e.target.value), 500)}
+                      showCount
+                      placeholder={reasonForUse}
+                      maxLength={1000}
+                    />
+                  </Form.Item>
 
                   <Divider orientation="center">Примечание</Divider>
 
-                  <Paragraph
-                    style={{ marginBottom: "20px" }}
-                    editable={{
-                      onChange: setComment,
-                      maxLength: 500,
-                      autoSize: {
-                        maxRows: 5,
-                        minRows: 4,
-                      },
-                    }}
+                  <Form.Item
+                    label="Примечание"
+                    name="comment"
                   >
-                    {comment}
-                  </Paragraph>
+                    <TextArea
+                      allowClear
+                      rows={4}
+                      onChange={debounce((e) => setComment(e.target.value), 500)}
+                      showCount
+                      placeholder={comment}
+                      maxLength={1000}
+                    />
+                  </Form.Item>
 
-                  <Form.Item style={{ width: "100%" }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={dataIsSent}
-                      icon={<SaveOutlined />}
-                      style={{ width: "100%" }}
-                    >
-                      Сохранить
-                    </Button>
-                  </Form.Item>
-                  <Form.Item style={{ width: "100%" }}>
-                    <Button
-                      type="primary"
-                      danger
-                      style={{ width: "100%" }}
-                      icon={<DeleteOutlined />}
-                      onClick={showModal}
-                    >
-                      Удалить
-                    </Button>
-                  </Form.Item>
+                  <div className="editButtonsGroup">
+
+                    <Form.Item style={{ width: "100%", marginRight: "10px" }}>
+                      <Button
+                        type="primary"
+                        danger
+                        style={{ width: "100%" }}
+                        icon={<DeleteOutlined />}
+                        onClick={showModal}
+                      >
+                        Удалить
+                      </Button>
+                    </Form.Item>
+
+                    <Form.Item style={{ width: "100%", marginLeft: "10px" }}>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={dataIsSent}
+                        icon={<SaveOutlined />}
+                        style={{ width: "100%" }}
+                      >
+                        Сохранить
+                      </Button>
+                    </Form.Item>
+                    
+                  </div>
+
                   <Modal
                     title="Удаление версии чек-листа!"
                     open={isModalOpen}
