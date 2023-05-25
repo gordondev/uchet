@@ -157,6 +157,7 @@ body {
 
 .navmenu {
   border: none;
+  white-space: nowrap;
 }
 
 .header,

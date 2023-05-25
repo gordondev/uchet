@@ -5,7 +5,7 @@ const User = sequelize.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING(600) },
-  role: { type: DataTypes.STRING, defaultValue: "USER" },
+  role: { type: DataTypes.ENUM("USER", "ADMIN"), defaultValue: "USER" },
   division: {
     type: DataTypes.ENUM(
       "ТЦ-3",

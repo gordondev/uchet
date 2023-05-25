@@ -108,7 +108,7 @@ const NavBar = observer(() => {
           Учет и анализ <br /> результатов наблюдения
         </p>
       </div>
-      <div className="mainnav">
+
         <Menu
           theme="light"
           mode="horizontal"
@@ -129,11 +129,8 @@ const NavBar = observer(() => {
           <Menu.Item key={RESULT_ROUTE} icon={<FileSearchOutlined />}>
             <Link to={RESULT_ROUTE}>Результаты</Link>
           </Menu.Item>
-          <Menu.Item disabled={true} icon={<LineChartOutlined />}>
+          <Menu.Item icon={<LineChartOutlined />}>
             <Link>Графики</Link>
-          </Menu.Item>
-          <Menu.Item disabled={true} icon={<BarChartOutlined />}>
-            <Link>Статистика</Link>
           </Menu.Item>
           {
             user.role === "ADMIN" &&
@@ -156,7 +153,6 @@ const NavBar = observer(() => {
             </Dropdown>
           </Menu.Item>
         </Menu>
-      </div>
     </Header>
   );
 });
