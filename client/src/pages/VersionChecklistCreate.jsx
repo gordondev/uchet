@@ -156,7 +156,7 @@ const VersionChecklistCreate = observer(() => {
                 <Form.Item
                   name="id"
                   label="Номер версии"
-                  style={{ marginBottom: "20px" }}
+                  style={{ width: "100%", marginBottom: "20px" }}
                   hasFeedback
                   rules={[
                     {
@@ -168,8 +168,8 @@ const VersionChecklistCreate = observer(() => {
                   <InputNumber
                     min={1}
                     prefix="№"
-                    style={{ width: "200px" }}
                     placeholder="Введите № версии"
+                    style={{ width: "100%", marginRight: "10px" }}
                     onChange={debounce((value) => setId(value), 500)}
                   />
                 </Form.Item>
@@ -177,7 +177,7 @@ const VersionChecklistCreate = observer(() => {
                   name="select"
                   label="Ключ актуальности"
                   hasFeedback
-                  style={{ width: "400px" }}
+                  style={{ width: "100%", marginLeft: "10px" }}
                   rules={[
                     {
                       required: true,
