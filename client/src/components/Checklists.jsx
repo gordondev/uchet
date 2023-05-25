@@ -49,6 +49,7 @@ const Checklists = ({ checklists }) => {
           ></Button>
           <img src={checklistImage} alt="checklistImage" />
           <div className="item__title-block">
+            <p className="item-title">Версия № {data.id}</p>
             <p className="item-title">{data.name}</p>
           </div>
         </div>

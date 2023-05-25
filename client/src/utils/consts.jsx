@@ -12,3 +12,4 @@ export const CHECKLIST_EDIT_ROUTE = "/checklist/edit";
 export const RESULT_ROUTE = "/result";
 export const RESULT_CREATE_ROUTE = "/result/create";
 export const ACCOUNT_LOCK_ROUTE = "/account-lock";
+export const CHART_ROUTE = "/chart";

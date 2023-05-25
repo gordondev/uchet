@@ -20,6 +20,7 @@ import {
   CHECKLIST_ROUTE,
   RESULT_ROUTE,
   ADMIN_ROUTE,
+  CHART_ROUTE,
 } from "../utils/consts";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../index";
@@ -84,6 +85,7 @@ const NavBar = observer(() => {
     { key: "12", label: RESULT_ROUTE, path: RESULT_ROUTE + "/" },
     { key: "13", label: ADMIN_ROUTE, path: ADMIN_ROUTE },
     { key: "14", label: PROFILE_ROUTE, path: PROFILE_ROUTE },
+    { key: "15", label: CHART_ROUTE, path: CHART_ROUTE },
   ];
 
   useEffect(() => {
@@ -129,8 +131,8 @@ const NavBar = observer(() => {
           <Menu.Item key={RESULT_ROUTE} icon={<FileSearchOutlined />}>
             <Link to={RESULT_ROUTE}>Результаты</Link>
           </Menu.Item>
-          <Menu.Item icon={<LineChartOutlined />}>
-            <Link>Графики</Link>
+          <Menu.Item key={CHART_ROUTE} icon={<LineChartOutlined />}>
+            <Link to={CHART_ROUTE}>Графики</Link>
           </Menu.Item>
           {
             user.role === "ADMIN" &&
