@@ -38,7 +38,7 @@ const fileTypeDoc = "application/msword";
 
 const { Option } = Select;
 const { Text } = Typography;
-const { Paragraph } = Typography;
+const { TextArea } = Input;
 
 const ChecklistEdit = observer(() => {
   const [versionChecklist, setVersionChecklist] = useState(null);
@@ -191,19 +191,21 @@ const ChecklistEdit = observer(() => {
                   </Form.Item>
                 </div>
                 <Divider orientation="center">Описание</Divider>
-                <Paragraph
-                  style={{ marginBottom: "20px" }}
-                  editable={{
-                    onChange: setDescription,
-                    maxLength: 500,
-                    autoSize: {
-                      maxRows: 5,
-                      minRows: 4,
-                    },
-                  }}
+
+                <Form.Item
+                  label="Описание"
+                  name="description"
                 >
-                  {description}
-                </Paragraph>
+                  <TextArea
+                    allowClear
+                    rows={4}
+                    onChange={debounce((e) => setDescription(e.target.value), 500)}
+                    showCount
+                    placeholder={description}
+                    maxLength={1000}
+                  />
+                </Form.Item>
+
                 <Divider orientation="center">Содержания</Divider>
                 {content.length === 0 && (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
@@ -222,7 +224,7 @@ const ChecklistEdit = observer(() => {
                       >
                         <Input
                           showCount
-                          maxLength={500}
+                          maxLength={1000}
                           placeholder={`${i.content ? i.content : ""}`}
                           allowClear
                         />
@@ -298,29 +300,35 @@ const ChecklistEdit = observer(() => {
                     )}
                   </List.Item>
                 </List>
+                
+                <div className="editButtonsGroup">
 
-                <Form.Item style={{ width: "100%" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={dataIsSent}
-                    icon={<SaveOutlined />}
-                    style={{ width: "100%" }}
-                  >
-                    Сохранить
-                  </Button>
-                </Form.Item>
-                <Form.Item style={{ width: "100%" }}>
-                  <Button
-                    type="primary"
-                    danger
-                    style={{ width: "100%" }}
-                    icon={<DeleteOutlined />}
-                    onClick={showModal}
-                  >
-                    Удалить
-                  </Button>
-                </Form.Item>
+                  <Form.Item style={{ width: "100%", marginRight: "10px" }}>
+                    <Button
+                      type="primary"
+                      danger
+                      style={{ width: "100%" }}
+                      icon={<DeleteOutlined />}
+                      onClick={showModal}
+                    >
+                      Удалить
+                    </Button>
+                  </Form.Item>
+
+                  <Form.Item style={{ width: "100%", marginLeft: "10px" }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      loading={dataIsSent}
+                      icon={<SaveOutlined />}
+                      style={{ width: "100%" }}
+                    >
+                      Сохранить
+                    </Button>
+                  </Form.Item>
+
+                </div>
+
                 <Modal
                   title="Удаление чек-листа!"
                   open={isModalOpen}

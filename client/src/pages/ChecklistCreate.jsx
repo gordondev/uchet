@@ -154,7 +154,7 @@ const ChecklistCreate = () => {
                 onChange={debounce((e) => setDescription(e.target.value), 500)}
                 showCount
                 placeholder="Введите описание"
-                maxLength={500}
+                maxLength={1000}
               />
             </Form.Item>
 
@@ -195,7 +195,7 @@ const ChecklistCreate = () => {
                       },
                     ]}
                   >
-                    <Input showCount maxLength={500} allowClear />
+                    <Input showCount maxLength={1000} allowClear />
                   </Form.Item>
 
                   <Button

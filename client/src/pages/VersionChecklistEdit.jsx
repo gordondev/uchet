@@ -39,7 +39,7 @@ const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessi
 const fileTypeDoc = "application/msword";
 
 const { Option } = Select;
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const ReachableContext = createContext(null);
