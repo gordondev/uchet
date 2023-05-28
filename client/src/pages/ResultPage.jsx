@@ -3,9 +3,7 @@ import { observer } from "mobx-react-lite";
 import { fetchOneResult, download, updateResultOfChecking } from "../http/resultAPI";
 import { useParams } from "react-router-dom";
 import { List, Typography, Button, Divider, Skeleton, message, Tabs, Empty, Form, Select, Input } from "antd";
-import { saveAs } from "file-saver";
 import {
-  FileWordOutlined,
   SaveOutlined,
   DownloadOutlined,
   CheckOutlined,
@@ -38,6 +36,7 @@ const ResultPage = observer(() => {
 	useEffect(() => {
 	    setIsLoading(true);
 	    fetchOneResult(id).then((data) => {
+	    	console.log(data);
 	      setThemes(data);
 	      setFile(data?.observation_results_files[0]?.id);
 	    });
@@ -92,7 +91,7 @@ const ResultPage = observer(() => {
 	        dataSource={theme?.grade_observation_results}
 	        renderItem={item => (
 	          <List.Item>
-	            <div style={{ width: "400px" }}>{item.checklist.name}</div>
+	            <div style={{ width: "400px" }}>{item?.checklist_content?.cont}</div>
 	            <div>{item.grade}</div>
 	          </List.Item>
 	        )}
@@ -274,7 +273,6 @@ const ResultPage = observer(() => {
 							                  loading={dataIsSent}
 							                  htmlType="submit"
 							                  icon={<SaveOutlined />}
-							                  style={{ width: "100%" }}
 							                >
 							                  Сохранить
 							                </Button>

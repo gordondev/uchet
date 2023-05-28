@@ -2,9 +2,9 @@ const result = require("../service/result-service");
 const ApiError = require("../exceptions/api-error");
 
 class ResultController {
-  async getActualThemes(req, res, next) {
+  async getActualThemesAndContents(req, res, next) {
     try {
-      const resultData = await result.getActualThemes();
+      const resultData = await result.getActualThemesAndContents();
       return res.json(resultData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));

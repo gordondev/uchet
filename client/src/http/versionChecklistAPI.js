@@ -45,3 +45,13 @@ export const downloadCommentFile = async (id, commentFile) => {
   );
   return data;
 };
+
+export const findVersionChecklistId = async (id) => {
+  const { data } = await $host.get("api/versionchecklist/find/" + id);
+  return data;
+}
+
+export const getThemes = async (id) => {
+  const { data } = await $host.get("api/versionchecklist/themes/" + id);
+  return data;
+};

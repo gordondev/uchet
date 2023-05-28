@@ -1,28 +1,28 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
-import { Input, Row, FloatButton, Spin, Select } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import { Input, Row, FloatButton, Spin, Modal, Button, message, Form } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { CHECKLIST_CREATE_ROUTE } from "../utils/consts";
-import { fetchVersionChecklist } from "../http/versionChecklistAPI";
+import { findVersionChecklistId } from "../http/versionChecklistAPI";
 import { useObserver } from "../hooks/useObserver";
 import { Collapse } from "antd";
 import { fetchChecklist } from "../http/checklistAPI";
 import Checklists from "../components/Checklists";
 import { observer } from "mobx-react-lite";
-import { Context } from "../index";
+import { debounce } from 'lodash';
 
 const { Panel } = Collapse;
-const { Option } = Select;
 const { Search } = Input;
 
 const Checklist = observer(() => {
-  const { checklist } = useContext(Context);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [searchNameQuery, setSearchNameQuery] = useState("");
   const [searchVersionQuery, setSearchVersionQuery] = useState("");
-  const [version, setVersion] = useState([]);
   const [isLoadind, setIsLoading] = useState(true);
+  const [modal2Open, setModal2Open] = useState(false);
+  const [versionChecklistId, setVersionChecklistId] = useState(null);
+  const [dataIsSent, setDataIsSent] = useState(false);
 
   const currentPage = useRef(1);
   const lastElement = useRef();
@@ -91,6 +91,17 @@ const Checklist = observer(() => {
     setIsLoading(false);
   };
 
+  const checkVersion = async () => {
+    setDataIsSent(true);
+    try {
+      await findVersionChecklistId(versionChecklistId);
+      navigate(CHECKLIST_CREATE_ROUTE + "/" + parseInt(versionChecklistId));
+    } catch (e) {
+      message.error(e.response?.data?.message);
+    }
+    setDataIsSent(false);
+  }
+
   return (
     <section className="searchSection">
       <div className="container">
@@ -136,6 +147,47 @@ const Checklist = observer(() => {
             </>
           )}
         </Row>
+
+        <Modal
+          title="Выбор версии"
+          centered
+          open={modal2Open}
+          footer={() => null}
+          onCancel={() => setModal2Open(false)}
+        >
+          <Form onFinish={checkVersion}>
+            <Form.Item
+              name="version"
+              label="Версиия"
+              onChange={debounce((e) => setVersionChecklistId(e.target.value), 500)}
+              rules={[
+                      {
+                        required: true,
+                        message: "Введите версию чек-листа",
+                      },
+                    ]}
+            >
+              <Input
+                placeholder="Введите версию чек-листа"
+                type="number"
+                allowClear
+                min={1}
+                prefix="№"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                style={{ marginTop: "20px"}}
+                type="primary"
+                htmlType="submit"
+                loading={dataIsSent}
+              >
+                Продолжить
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+
         <FloatButton
           tooltip={<div>Создать чек-лист</div>}
           icon={<PlusOutlined />}
@@ -143,7 +195,7 @@ const Checklist = observer(() => {
           style={{
             right: 20,
           }}
-          onClick={() => navigate(CHECKLIST_CREATE_ROUTE)}
+          onClick={() => setModal2Open(true)}
         />
       </div>
     </section>

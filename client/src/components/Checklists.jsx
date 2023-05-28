@@ -18,7 +18,7 @@ const Checklists = ({ checklists }) => {
       span={checklists.length >= 4 ? 6 : checklists.length === 2 ? 12 : 8}
       key={data.id}
     >
-    <Tooltip title={data.name} arrow={false}>
+    <Tooltip title={data.theme.title} arrow={false}>
       <Card
         hoverable
         onClick={(event) => {
@@ -49,8 +49,8 @@ const Checklists = ({ checklists }) => {
           ></Button>
           <img src={checklistImage} alt="checklistImage" />
           <div className="item__title-block">
-            <p className="item-title">Версия № {data.id}</p>
-            <p className="item-title">{data.name}</p>
+            <p className="item-title">Версия № {data.theme.versionChecklistId}</p>
+            <p className="item-title">{data.theme.title}</p>
           </div>
         </div>
       </Card>

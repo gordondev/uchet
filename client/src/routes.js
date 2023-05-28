@@ -73,7 +73,7 @@ export const adminRoutes = [
     Component: Admin
   },
   {
-    path: CHECKLIST_CREATE_ROUTE,
+    path: CHECKLIST_CREATE_ROUTE + "/:id",
     Component: ChecklistCreate
   },
   {

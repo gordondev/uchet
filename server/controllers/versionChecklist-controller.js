@@ -14,7 +14,7 @@ class VersionChecklistController {
         acceptanceDate,
         comment,
         theme,
-        title,
+        title
       } = req.body;
 
       const { headerFile, commentFile } = req.files || {};
@@ -57,10 +57,30 @@ class VersionChecklistController {
     }
   }
 
+  async getThemesById(req, res, next) {
+    try {
+      const { id } = req.params;
+      const themesData = await versionChecklist.getThemesById(id);
+      return res.json(themesData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
   async getOne(req, res, next) {
     try {
       const { id } = req.params;
       const versionChecklistData = await versionChecklist.getOne(id);
+      return res.json(versionChecklistData);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
+  async findVersion(req, res, next) {
+    try {
+      const { id } = req.params;
+      const versionChecklistData = await versionChecklist.findVersion(id);
       return res.json(versionChecklistData);
     } catch (e) {
       next(ApiError.BadRequest(e.message));

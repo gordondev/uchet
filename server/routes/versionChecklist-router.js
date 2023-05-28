@@ -16,5 +16,13 @@ router.get(
   "/:id/download-comment",
   versionCheckListController.downloadCommentFile
 );
+router.get(
+  "/find/:id",
+  versionCheckListController.findVersion
+);
+router.get(
+  "/themes/:id",
+  versionCheckListController.getThemesById
+);
 
 module.exports = router;

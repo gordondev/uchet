@@ -222,6 +222,14 @@ class VersionChecklistService {
     return versionChecklists;
   }
 
+  async getThemesById(id) {
+     const themes = await Themes.findAll({
+      where: { versionChecklistId: id },
+    });
+
+    return themes;
+  }
+
   async getOne(id) {
     const versionChecklist = await VersionChecklist.findOne({
       where: { id },
@@ -232,6 +240,18 @@ class VersionChecklistService {
         { model: CommentFiles },
       ],
     });
+    return versionChecklist;
+  }
+
+  async findVersion(id) {
+
+    const versionChecklist = await VersionChecklist.findOne({
+      where: { id },
+    });
+
+    if (!versionChecklist) {
+      throw ApiError.BadRequest(`Данной версии не существует`);
+    }
     return versionChecklist;
   }
 

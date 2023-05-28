@@ -75,7 +75,7 @@ const VersionChecklistCreate = observer(() => {
 
   const changeTheme = debounce((value, number) => {
     setTheme(
-      theme.map((i) => (i.number === number ? { ...i, ["theme"]: value } : i))
+      theme.map((i) => (i.number === number ? { ...i, theme: value } : i))
     );
   }, 500);
 
@@ -220,41 +220,41 @@ const VersionChecklistCreate = observer(() => {
               )}
 
               <TransitionGroup>
-              {theme.map((i) => (
-                <CSSTransition key={i.number} timeout={500} classNames="point">
-                <div className="theme_item">
-                  <Form.Item
-                    key={i.number}
-                    name={i.number}
-                    label="Название темы: "
-                    style={{ marginTop: "23px", width: "100%" }}
-                    onChange={(e) => changeTheme(e.target.value, i.number)}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Введите название темы",
-                      },
-                    ]}
-                  >
-                    <Input allowClear showCount maxLength={1000}/>
-                  </Form.Item>
-                  <Button
-                    type="primary"
-                    danger
-                    style={{ marginLeft: "20px" }}
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeTheme(i.number)}
-                  >
-                    Удалить
-                  </Button>
-                </div>
+              {theme.map((item, index) => (
+                <CSSTransition key={item.number} timeout={500} classNames="point">
+                  <div className="theme_item">
+                    <Form.Item
+                      key={item.number}
+                      name={item.number}
+                      label={`Название темы ${index + 1}:`}
+                      style={{ marginTop: "23px", width: "100%" }}
+                      onChange={(e) => changeTheme(e.target.value, item.number)}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Введите название темы",
+                        },
+                      ]}
+                    >
+                      <TextArea rows={2} placeholder="Введите название темы" allowClear showCount maxLength={1000}/>
+                    </Form.Item>
+                    <Button
+                      type="primary"
+                      danger
+                      style={{ marginLeft: "20px" }}
+                      icon={<DeleteOutlined />}
+                      onClick={() => removeTheme(item.number)}
+                    >
+                      Удалить
+                    </Button>
+                  </div>
                 </CSSTransition>
               ))}
               </TransitionGroup>
 
               <Button
                 type="primary"
-                style={{ width: "100%", marginBottom: "20px" }}
+                style={{ marginBottom: "20px" }}
                 icon={<PlusOutlined />}
                 onClick={addTheme}
                 disabled={count >= 7}
@@ -309,8 +309,8 @@ const VersionChecklistCreate = observer(() => {
               >
                 <InputNumber
                   min={1}
-                  max={10}
-                  placeholder="Количество типов(max: 10)"
+                  max={6}
+                  placeholder="Количество типов(max: 6)"
                   onChange={(value) => setQuanityType(value)}
                   style={{ width: "100%" }}
                 />
@@ -378,7 +378,6 @@ const VersionChecklistCreate = observer(() => {
                   loading={dataIsSent}
                   htmlType="submit"
                   icon={<SaveOutlined />}
-                  style={{ width: "100%" }}
                 >
                   Сохранить
                 </Button>

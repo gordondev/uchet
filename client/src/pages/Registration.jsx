@@ -99,6 +99,7 @@ const Registration = observer(() => {
             name="division"
             label="Подразделение"
             hasFeedback
+            placeholder="Выберите подразделение"
             onChange={(e) => setDivision(e.target.value)}
             rules={[
               {
@@ -108,7 +109,7 @@ const Registration = observer(() => {
             ]}
           >
             <Select
-              defaultValue={division}
+              placeholder="Выберите подразделение"
               allowClear
               onChange={(value) => {
                 setDivision(value);
@@ -149,7 +150,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={name} allowClear />
+            <Input defaultValue={name} allowClear placeholder="Введите имя"/>
           </Form.Item>
 
           <Form.Item
@@ -164,7 +165,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={surname} allowClear />
+            <Input defaultValue={surname} allowClear placeholder="Введите фамилию"/>
           </Form.Item>
 
           <Form.Item
@@ -179,7 +180,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={patronymic} allowClear />
+            <Input defaultValue={patronymic} allowClear placeholder="Введите отчество"/>
           </Form.Item>
 
           <Form.Item
@@ -197,7 +198,7 @@ const Registration = observer(() => {
               },
             ]}
           >
-            <Input defaultValue={email} allowClear />
+            <Input defaultValue={email} allowClear placeholder="Введите почту"/>
           </Form.Item>
 
           <Form.Item
@@ -212,7 +213,7 @@ const Registration = observer(() => {
             ]}
             hasFeedback
           >
-            <Input.Password defaultValue={password} allowClear />
+            <Input.Password defaultValue={password} allowClear placeholder="Придумайте пароль"/>
           </Form.Item>
 
           <Form.Item
@@ -237,7 +238,7 @@ const Registration = observer(() => {
               }),
             ]}
           >
-            <Input.Password defaultValue={password} allowClear />
+            <Input.Password defaultValue={password} allowClear placeholder="Повторите пароль"/>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>

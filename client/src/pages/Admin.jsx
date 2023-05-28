@@ -1,77 +1,108 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, Select, message } from "antd";
-import { getAllUsers } from "../http/userAPI";
+import { getAllUsers, updateProfile, blockUser, deleteAccount, createUser } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { DeleteOutlined, LockOutlined, EditOutlined, UnlockOutlined } from "@ant-design/icons";
 import { debounce } from 'lodash';
-import { updateProfile, blockUser } from "../http/userAPI";
 
 const { Option } = Select;
 
+const divisions = [
+  "ТЦ-3",
+  "РЦ-2",
+  "РЦ-3",
+  "ЦЦР",
+  "ЦОРО",
+  "ЭЦ",
+  "ЦТАИ",
+  "ЦВ",
+  "ОРБ",
+  "ХЦ",
+  "ТЦ-2",
+  "РТЦ-1",
+  "ЦОС",
+  "ОПБ",
+  "ОЯБиН",
+  "Управление",
+  "ОТИиПБ",
+  "ОИиКОБ",
+  "ООТ",
+  "УТП",
+];
+
 const Admin = observer(() => {
   const [form] = Form.useForm();
-  const [isLoadind, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [division, setDivision] = useState("");
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [patronymic, setPatronymic] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
-  const [dataIsSent, setDataIsSent] = useState(false);
+  const [formDataIsSent, setFormDataIsSent] = useState(false);
 
   useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
     setIsLoading(true);
-    getAllUsers().then((data) => setUsers(data));
-    setIsLoading(false);
-  }, [dataIsSent]);
+    try {
+      const data = await getAllUsers();
+      setUsers(data);
+    } catch (error) {
+      console.log(error);
+      message.error("Ошибка при загрузке пользователей.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onEditUser = (record) => {
-    setDivision(record?.division);
-    setName(record?.name);
-    setSurname(record?.surname);
-    setPatronymic(record?.patronymic);
-    setEmail(record?.email);
-    setPassword(record?.password);
-    setRole(record?.role);
+    setEditingUser(record);
     setIsEditing(true);
-    setEditingUser({...record});
-  }
+    form.resetFields();
+    form.setFieldsValue({
+      division: record.division,
+      role: record.role,
+      name: record.name,
+      surname: record.surname,
+      patronymic: record.patronymic,
+      email: record.email,
+    });
+  };
 
   const updateProfile_ = async () => {
-    setDataIsSent(true);
-    const formData = new FormData();
-    formData.append("division", division);
-    formData.append("role", role);
-    formData.append("name", name);
-    formData.append("surname", surname);
-    formData.append("patronymic", patronymic);
-    formData.append("email", email);
-    formData.append("password", password);
+    setFormDataIsSent(true);
     try {
-      const userData = await updateProfile(editingUser?.id, formData);
-      message.success(`Данные обновленны...`);
-    } catch (e) {
-      message.error(e.response?.data?.message);
+      await form.validateFields();
+      const values = form.getFieldsValue();
+      const formData = new FormData();
+      formData.append("division", values.division);
+      formData.append("role", values.role);
+      formData.append("name", values.name);
+      formData.append("surname", values.surname);
+      formData.append("patronymic", values.patronymic);
+      formData.append("email", values.email);
+
+      if (values.password) {
+        formData.append("password", values.password);
+      }
+
+      await updateProfile(editingUser.id, formData);
+      message.success("Данные обновлены.");
+      resetEditing();
+      loadData();
+    } catch (error) {
+      console.log(error);
+      message.error(error.message || "Ошибка при обновлении данных.");
+    } finally {
+      setFormDataIsSent(false);
     }
-    setDataIsSent(false);
   };
 
   const resetEditing = () => {
     setIsEditing(false);
     setEditingUser(null);
-    setDivision("");
-    setName("");
-    setSurname("");
-    setPatronymic("");
-    setEmail("");
-    setPassword("");
-    setRole("");
     form.resetFields();
-  }
+  };
 
   const columns = [
     {
@@ -86,303 +117,273 @@ const Admin = observer(() => {
       key: 'role',
       editable: true,
       filters: [
-        {
-          text: "USER",
-          value: "USER",
-        },
-        {
-          text: "ADMIN",
-          value: "ADMIN",
-        },
+        { text: "USER", value: "USER" },
+        { text: "ADMIN", value: "ADMIN" },
       ],
+
       onFilter: (value, record) => record.role === value,
-    },
-    {
-      title: "Подразделение",
-      dataIndex: "division",
-      key: 'division',
-      width: 170,
-      editable: true,
-      filters: [
-        {
-          text: "ТЦ-3",
-          value: "ТЦ-3",
-        },
-        {
-          text: "РЦ-2",
-          value: "РЦ-2",
-        },
-        {
-          text: "РЦ-3",
-          value: "РЦ-3",
-        },
-        {
-          text: "ЦЦР",
-          value: "ЦЦР",
-        },
-        {
-          text: "ЦОРО",
-          value: "ЦОРО",
-        },
-        {
-          text: "ЭЦ",
-          value: "ЭЦ",
-        },
-        {
-          text: "ЦТАИ",
-          value: "ЦТАИ",
-        },
-        {
-          text: "ЦВ",
-          value: "ЦВ",
-        },
-        {
-          text: "ОРБ",
-          value: "ОРБ",
-        },
-        {
-          text: "ХЦ",
-          value: "ХЦ",
-        },
-        {
-          text: "ТЦ-2",
-          value: "ТЦ-2",
-        },
-        {
-          text: "РТЦ-1",
-          value: "РТЦ-1",
-        },
-        {
-          text: "ЦОС",
-          value: "ЦОС",
-        },
-        {
-          text: "ОПБ",
-          value: "ОПБ",
-        },
-        {
-          text: "ОЯБиН",
-          value: "ОЯБиН",
-        },
-        {
-          text: "Управление",
-          value: "Управление",
-        },
-        {
-          text: "ОТИиПБ",
-          value: "ОТИиПБ",
-        },
-        {
-          text: "ОИиКОБ",
-          value: "ОИиКОБ",
-        },
-        {
-          text: "ООТ",
-          value: "ООТ",
-        },
-        {
-          text: "УТП",
-          value: "УТП",
-        },
-      ],
-      onFilter: (value, record) => record.division === value,
+      render: (text, record) => (
+        <Select
+          value={text}
+          style={{ width: 120 }}
+          onChange={(value) => handleRoleChange(record, value)}
+          disabled={isEditing && editingUser && editingUser.id !== record.id}
+        >
+          <Option value="USER">USER</Option>
+          <Option value="ADMIN">ADMIN</Option>
+        </Select>
+      ),
     },
     {
       title: "Имя",
       dataIndex: "name",
+      key: 'name',
       editable: true,
     },
     {
       title: "Фамилия",
       dataIndex: "surname",
+      key: 'surname',
       editable: true,
     },
     {
       title: "Отчество",
       dataIndex: "patronymic",
+      key: 'patronymic',
       editable: true,
     },
     {
-      title: "Редактирование",
+      title: "Подразделение",
+      dataIndex: "division",
+      key: "division",
       editable: true,
-      dataIndex: "",
-      key: "x",
-      render: (record) => (
-        <Button type="primary" icon={<EditOutlined />} onClick={() => { onEditUser(record) }}>
-          
-        </Button>
-      ),
+      filters: divisions.map((division) => ({
+        text: division,
+        value: division,
+      })),
+      onFilter: (value, record) => record.division === value,
+      render: (text) => <span>{text}</span>,
     },
     {
-      title: "Блокировка",
-      dataIndex: "",
-      key: "x",
-      render: (record) => (
-        record.isBlocked
-        ? <Button type="primary" style={{ backgroundColor: "#52c41a" }} icon={<UnlockOutlined />} onClick={() => { setBlockStatus(record) }}>
-          </Button>
-        : <Button type="primary" danger icon={<LockOutlined />} onClick={() => { setBlockStatus(record) }}>
-          </Button>
+      title: "Действия",
+      key: "action",
+      render: (text, record) => (
+        <span>
+          {isEditing && editingUser && editingUser.id === record.id ? (
+            <span>
+              <Button
+                type="primary"
+                onClick={updateProfile_}
+                loading={formDataIsSent}
+              >
+                Сохранить
+              </Button>
+              <Button onClick={resetEditing}>Отмена</Button>
+            </span>
+          ) : (
+            <span>
+              {record.isBlocked ? (
+                <Button
+                  type="primary"
+                  onClick={() => setBlockStatus(record)}
+                  loading={formDataIsSent}
+                  icon={<UnlockOutlined />}
+                >
+                  
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  onClick={() => setBlockStatus(record)}
+                  loading={formDataIsSent}
+                  icon={<LockOutlined />}
+                >
+                  
+                </Button>
+              )}
+              <Button
+                type="primary"
+                onClick={() => onEditUser(record)}
+                disabled={isEditing}
+                icon={<EditOutlined />}
+                style={{ marginLeft: 8 }}
+              >
+                
+              </Button>
+              <Button
+                type="primary"
+                danger
+                onClick={() => deleteUser(record.id)}
+                disabled={isEditing}
+                icon={<DeleteOutlined />}
+                style={{ marginLeft: 8 }}
+              >
+                
+              </Button>
+            </span>
+          )}
+        </span>
       ),
     },
   ];
 
-  const setBlockStatus = async (record) => {
-    setDataIsSent(true);
-    const formData = new FormData();
-    formData.append("isBlocked", !record?.isBlocked);
+  const handleRoleChange = debounce(async (record, value) => {
     try {
-      const userData = await blockUser(record?.id, formData);
-    } catch (e) {
-      message.error(e.response?.data?.message);
+      await updateRole(record.id, value);
+      message.success("Роль обновлена.");
+    } catch (error) {
+      console.log(error);
+      message.error("Ошибка при обновлении роли.");
     }
-    setDataIsSent(false);
-  }
+  }, 500);
+
+  const updateRole = async (id, role) => {
+    try {
+      const formData = new FormData();
+      formData.append("role", role);
+      await updateProfile(id, formData);
+      loadData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteUser = async (id) => {
+    try {
+      await deleteAccount(id);
+      message.success("Пользователь успешно удален.");
+      loadData();
+    } catch (error) {
+      console.log(error);
+      message.error("Ошибка при удалении пользователя.");
+    }
+  };
+
+  const setBlockStatus = async (user) => {
+    try {
+      const formData = new FormData();
+      formData.append("isBlocked", !user.isBlocked);
+      await blockUser(user.id, formData);
+      message.success(
+        user.isBlocked ? "Пользователь разблокирован." : "Пользователь заблокирован."
+      );
+      loadData();
+    } catch (error) {
+      console.log(error);
+      message.error("Ошибка при изменении статуса блокировки пользователя.");
+    }
+  };
 
   return (
-    <section className="searchSection">
-      <div className="container">
-        <Table
-          style={{ marginTop: "20px" }}
-          columns={columns}
-          size="middle"
-          dataSource={users}
-          pagination={{
-            pageSize: 30,
-          }}
-          scroll={{
-            y: 940,
-          }}
-          loading={isLoadind}
-        />
-        <Modal
-          centered
-          title="Редактирование пользователя"
-          cancelText="Отмена"
-          visible={isEditing}
-          footer={() => null}
-          onCancel={() => resetEditing()}
-        >
-          <Form
-            className="formWindow"
-            name="register"
-            form={form}
-            style={{
-              maxWidth: 470,
-            }}
-            scrollToFirstError
+    <>
+    <div className="container">
+      <Table
+        style={{ marginTop: "20px" }}
+        dataSource={users}
+        columns={columns}
+        loading={isLoading}
+        rowKey={(record) => record.id}
+        bordered
+        size="small"
+        scroll={{ x: 1000 }}
+      />
+      <Modal
+        title="Редактирование пользователя"
+        visible={isEditing}
+        onCancel={resetEditing}
+        footer={null}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Пожалуйста, введите email" },
+              { type: "email", message: "Некорректный email" },
+            ]}
           >
-            <Form.Item
-              name="division"
-              label="Подразделение"
-              hasFeedback
-            >
-              <Select
-                placeholder={editingUser?.division}
-                allowClear
-                onChange={(value) => {
-                  setDivision(value);
-                }}
-              >
-                <Option value="ТЦ-3">ТЦ-3</Option>
-                <Option value="РЦ-2">РЦ-2</Option>
-                <Option value="РЦ-3">РЦ-3</Option>
-                <Option value="ЦЦР">ЦЦР</Option>
-                <Option value="ЦОРО">ЦОРО</Option>
-                <Option value="ЭЦ">ЭЦ</Option>
-                <Option value="ЦТАИ">ЦТАИ</Option>
-                <Option value="ЦВ">ЦВ</Option>
-                <Option value="ОРБ">ОРБ</Option>
-                <Option value="ХЦ">ХЦ</Option>
-                <Option value="ТЦ-2">ТЦ-2</Option>
-                <Option value="РТЦ-1">РТЦ-1</Option>
-                <Option value="ЦОС">ЦОС</Option>
-                <Option value="ОПБ">ОПБ</Option>
-                <Option value="ОЯБиН">ОЯБиН</Option>
-                <Option value="Управление">Управление</Option>
-                <Option value="ОТИиПБ">ОТИиПБ</Option>
-                <Option value="ОИиКОБ">ОИиКОБ</Option>
-                <Option value="ООТ">ООТ</Option>
-                <Option value="УТП">УТП</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="role"
-              label="Роль"
-              hasFeedback
-            >
-              <Select
-                placeholder={editingUser?.role}
-                allowClear
-                onChange={(value) => {
-                  setRole(value);
-                }}
-              >
-                <Option value="USER">USER</Option>
-                <Option value="ADMIN">ADMIN</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="name"
-              label="Имя"
-              onChange={debounce((e) => setName(e.target.value), 500)}
-            >
-              <Input placeholder={editingUser?.name} allowClear />
-            </Form.Item>
-
-            <Form.Item
-              name="surname"
-              label="Фамилия"
-              onChange={debounce((e) => setSurname(e.target.value), 500)}
-            >
-              <Input placeholder={editingUser?.surname} allowClear />
-            </Form.Item>
-
-            <Form.Item
-              name="patronymic"
-              label="Отчество"
-              onChange={debounce((e) => setPatronymic(e.target.value), 500)}
-            >
-              <Input placeholder={editingUser?.patronymic} allowClear />
-            </Form.Item>
-
-            <Form.Item
-              name="email"
-              label="Почта"
-              onChange={debounce((e) => setEmail(e.target.value), 500)}
-              rules={[
-                {
-                  type: "email",
-                  message: "Не валидная почта",
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            label="Роль"
+            name="role"
+            rules={[{ required: true, message: "Пожалуйста, выберите роль" }]}
+          >
+            <Select>
+              <Option value="USER">USER</Option>
+              <Option value="ADMIN">ADMIN</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Имя" name="name">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Фамилия" name="surname">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Отчество" name="patronymic">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Подразделение" name="division">
+            <Select>
+              {divisions.map((div) => (
+                <Option key={div} value={div}>
+                  {div}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Пароль"
+            name="password"
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("passwordConfirmation") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Пароль и его подтверждение не совпадают")
+                  );
                 },
-              ]}
-            >
-              <Input placeholder={editingUser?.email} allowClear />
-            </Form.Item>
-
-            <Form.Item
-              name="password"
-              label="Пароль"
-              onChange={debounce((e) => setPassword(e.target.value), 500)}
-              hasFeedback
-            >
-              <Input.Password allowClear placeholder="Придумайте пароль"/>
-            </Form.Item>
-            <Button
-              loading={dataIsSent}
-              style={{ marginTop: "20px"}}
-              type="primary"
-              htmlType="submit"
-              onClick={updateProfile_}
-            >
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label="Подтверждение пароля"
+            name="passwordConfirmation"
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    !value ||
+                    getFieldValue("password") === value ||
+                    !getFieldValue("password")
+                  ) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Пароль и его подтверждение не совпадают")
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" onClick={updateProfile_} loading={formDataIsSent}>
               Сохранить
             </Button>
-          </Form>
-        </Modal>
+            <Button onClick={resetEditing} style={{ marginLeft: 8 }}>
+              Отмена
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
       </div>
-    </section>
+    </>
   );
 });
 

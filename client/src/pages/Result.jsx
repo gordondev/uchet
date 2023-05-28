@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Input, Row, FloatButton, Spin, Select, DatePicker, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { RESULT_CREATE_ROUTE } from "../utils/consts";
 import { Collapse } from "antd";
 import { fetchResult } from "../http/resultAPI";
-import Checklists from "../components/Results";
 import { observer } from "mobx-react-lite";
 import { useObserver } from "../hooks/useObserver";
 import Results from "../components/Results";
@@ -166,7 +165,6 @@ const Result = observer(() => {
     setIsLoading(false);
   };
 
-  console.log("s: ", startDate, "e: ", endDate);
   return (
     <section className="searchSection">
       <div className="container">

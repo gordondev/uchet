@@ -1,13 +1,13 @@
 import { $authHost, $host, $download } from "./index";
 
-export const createChecklist = async (checklist) => {
-  const { data } = await $authHost.post("api/checklist/create", checklist);
+export const createChecklist = async (checklist, id) => {
+  const { data } = await $authHost.post("api/checklist/create/versionchecklist-id/" + id, checklist);
   return data;
 };
 
-export const fetchChecklist = async (limit, page, versionChecklistId, name) => {
+export const fetchChecklist = async (limit, page, versionChecklistId, title, id) => {
   const { data } = await $authHost.get("api/checklist/", {
-    params: { limit, page, versionChecklistId, name },
+    params: { limit, page, versionChecklistId, title },
   });
   return data;
 };

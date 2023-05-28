@@ -3,7 +3,7 @@ const router = new Router();
 
 const checkListController = require("../controllers/checklist-controller");
 
-router.post("/create/", checkListController.create);
+router.post("/create/versionchecklist-id/:id", checkListController.create);
 router.get("/", checkListController.getAll);
 router.get("/:id", checkListController.getOne);
 router.delete("/edit/:id", checkListController.deleteOne);

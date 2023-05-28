@@ -180,8 +180,12 @@ class UserService {
     checkFileExtension(file);
 
     const findUser = await User.findOne({ where: { id } });
-    let hashPassword = password;
-    if (findUser.password !== hashPassword) {
+
+    console.log("___password: ", password);
+
+    let hashPassword = findUser.password; // Используем существующий хеш пароля по умолчанию
+
+    if (password !== undefined && findUser.password !== password) {
       hashPassword = await bcrypt.hash(password, 3);
     }
 

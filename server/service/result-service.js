@@ -1,6 +1,7 @@
 const { VersionChecklist,
  Themes, 
- Checklist, 
+ Checklist,
+ ChecklistContent,
  ObservationResults, 
  ThemesResults,
  PointsOfGrowth,
@@ -48,11 +49,11 @@ async function createThemes(themes, resultId) {
       observationResultId: resultId
     });
 
-  await Promise.all(theme.grades.map(async (checklist) => {
+  await Promise.all(theme.grades.map(async (content) => {
     const gradeResult = await GradeObservationResults.create({
       themesResultId: themeResult.id,
-      checklistId: checklist.checklistId,
-      grade: checklist.grade
+      checklistContentId: content.themeId,
+      grade: content.grade
     });
   }));
 
@@ -156,15 +157,31 @@ class ResultService {
     return { pathFile, fileItem };
   }
 
-  async getActualThemes() {
-    const actualId = await getActualId();
+  async getActualThemesAndContents() {
+  const actualId = await getActualId();
 
-    const actualThemes = await Themes.findAll({
-      attributes: ['title', 'id'],
-      where: { versionChecklistId: actualId }
+  return Themes.findAll({
+    where: { versionChecklistId: actualId },
+    include: [{ model: Checklist, include: [{ model: ChecklistContent }] }],
+  })
+    .then((themes) => {
+      const titles = themes.map((theme) => ({
+        label: theme.title,
+        value: theme.title,
+        id: theme.id,
+        contents: theme.checklists.map((checklist) =>
+          checklist.checklist_contents.map((content) => ({
+            label: content.content,
+            value: content.content,
+            id: content.id,
+          }))
+        ),
+      }));
+      return titles;
+    })
+    .catch((error) => {
+      console.log(error);
     });
-
-    return actualThemes;
   }
 
   async getActualChecklists() {
@@ -208,7 +225,7 @@ class ResultService {
               model: GradeObservationResults,
               include: [
                 {
-                  model: Checklist,
+                  model: ChecklistContent,
                 }
               ]
             },

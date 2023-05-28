@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { List, Typography, Button, Divider, Skeleton, message } from "antd";
 import {
-  FileWordOutlined,
   DownloadOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { fetchOneChecklist, download } from "../http/checklistAPI";
 import { observer } from "mobx-react-lite";
-import { saveAs } from "file-saver";
 import docxImage from "../images/docx.png";
 import docImage from "../images/doc.png";
 import { getConvertedFileSize } from '../utils/getConvertedFileSize';
@@ -66,7 +64,7 @@ const ChecklistPage = observer(() => {
             <>
               <div className="defaultForm__tile">
                 <Title level={3} style={{ color: "#0e78ff" }}>
-                  {checklist.name}
+                  {checklist?.theme?.title}
                 </Title>
                 <Text type="secondary">
                   Версия чек-листа: {checklist.versionChecklistId}

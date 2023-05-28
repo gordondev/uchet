@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
-import { Layout, Menu, message, Dropdown, Space } from "antd";
+import { Layout, Menu, message, Dropdown, Space, Select } from "antd";
 import {
   DownOutlined,
   UserOutlined,
@@ -10,7 +10,6 @@ import {
   UnorderedListOutlined,
   FileSearchOutlined,
   LineChartOutlined,
-  BarChartOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
 import {
@@ -27,6 +26,7 @@ import { Context } from "../index";
 import { logout } from "../http/userAPI";
 
 const { Header } = Layout;
+const { Option } = Select;
 
 const NavBar = observer(() => {
   const navigate = useNavigate();
@@ -42,6 +42,34 @@ const NavBar = observer(() => {
     } catch (e) {
       message.error(e.response?.data?.message);
     }
+  };
+
+  const divisions = [
+    "ТЦ-3",
+    "РЦ-2",
+    "РЦ-3",
+    "ЦЦР",
+    "ЦОРО",
+    "ЭЦ",
+    "ЦТАИ",
+    "ЦВ",
+    "ОРБ",
+    "ХЦ",
+    "ТЦ-2",
+    "РТЦ-1",
+    "ЦОС",
+    "ОПБ",
+    "ОЯБиН",
+    "Управление",
+    "ОТИиПБ",
+    "ОИиКОБ",
+    "ООТ",
+    "УТП",
+  ];
+
+  const handleDivisionChange = (value) => {
+    console.log("Selected division:", value);
+    // Handle division change logic here
   };
 
   const items = [
@@ -99,6 +127,7 @@ const NavBar = observer(() => {
           setCurrentPage(item.label);
         }
       }
+      return "";
     });
   }, [window.location.pathname]);
 
@@ -111,14 +140,14 @@ const NavBar = observer(() => {
         </p>
       </div>
 
-        <Menu
-          theme="light"
-          mode="horizontal"
-          selectedKeys={currentPage}
-          className="navmenu"
-        >
-        {
-          user.role === "ADMIN" &&
+      <Menu
+        theme="light"
+        mode="horizontal"
+        selectedKeys={currentPage}
+        className="navmenu"
+        inlineCollapsed={false} 
+      >
+        {user.role === "ADMIN" && (
           <>
             <Menu.Item key={VERSION_CHECKLIST_ROUTE} icon={<FileDoneOutlined />}>
               <Link to={VERSION_CHECKLIST_ROUTE}>Версии</Link>
@@ -127,34 +156,33 @@ const NavBar = observer(() => {
               <Link to={CHECKLIST_ROUTE}>Чек-листы</Link>
             </Menu.Item>
           </>
-        }
-          <Menu.Item key={RESULT_ROUTE} icon={<FileSearchOutlined />}>
-            <Link to={RESULT_ROUTE}>Результаты</Link>
+        )}
+        <Menu.Item key={RESULT_ROUTE} icon={<FileSearchOutlined />}>
+          <Link to={RESULT_ROUTE}>Результаты</Link>
+        </Menu.Item>
+        <Menu.Item key={CHART_ROUTE} icon={<LineChartOutlined />}>
+          <Link to={CHART_ROUTE}>Графики</Link>
+        </Menu.Item>
+        {user.role === "ADMIN" && (
+          <Menu.Item key={ADMIN_ROUTE} icon={<TeamOutlined />}>
+            <Link to={ADMIN_ROUTE}>Админ</Link>
           </Menu.Item>
-          <Menu.Item key={CHART_ROUTE} icon={<LineChartOutlined />}>
-            <Link to={CHART_ROUTE}>Графики</Link>
-          </Menu.Item>
-          {
-            user.role === "ADMIN" &&
-            <Menu.Item key={ADMIN_ROUTE} icon={<TeamOutlined />}>
-              <Link to={ADMIN_ROUTE}>Админ</Link>
-            </Menu.Item>
-          }
-          <Menu.Item key={PROFILE_ROUTE} icon={<UserOutlined />}>
-            <Dropdown
-              menu={{
-                items,
-              }}
-            >
-              <Link>
-                <Space icon={<UserOutlined />}>
-                  {user?.user?.name}
-                  <DownOutlined />
-                </Space>
-              </Link>
-            </Dropdown>
-          </Menu.Item>
-        </Menu>
+        )}
+        <Menu.Item key={PROFILE_ROUTE} icon={<UserOutlined />}>
+          <Dropdown
+            menu={{
+              items,
+            }}
+          >
+            <Link>
+              <Space icon={<UserOutlined />} style={{ maxWidth: '150px' }}>
+                {user?.user?.name}
+                <DownOutlined />
+              </Space>
+            </Link>
+          </Dropdown>
+        </Menu.Item>
+      </Menu>
     </Header>
   );
 });

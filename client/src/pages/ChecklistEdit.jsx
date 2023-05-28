@@ -13,8 +13,8 @@ import {
   List,
   Upload,
 } from "antd";
-import { updateOne, fetchChecklist, deleteOne } from "../http/checklistAPI";
-import { fetchVersionChecklist } from "../http/versionChecklistAPI";
+import { updateOne, deleteOne, fetchOneChecklist } from "../http/checklistAPI";
+import { getThemes } from "../http/versionChecklistAPI";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -22,7 +22,6 @@ import {
   UploadOutlined,
   FileOutlined,
 } from "@ant-design/icons";
-import { fetchOneChecklist } from "../http/checklistAPI";
 import { useParams, useNavigate } from "react-router-dom";
 import { CHECKLIST_ROUTE } from "../utils/consts";
 import { observer } from "mobx-react-lite";
@@ -36,48 +35,50 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const fileTypeDoc = "application/msword";
 
-const { Option } = Select;
 const { Text } = Typography;
 const { TextArea } = Input;
 
 const ChecklistEdit = observer(() => {
-  const [versionChecklist, setVersionChecklist] = useState(null);
-  const [checklists, setChecklists] = useState([]);
   const [isLoadind, setIsLoading] = useState(true);
   const [description, setDescription] = useState("");
   const [content, setContent] = useState([]);
-  const [checklist, setChecklist] = useState({ contents: [], user: [] });
-  const [name, setName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [versionChecklistId, setVersionChecklistId] = useState(null);
   const [file, setFile] = useState("");
   const [nameFile, setNameFile] = useState("");
   const [fileSize, setFileSize] = useState("");
   const [fileExtension, setFileExtension] = useState("");
   const [fileIsDeleted, setFileIsDeleted] = useState("");
   const [dataIsSent, setDataIsSent] = useState(false);
+  const [themeId, setThemeId] = useState();
+  const [themes, setThemes] = useState([]);
+  const [title, setTitle] = useState("");
+  const [versionChecklistId, setVersionChecklistId] = useState();
   const navigate = useNavigate();
 
   const { id } = useParams();
 
   useEffect(() => {
     setIsLoading(true);
-    fetchChecklist().then((response) => setChecklists(response.rows));
     fetchOneChecklist(id).then((data) => {
-      setChecklist(data);
+      setVersionChecklistId(data.versionChecklistId);
+      setTitle(data.theme.title);
       setDescription(data.description);
       setContent(data.checklist_contents);
-      setName(data?.name);
       setNameFile(data?.checklist_files[0]?.fileName);
       setFileExtension(data?.checklist_files[0]?.fileExtension);
       setFileSize(data?.checklist_files[0]?.fileSize);
-      setVersionChecklistId(data?.versionChecklistId);
+    });
+    getThemes(id).then((data) => {
+      const updatedData = data.map((item) => {
+        return { ...item, value: item.title };
+      });
+      setThemes(updatedData);
     });
     setIsLoading(false);
   }, []);
 
   const addContent = () => {
-    setContent([...content, { content: "", id: Date.now() }]);
+    setContent([...content, { content: "", id: shortid.generate() }]);
   };
 
   const removeContent = (id) => {
@@ -86,7 +87,7 @@ const ChecklistEdit = observer(() => {
 
   const changeContent = debounce((value, id) => {
     setContent(
-      content.map((i) => (i.id === id ? { ...i, ["content"]: value } : i))
+      content.map((i) => (i.id === id ? { ...i, content: value } : i))
     );
   }, 500);
 
@@ -130,7 +131,7 @@ const ChecklistEdit = observer(() => {
     setDataIsSent(true);
     const formData = new FormData();
     formData.append("id", id);
-    formData.append("name", name);
+    formData.append("themeId", themeId);
     formData.append("versionChecklistId", versionChecklistId);
     formData.append("description", description);
     formData.append("contents", JSON.stringify(content));
@@ -154,6 +155,20 @@ const ChecklistEdit = observer(() => {
     }
   };
 
+  if (!title) {
+    return (
+      <section className="searchSection">
+        <div className="container">
+          <div className="defaultForm">
+            <Skeleton active="true" />
+            <br />
+            <Skeleton active="true" />
+          </div>
+        </div>
+      </section>
+      );
+  }
+
   return (
     <section className="searchSection">
       <div className="container">
@@ -169,27 +184,25 @@ const ChecklistEdit = observer(() => {
               <>
                 <div className="defaultForm__tile">
                   <Form.Item
-                    name="title"
-                    label="Название темы"
-                    style={{ width: "100%", marginRight: "10px" }}
-                    onChange={debounce((e) => setName(e.target.value), 500)}
+                    name="select"
+                    label="Темы"
+                    hasFeedback
+                    style={{ width: "100%" }}
                   >
-                    <Input placeholder={name} allowClear />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="version"
-                    label="Версиия"
-                    style={{ width: "100%", marginLeft: "10px" }}
-                    onChange={debounce((e) => setVersionChecklistId(e.target.value), 500)}
-                  >
-                    <Input
-                      placeholder={versionChecklistId}
-                      type="number"
+                    <Select
                       allowClear
-                    />
+                      defaultValue={title}
+                      placeholder="Выберите тему"
+                      options={themes}
+                      onChange={(value) => {
+                        const selectedTheme = themes.find((theme) => theme.value === value);
+                        setThemeId(selectedTheme.id);
+                      }}
+                    >
+                    </Select>
                   </Form.Item>
                 </div>
+
                 <Divider orientation="center">Описание</Divider>
 
                 <Form.Item
@@ -201,7 +214,8 @@ const ChecklistEdit = observer(() => {
                     rows={4}
                     onChange={debounce((e) => setDescription(e.target.value), 500)}
                     showCount
-                    placeholder={description}
+                    defaultValue={description}
+                    placeholder="Введите описание"
                     maxLength={1000}
                   />
                 </Form.Item>
@@ -212,20 +226,22 @@ const ChecklistEdit = observer(() => {
                 )}
 
                 <TransitionGroup>
-                {content.map((i) => (
+                {content.map((i, index) => (
                   <CSSTransition key={i.id} timeout={500} classNames="point">
                     <div className="theme_item">
                       <Form.Item
                         name={i.id}
-                        label="Содержние"
+                        label={`Содержание ${index + 1}:`}
                         rows={4}
                         style={{ marginTop: "23px", width: "100%" }}
                         onChange={(e) => changeContent(e.target.value, i.id)}
                       >
-                        <Input
+                        <TextArea
+                          rows={2}
                           showCount
                           maxLength={1000}
-                          placeholder={`${i.content ? i.content : ""}`}
+                          defaultValue={`${i.content ? i.content : ""}`}
+                          placeholder="Введите содержание"
                           allowClear
                         />
                       </Form.Item>
@@ -246,7 +262,7 @@ const ChecklistEdit = observer(() => {
 
                 <Button
                   type="primary"
-                  style={{ width: "100%", marginBottom: "20px" }}
+                  style={{ marginBottom: "20px" }}
                   icon={<PlusOutlined />}
                   onClick={addContent}
                 >
@@ -303,11 +319,10 @@ const ChecklistEdit = observer(() => {
                 
                 <div className="editButtonsGroup">
 
-                  <Form.Item style={{ width: "100%", marginRight: "10px" }}>
+                  <Form.Item style={{ marginRight: "10px" }}>
                     <Button
                       type="primary"
                       danger
-                      style={{ width: "100%" }}
                       icon={<DeleteOutlined />}
                       onClick={showModal}
                     >
@@ -315,13 +330,12 @@ const ChecklistEdit = observer(() => {
                     </Button>
                   </Form.Item>
 
-                  <Form.Item style={{ width: "100%", marginLeft: "10px" }}>
+                  <Form.Item style={{ marginLeft: "10px" }}>
                     <Button
                       type="primary"
                       htmlType="submit"
                       loading={dataIsSent}
                       icon={<SaveOutlined />}
-                      style={{ width: "100%" }}
                     >
                       Сохранить
                     </Button>

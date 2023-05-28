@@ -4,6 +4,7 @@ const {
   User,
   ChecklistFiles,
   VersionChecklist,
+  Themes,
 } = require("../models/models");
 const ApiError = require("../exceptions/api-error");
 const ChecklistDto = require("../dtos/checklist-dto");
@@ -69,9 +70,19 @@ function checkFileExtension(file) {
   }
 }
 
+async function checkRepeatName(themeId, versionChecklistId) {
+  const nameChecklist = await Checklist.findOne({
+    where: { themeId: themeId, versionChecklistId: versionChecklistId },
+  });
+
+  if (nameChecklist) {
+    throw ApiError.BadRequest(`Название с данной версией уже существует`);
+  }
+}
+
 class ChecklistService {
   async createChecklist(
-    name,
+    themeId,
     versionChecklistId,
     description,
     file,
@@ -89,13 +100,7 @@ class ChecklistService {
       throw ApiError.BadRequest(`Данной версии не существует`);
     }
 
-    const nameChecklist = await Checklist.findOne({
-      where: { name: name, versionChecklistId: versionChecklistId },
-    });
-
-    if (nameChecklist) {
-      throw ApiError.BadRequest(`Название с темы с данной версией уже существует`);
-    }
+    await checkRepeatName(themeId, versionChecklistId);
 
     const numberOfRecordsAvailable = await Checklist.count({
       where: { versionChecklistId: versionChecklistId },
@@ -108,7 +113,7 @@ class ChecklistService {
     }
 
     const checklist = await Checklist.create({
-      name,
+      themeId,
       versionChecklistId,
       description,
       userId,
@@ -148,15 +153,22 @@ class ChecklistService {
     return { pathFile, fileItem };
   }
 
-  async getAll(limit, offset, versionChecklistId, name) {
+  async getAll(limit, offset, versionChecklistId, title) {
     const where = {};
-    if (name) where.name = { [Op.iLike]: `%${name}%` };
-    if (versionChecklistId) where.versionChecklistId = versionChecklistId;
+    if (title) {
+        where["$theme.title$"] = { [Op.iLike]: `%${title}%` };
+    }
+    if (versionChecklistId) {
+        where.versionChecklistId = versionChecklistId;
+    }
 
     const checklist = await Checklist.findAndCountAll({
         limit,
         offset,
         where,
+        include: [
+          { model: Themes, as: "theme" },
+        ],
     });
     return checklist;
   } 
@@ -168,6 +180,7 @@ class ChecklistService {
         { model: ChecklistContent, as: "checklist_contents" },
         { model: User, as: "user" },
         { model: ChecklistFiles },
+        { model: Themes },
       ],
     });
     return checklist;
@@ -181,7 +194,7 @@ class ChecklistService {
 
   async updateOne(
     id,
-    name,
+    themeId,
     versionChecklistId,
     description,
     contents,
@@ -190,10 +203,16 @@ class ChecklistService {
   ) {
     
     checkFileExtension(file);
+    const nameChecklist = await Checklist.findOne({
+      where: { id: id, themeId: themeId },
+    });
+    if (!nameChecklist) {
+      await checkRepeatName(themeId, versionChecklistId);
+    }
     
     const checklist = await Checklist.update(
       {
-        name: name,
+        themeId: themeId,
         versionChecklistId: versionChecklistId,
         description: description,
       },

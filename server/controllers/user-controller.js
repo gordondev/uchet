@@ -130,6 +130,8 @@ class UserController {
       const { name, surname, patronymic, email, division, role, password } = req.body;
       const file = req.files?.file || null;
 
+      console.log(req.body);
+
       await userService.updateAccount(id, name, surname, patronymic, email, division, role, password, file);
       return res.json({ message: `Данные были обновленны` });
     } catch (e) {

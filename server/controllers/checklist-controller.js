@@ -4,13 +4,13 @@ const ApiError = require("../exceptions/api-error");
 class ChecklistController {
   async create(req, res, next) {
     try {
-      const { name, versionChecklistId, description, userId, contents } =
+      const { themeId, versionChecklistId, description, userId, contents } =
         req.body;
 
       const file = req.files?.file || null;
 
       const checklistData = await checklist.createChecklist(
-        name,
+        themeId,
         versionChecklistId,
         description,
         file,
@@ -26,7 +26,7 @@ class ChecklistController {
 
   async getAll(req, res, next) {
     try {
-      let { limit, page, versionChecklistId, name } = req.query;
+      let { limit, page, versionChecklistId, title } = req.query;
       page = page || 1;
       limit = limit || 16;
       let offset = page * limit - limit;
@@ -34,7 +34,7 @@ class ChecklistController {
         limit,
         offset,
         versionChecklistId,
-        name
+        title
       );
 
       return res.json(checklistData);
@@ -79,7 +79,7 @@ class ChecklistController {
     try {
       const {
         id,
-        name,
+        themeId,
         versionChecklistId,
         description,
         contents,
@@ -89,7 +89,7 @@ class ChecklistController {
       if (!req.files) {
         const checklistData = await checklist.updateOne(
           id,
-          name,
+          themeId,
           versionChecklistId,
           description,
           contents,
@@ -101,7 +101,7 @@ class ChecklistController {
         const { file } = req.files;
         const checklistData = await checklist.updateOne(
           id,
-          name,
+          themeId,
           versionChecklistId,
           description,
           contents,

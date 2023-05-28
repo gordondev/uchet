@@ -34,12 +34,14 @@ import docxImage from "../images/docx.png";
 import docImage from "../images/doc.png";
 import { getConvertedFileSize } from '../utils/getConvertedFileSize';
 import { debounce } from 'lodash';
+import dayjs from 'dayjs';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const fileTypeDoc = "application/msword";
 
 const { Option } = Select;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const ReachableContext = createContext(null);
@@ -133,7 +135,7 @@ const VersionChecklistEdit = observer(() => {
     setIsLoading(true);
     fetchOneVersion(id).then((data) => {
       setVersion(data);
-      setActualKey(data.actualKey);
+      setActualKey(data?.actualKey);
       setTheme(data.themes);
       setQuanityType(data.quanityType);
       setCount(data.themes.length);
@@ -162,7 +164,7 @@ const VersionChecklistEdit = observer(() => {
   };
 
   const changeTheme = debounce((value, id) => {
-    setTheme(theme.map((i) => (i.id === id ? { ...i, ["title"]: value } : i)));
+    setTheme(theme.map((i) => (i.id === id ? { ...i, title: value } : i)));
   }, 500);
 
   const props = {
@@ -209,6 +211,39 @@ const VersionChecklistEdit = observer(() => {
     return !isDocx && !isDoc;
   };
 
+  if (!actualKey) {
+    return (
+      <section className="searchSection">
+        <div className="container">
+          <div className="defaultForm">
+            <div className="defaultForm__tile">
+              <Skeleton.Input
+                active="true"
+                size="small"
+                style={{ marginBottom: "20px", width: "300px" }}
+              />
+              <br />
+              <Skeleton.Input
+                active="true"
+                size="small"
+                style={{ marginBottom: "20px", width: "300px" }}
+              />
+            </div>
+            <Skeleton.Input
+              active="true"
+              size="small"
+              block={true}
+              style={{ marginBottom: "20px" }}
+            />
+            <Skeleton active="true" />
+            <br />
+            <Skeleton active="true" />
+          </div>
+        </div>
+      </section>
+      );
+  }
+
   return (
     <ReachableContext.Provider value="Light">
       <section className="searchSection">
@@ -221,13 +256,13 @@ const VersionChecklistEdit = observer(() => {
                     <Skeleton.Input
                       active="true"
                       size="small"
-                      style={{ marginBottom: "20px" }}
+                      style={{ marginBottom: "20px", width: "300px" }}
                     />
                     <br />
                     <Skeleton.Input
                       active="true"
                       size="small"
-                      style={{ marginBottom: "20px" }}
+                      style={{ marginBottom: "20px", width: "300px" }}
                     />
                   </>
                 ) : (
@@ -238,7 +273,8 @@ const VersionChecklistEdit = observer(() => {
                     >
                       <InputNumber
                         min={1}
-                        placeholder={updateId}
+                        value={updateId}
+                        placeholder="Введите № версии"
                         prefix="№"
                         onChange={debounce((value) => setUpdateId(value), 500)}
                         style={{ width: "100%", marginRight: "10px" }}
@@ -258,7 +294,8 @@ const VersionChecklistEdit = observer(() => {
                     >
                       <Select
                         name="selectActualKey"
-                        placeholder={`${actualKey}`}
+                        defaultValue={actualKey}
+                        placeholder="Выберите ключ актуальности"
                         onChange={(value) => {
                           setActualKey(value);
                           if (value === "Актуально") {
@@ -289,7 +326,7 @@ const VersionChecklistEdit = observer(() => {
                     label="Название версии"
                     onChange={debounce((e) => setTitle(e.target.value), 500)}
                   >
-                    <Input allowClear placeholder={title} showCount maxLength={1000}/>
+                    <Input defaultValue={title} placeholder="Введите название версии" allowClear showCount maxLength={1000}/>
                   </Form.Item>
                 </>
               )}
@@ -306,17 +343,22 @@ const VersionChecklistEdit = observer(() => {
                   {theme.length === 0 && (
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                   )}
-                  {theme.map((i) => (
+                  <TransitionGroup>
+                  {theme.map((i, index) => (
+                    <CSSTransition key={i.number} timeout={500} classNames="point">
                     <div className="theme_item">
                       <Form.Item
+                        key={i.id}
                         name={i.id}
-                        label="Название темы"
+                        label={`Название темы ${index + 1}:`}
                         placeholder="Error"
                         style={{ marginTop: "23px", width: "100%" }}
                         onChange={(e) => changeTheme(e.target.value, i.id)}
                       >
-                        <Input
-                          placeholder={`${i.title ? i.title : ""}`}
+                        <TextArea
+                          rows={2}
+                          defaultValue={`${i.title ? i.title : ""}`}
+                          placeholder="Введите название темы"
                           allowClear
                           showCount maxLength={1000}
                         />
@@ -331,10 +373,12 @@ const VersionChecklistEdit = observer(() => {
                         Удалить
                       </Button>
                     </div>
+                    </CSSTransition>
                   ))}
+                  </TransitionGroup>
                   <Button
                     type="primary"
-                    style={{ width: "100%", marginBottom: "20px" }}
+                    style={{ marginBottom: "20px" }}
                     icon={<PlusOutlined />}
                     onClick={addTheme}
                     disabled={count >= 6}
@@ -448,15 +492,15 @@ const VersionChecklistEdit = observer(() => {
                   >
                     <InputNumber
                       min={1}
-                      max={10}
-                      placeholder={quanityType}
+                      max={6}
+                      value={quanityType}
                       onChange={(value) => setQuanityType(value)}
                       style={{ width: "100%" }}
                     />
                   </Form.Item>
                   <Form.Item label="Дата принятия" name="date-picker">
                     <DatePicker
-                      placeholder={version.acceptanceDate}
+                      defaultValue={dayjs(version.acceptanceDate, 'YYYY-MM-DD')}
                       style={{ width: "100%" }}
                       onChange={(date, dateString) => {
                         setAcceptanceDate(dateString);
@@ -477,7 +521,8 @@ const VersionChecklistEdit = observer(() => {
                       rows={4}
                       onChange={debounce((e) => setReasonForUse(e.target.value), 500)}
                       showCount
-                      placeholder={reasonForUse}
+                      defaultValue={reasonForUse}
+                      placeholder="Введите основание использования"
                       maxLength={1000}
                     />
                   </Form.Item>
@@ -493,18 +538,18 @@ const VersionChecklistEdit = observer(() => {
                       rows={4}
                       onChange={debounce((e) => setComment(e.target.value), 500)}
                       showCount
-                      placeholder={comment}
+                      defaultValue={comment}
+                      placeholder="Введите примечание"
                       maxLength={1000}
                     />
                   </Form.Item>
 
                   <div className="editButtonsGroup">
 
-                    <Form.Item style={{ width: "100%", marginRight: "10px" }}>
+                    <Form.Item style={{ marginRight: "10px" }}>
                       <Button
                         type="primary"
                         danger
-                        style={{ width: "100%" }}
                         icon={<DeleteOutlined />}
                         onClick={showModal}
                       >
@@ -512,13 +557,12 @@ const VersionChecklistEdit = observer(() => {
                       </Button>
                     </Form.Item>
 
-                    <Form.Item style={{ width: "100%", marginLeft: "10px" }}>
+                    <Form.Item style={{ marginLeft: "10px" }}>
                       <Button
                         type="primary"
                         htmlType="submit"
                         loading={dataIsSent}
                         icon={<SaveOutlined />}
-                        style={{ width: "100%" }}
                       >
                         Сохранить
                       </Button>

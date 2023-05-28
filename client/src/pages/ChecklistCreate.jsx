@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../index";
 import {
-  Typography,
   Form,
   Input,
   Select,
@@ -18,27 +17,39 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 import { createChecklist } from "../http/checklistAPI";
+import { getThemes } from "../http/versionChecklistAPI";
 import shortid from 'shortid';
 import { debounce } from 'lodash';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { useParams } from "react-router-dom";
 
 const fileTypeDocx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const fileTypeDoc = "application/msword";
 
 const { TextArea } = Input;
-const { Text } = Typography;
-const { Option } = Select;
 const { Dragger } = Upload;
 
 const ChecklistCreate = () => {
   const { user } = useContext(Context);
   const [description, setDescription] = useState("");
   const [content, setContent] = useState([]);
-  const [name, setName] = useState("");
-  const [versionChecklist, setVersionChecklist] = useState(null);
+  const [themeId, setThemeId] = useState();
   const [file, setFile] = useState("");
-  const [checklists, setChecklists] = useState([]);
   const [dataIsSent, setDataIsSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { id } = useParams();
+  const [themes, setThemes] = useState([]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getThemes(id).then((data) => {
+      const updatedData = data.map((item) => {
+        return { ...item, value: item.title };
+      });
+      setThemes(updatedData);
+      setIsLoading(false);
+    });
+  }, []);
 
   const addContent = () => {
     setContent([...content, { content: "", id: shortid.generate() }]);
@@ -50,21 +61,21 @@ const ChecklistCreate = () => {
 
   const changeContent = (value, id) => {
     setContent(
-      content.map((i) => (i.id === id ? { ...i, ["content"]: value } : i))
+      content.map((i) => (i.id === id ? { ...i, content: value } : i))
     );
   };
 
   const addChecklist = async () => {
     setDataIsSent(true);
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("versionChecklistId", versionChecklist);
+    formData.append("themeId", themeId);
+    formData.append("versionChecklistId", id);
     formData.append("description", description);
     formData.append("file", file);
     formData.append("userId", user.user.id);
     formData.append("contents", JSON.stringify(content));
     try {
-      await createChecklist(formData);
+      await createChecklist(formData, id);
       message.success(`Чек-лист был добавлен`);
     } catch (e) {
       message.error(e.response?.data?.message);
@@ -104,38 +115,29 @@ const ChecklistCreate = () => {
           <div className="defaultForm">
             <div className="defaultForm__tile">
               <Form.Item
-                name="title"
-                label="Название темы"
-                style={{ width: "100%", marginRight: "10px" }}
-                onChange={debounce((e) => setName(e.target.value), 500)}
-                rules={[
-                  {
-                    required: true,
-                    message: "Введите название чек-листа",
-                  },
-                ]}
-              >
-                <Input placeholder="Введите название темы" allowClear />
+                  name="select"
+                  label="Темы"
+                  hasFeedback
+                  style={{ width: "100%" }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Выберите тему",
+                    },
+                  ]}
+                >
+                  <Select
+                    allowClear
+                    placeholder="Выберите тему"
+                    options={themes}
+                    onChange={(value) => {
+                      const selectedTheme = themes.find((theme) => theme.value === value);
+                      setThemeId(selectedTheme.id);
+                    }}
+                  >
+                  </Select>
               </Form.Item>
 
-              <Form.Item
-                name="version"
-                label="Версиия"
-                style={{ width: "100%", marginLeft: "10px" }}
-                onChange={debounce((e) => setVersionChecklist(e.target.value), 500)}
-                rules={[
-                  {
-                    required: true,
-                    message: "Введите версию чек-листа",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Введите версию чек-листа"
-                  type="number"
-                  allowClear
-                />
-              </Form.Item>
             </div>
 
             <Form.Item
@@ -179,23 +181,29 @@ const ChecklistCreate = () => {
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
             <TransitionGroup>
-            {content.map((i) => (
+            {content.map((i, index) => (
               <CSSTransition key={i.id} timeout={500} classNames="point">
                 <div className="theme_item">
                   <Form.Item
                     name={i.id}
-                    label="Содержние"
+                    label={`Содержание ${index + 1}:`}
                     rows={4}
                     style={{ marginTop: "23px", width: "100%" }}
-                    onChange={debounce((e) => changeContent(e.target.value, i.id), 500)}
+                    onChange={(e) => changeContent(e.target.value, i.id)}
                     rules={[
                       {
                         required: true,
-                        message: "Введите содержние",
+                        message: "Введите содержание",
                       },
                     ]}
                   >
-                    <Input showCount maxLength={1000} allowClear />
+                    <TextArea
+                      rows={2}
+                      showCount
+                      maxLength={1000}
+                      placeholder="Введите содержание"
+                      allowClear
+                    />
                   </Form.Item>
 
                   <Button
@@ -214,7 +222,7 @@ const ChecklistCreate = () => {
             
             <Button
               type="primary"
-              style={{ width: "100%", marginBottom: "20px" }}
+              style={{ marginBottom: "20px" }}
               icon={<PlusOutlined />}
               onClick={addContent}
             >
@@ -226,7 +234,6 @@ const ChecklistCreate = () => {
                 htmlType="submit"
                 loading={dataIsSent}
                 icon={<SaveOutlined />}
-                style={{ width: "100%" }}
               >
                 Сохранить
               </Button>

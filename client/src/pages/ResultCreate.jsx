@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 
 import { Form, Input, Select, Divider, Button, Tabs, Empty, Upload, Typography, message } from "antd";
 import { SaveOutlined, PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
-import { fetchActualThemes, fetchActualChecklists, createResult } from "../http/resultAPI";
+import { fetchActualThemes, createResult } from "../http/resultAPI";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Context } from "../index";
 import shortid from 'shortid';
@@ -19,11 +19,9 @@ const { TextArea } = Input;
 
 const ResultCreate = () => {
   const [checklists, setChecklists] = useState([]);
-  const [version, setVersion] = useState([]);
-  const [isLoadind, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [actualThemesTitle, setActualThemesTitle] = useState([]);
   const [selectedThemes, setSelectedThemes] = useState([]);
-  const [selectedChecklists, setSelectedChecklists] = useState([]);
   const [themes, setThemes] = useState([]);
   const [activeKey, setActiveKey] = useState('1');
   const [activeIndex, setActiveIndex] = useState(0);
@@ -37,17 +35,9 @@ const ResultCreate = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchActualThemes().then((data) => setActualThemesTitle(data.map(item => ({
-      label: item.title,
-      value: item.title,
-      id: item.id,
-    }))));
-    fetchActualChecklists().then((data) => setChecklists(data.map(item => ({
-      label: item.name,
-      value: item.name,
-      disabled: false,
-      id: item.id,
-    }))) );
+    fetchActualThemes().then((data) => {
+      setActualThemesTitle(data);
+    });
     setIsLoading(false);
   }, []);
 
@@ -83,22 +73,30 @@ const ResultCreate = () => {
   };
 
   const checklistsChange = (value) => {
-    setSelectedChecklists(value);
-    value.forEach(checklist => {
-      if (!activeTheme.grades.some(({ checklist: c }) => c === checklist)) {
-        activeTheme.grades.push({ checklist, grade: '', checklistId: getIdChecklistByValue(checklist), id: shortid.generate() });
+    const themeIndex = themes.findIndex(theme => theme.theme === activeKey);
+    const updatedGrades = value.reduce((grades, checklist) => {
+      if (!themes[themeIndex].grades.some(({ checklist: c }) => c === checklist)) {
+        grades.push({ checklist, grade: '', themeId: getIdChecklistByValue(checklist), id: shortid.generate() });
       }
-    });
+      return grades;
+    }, []);
 
-    activeTheme.grades = activeTheme.grades.filter(checklist => value.includes(checklist.checklist));
+    const updatedTheme = {
+      ...themes[themeIndex],
+      grades: [...updatedGrades, ...themes[themeIndex].grades.filter(({ checklist }) => value.includes(checklist))]
+    };
+
+    const updatedThemes = [...themes];
+    updatedThemes[themeIndex] = updatedTheme;
+
+    setActiveKey(activeKey);
+    setThemes(updatedThemes);
   }; 
 
   const handleTabChange = (key) => {
     setActiveKey(key);
     setActiveIndex(selectedThemes.indexOf(key));
   };
-
-  console.log(themes);
 
   const addPoint = () => {
     const newPointsOfGrowth = [...activeTheme.points_of_growths];
@@ -109,6 +107,16 @@ const ResultCreate = () => {
   };
 
   const activeTheme = themes.find(theme => theme.theme === activeKey);
+
+  useEffect(() => {
+    if (!activeTheme) return;
+    const selectedContents = actualThemesTitle.find((item) => item.label === activeTheme.theme)?.contents[0];
+    if (selectedContents) {
+      setChecklists(selectedContents.map(({ id, label, value }) => ({ id, label, value })));
+    } else {
+      setChecklists([]);
+    }
+  }, [activeTheme, actualThemesTitle]);
 
   const changeGrade = (value, id) => {
     const updatedThemes = themes.map((theme) => {
@@ -253,7 +261,7 @@ const ResultCreate = () => {
                   },
                 ]}
               >
-                <Input />
+                <Input placeholder="Введите название" allowClear showCount maxLength={1000}/>
               </Form.Item>
 
               <Form.Item
@@ -269,9 +277,10 @@ const ResultCreate = () => {
                 ]}
               >
                 <Select 
-                onChange={(value) => {
-                  setImpactOnSave(value);
-                }}>
+                  placeholder="Выберите пункт"
+                  onChange={(value) => {
+                    setImpactOnSave(value);
+                  }}>
                   <Option value="Да">Да</Option>
                   <Option value="Нет">Нет</Option>
                 </Select>
@@ -304,7 +313,6 @@ const ResultCreate = () => {
                       <Select
                         allowClear
                         mode="multiple"
-                        allowClear
                         style={{
                           width: "100%",
                           marginBottom: "20px"
@@ -336,7 +344,7 @@ const ResultCreate = () => {
                               },
                             ]}
                           >
-                            <Select allowClear onChange={(value) => changeGrade(value, id)}>
+                            <Select allowClear placeholder="Выберите оценку" onChange={(value) => changeGrade(value, id)}>
                               <Option value="Ниже требований">Ниже требований</Option>
                               <Option value="Соответствуют требованиям">Соответствуют требованиям</Option>
                               <Option value="Выше требований">Выше требований</Option>
@@ -370,7 +378,7 @@ const ResultCreate = () => {
                               },
                             ]}
                           >
-                            <Input showCount maxLength={500} allowClear onChange={e => changePoint(e.target.value, id)}/>
+                            <TextArea rows={2} placeholder="Введите точку роста" showCount maxLength={1000} allowClear onChange={e => changePoint(e.target.value, id)}/>
                           </Form.Item>
                           <Button
                             type="primary"
@@ -387,7 +395,7 @@ const ResultCreate = () => {
                       </TransitionGroup>
                       <Button
                         type="primary"
-                        style={{ width: "100%", marginBottom: "20px" }}
+                        style={{ marginBottom: "20px" }}
                         icon={<PlusOutlined />}
                         onClick={addPoint}
                       >
@@ -416,7 +424,7 @@ const ResultCreate = () => {
                               },
                             ]}
                           >
-                            <Input showCount maxLength={500} allowClear onChange={e => changeStrengt(e.target.value, id)}/>
+                            <TextArea rows={2} placeholder="Введите сильную сторону" showCount maxLength={1000} allowClear onChange={e => changeStrengt(e.target.value, id)}/>
                           </Form.Item>
                           <Button
                             type="primary"
@@ -434,7 +442,7 @@ const ResultCreate = () => {
 
                       <Button
                         type="primary"
-                        style={{ width: "100%", marginBottom: "20px" }}
+                        style={{ marginBottom: "20px" }}
                         icon={<PlusOutlined />}
                         onClick={addStrengt}
                       >
@@ -479,7 +487,7 @@ const ResultCreate = () => {
                   onChange={debounce((e) => setComment(e.target.value), 500)}
                   showCount
                   placeholder="Введите комментарий"
-                  maxLength={500}
+                  maxLength={1000}
                 />
             </Form.Item>
             <Form.Item
@@ -495,6 +503,7 @@ const ResultCreate = () => {
               ]}
             >
               <Select
+                placeholder="Выберите оценку"
                 onChange={(value) => {
                   setFinalGrade(value);
                 }}>>
@@ -511,7 +520,6 @@ const ResultCreate = () => {
                 loading={dataIsSent}
                 htmlType="submit"
                 icon={<SaveOutlined />}
-                style={{ width: "100%" }}
               >
                 Сохранить
               </Button>

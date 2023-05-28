@@ -83,7 +83,7 @@ const CommentFiles = sequelize.define("comment_files", {
 
 const Checklist = sequelize.define("checklist", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING },
+  themeId: { type: DataTypes.INTEGER },
   versionChecklistId: { type: DataTypes.INTEGER },
   description: { type: DataTypes.STRING(1000) },
   userId: { type: DataTypes.INTEGER },
@@ -158,7 +158,7 @@ const PointsOfGrowth = sequelize.define("points_of_growth", {
 const GradeObservationResults = sequelize.define("grade_observation_results", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   themesResultId: { type: DataTypes.INTEGER },
-  checklistId: { type: DataTypes.INTEGER },
+  checklistContentId: { type: DataTypes.INTEGER },
   grade: {
     type: DataTypes.ENUM(
       "Ниже требований",
@@ -196,6 +196,9 @@ ChecklistContent.belongsTo(Checklist);
 Checklist.hasMany(ChecklistFiles);
 ChecklistFiles.belongsTo(Checklist);
 
+Themes.hasMany(Checklist);
+Checklist.belongsTo(Themes);
+
 User.hasMany(ObservationResults);
 ObservationResults.belongsTo(User);
 
@@ -220,8 +223,8 @@ PointsOfGrowth.belongsTo(ThemesResults);
 ThemesResults.hasMany(GradeObservationResults);
 GradeObservationResults.belongsTo(ThemesResults);
 
-Checklist.hasMany(GradeObservationResults);
-GradeObservationResults.belongsTo(Checklist);
+ChecklistContent.hasMany(GradeObservationResults);
+GradeObservationResults.belongsTo(ChecklistContent);
 
 module.exports = {
   User,

@@ -66,6 +66,7 @@ const Login = observer(() => {
           >
             <Input
               defaultValue={email}
+              placeholder="Введите почту"
               prefix={<UserOutlined className="site-form-item-icon" />}
               allowClear
             />
@@ -84,6 +85,7 @@ const Login = observer(() => {
           >
             <Input.Password
               defaultValue={password}
+              placeholder="Введите пароль"
               prefix={<LockOutlined className="site-form-item-icon" />}
               allowClear
             />
