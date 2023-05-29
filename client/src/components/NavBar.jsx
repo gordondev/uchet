@@ -44,34 +44,6 @@ const NavBar = observer(() => {
     }
   };
 
-  const divisions = [
-    "ТЦ-3",
-    "РЦ-2",
-    "РЦ-3",
-    "ЦЦР",
-    "ЦОРО",
-    "ЭЦ",
-    "ЦТАИ",
-    "ЦВ",
-    "ОРБ",
-    "ХЦ",
-    "ТЦ-2",
-    "РТЦ-1",
-    "ЦОС",
-    "ОПБ",
-    "ОЯБиН",
-    "Управление",
-    "ОТИиПБ",
-    "ОИиКОБ",
-    "ООТ",
-    "УТП",
-  ];
-
-  const handleDivisionChange = (value) => {
-    console.log("Selected division:", value);
-    // Handle division change logic here
-  };
-
   const items = [
     {
       key: "PROFILE_ROUTE",

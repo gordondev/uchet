@@ -6,7 +6,7 @@ import { fetchActualThemes, createResult } from "../http/resultAPI";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Context } from "../index";
 import shortid from 'shortid';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 const fileTypePDF = "application/pdf";
 const fileTypeJPG = "image/jpeg";
@@ -16,6 +16,7 @@ const { Title } = Typography;
 const { Option } = Select;
 const { Dragger } = Upload;
 const { TextArea } = Input;
+
 
 const ResultCreate = () => {
   const [checklists, setChecklists] = useState([]);
@@ -40,6 +41,8 @@ const ResultCreate = () => {
     });
     setIsLoading(false);
   }, []);
+
+  console.log(themes);
 
   const getIdThemeByValue = (value) => {
     const themeObj = actualThemesTitle.find(obj => obj.value === value);

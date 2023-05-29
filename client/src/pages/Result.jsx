@@ -21,17 +21,12 @@ const Result = observer(() => {
   const [searchWorkInProgressQuery, setSearchWorkInProgressQuery] = useState("");
   const [searchImpactOnSaveQuery, setSearchImpactOnSaveQuery] = useState("");
   const [searchDivisionQuery, setSearchDivisionQuery] = useState("");
-  const [isLoadind, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-
   const currentPage = useRef(1);
   const lastElement = useRef();
-
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   const handleExport = async () => {
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -40,7 +35,7 @@ const Result = observer(() => {
     XLSX.writeFile(workbook, "Результаты.xlsx");
   }
 
-  useObserver(lastElement, data.length < totalCount, isLoadind, () => {
+  useObserver(lastElement, data.length < totalCount, isLoading, () => {
     setIsLoading(true);
     currentPage.current += 1;
     fetchResult(
@@ -54,8 +49,9 @@ const Result = observer(() => {
     ).then((response) => {
       setData([...data, ...response.rows]);
       setTotalCount(response.count);
+    }).finally(() => {
+      setIsLoading(false);
     });
-    setIsLoading(false);
   });
 
   useEffect(() => {
@@ -72,8 +68,9 @@ const Result = observer(() => {
     ).then((response) => {
       setData(response.rows);
       setTotalCount(response.count);
+    }).finally(() => {
+      setIsLoading(false);
     });
-    setIsLoading(false);
   }, []);
 
   const searchWorkInProgress = async (value) => {
@@ -93,9 +90,9 @@ const Result = observer(() => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const searchImpactOnSave = async (value) => {
@@ -115,9 +112,9 @@ const Result = observer(() => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const searchDivision = async (value) => {
@@ -137,9 +134,9 @@ const Result = observer(() => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const handleRangePickerChange = async (dates, dateStrings) => {
@@ -160,9 +157,9 @@ const Result = observer(() => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   return (
@@ -315,18 +312,16 @@ const Result = observer(() => {
         </Collapse>
 
         <Row gutter={[40, 16]} justify="left">
-          {isLoadind ? (
-            <Spin size="large" style={{ marginTop: "20px" }} />
-          ) : (
-            <>
-              <Results results={data} />
-              <div
-                ref={lastElement}
-                style={{ height: "1px", width: "100%" }}
-              ></div>
-            </>
-          )}
+          <Results results={data} isLoading={isLoading} />
+          <div ref={lastElement} style={{ height: "1px", width: "100%" }}></div>
         </Row>
+
+        {isLoading ? (
+          <Row gutter={[40, 16]} justify="center">
+            <Spin size="large" style={{ marginTop: "20px" }} />
+          </Row>
+        ) : null}
+
 
         <FloatButton.Group
           shape="circle"

@@ -19,21 +19,16 @@ const Checklist = observer(() => {
   const [totalCount, setTotalCount] = useState(0);
   const [searchNameQuery, setSearchNameQuery] = useState("");
   const [searchVersionQuery, setSearchVersionQuery] = useState("");
-  const [isLoadind, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [modal2Open, setModal2Open] = useState(false);
   const [versionChecklistId, setVersionChecklistId] = useState(null);
   const [dataIsSent, setDataIsSent] = useState(false);
 
   const currentPage = useRef(1);
   const lastElement = useRef();
-
   const navigate = useNavigate();
 
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  useObserver(lastElement, data.length < totalCount, isLoadind, () => {
+  useObserver(lastElement, data.length < totalCount, isLoading, () => {
     setIsLoading(true);
     currentPage.current += 1;
     fetchChecklist(
@@ -44,8 +39,9 @@ const Checklist = observer(() => {
     ).then((response) => {
       setData([...data, ...response.rows]);
       setTotalCount(response.count);
+    }).finally(() => {
+      setIsLoading(false);
     });
-    setIsLoading(false);
   });
 
   useEffect(() => {
@@ -59,8 +55,9 @@ const Checklist = observer(() => {
     ).then((response) => {
       setData(response.rows);
       setTotalCount(response.count);
+    }).finally(() => {
+      setIsLoading(false);
     });
-    setIsLoading(false);
   }, []);
 
   const searchName = async (value) => {
@@ -72,9 +69,9 @@ const Checklist = observer(() => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const searchVersion = async (value) => {
@@ -86,9 +83,9 @@ const Checklist = observer(() => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const checkVersion = async () => {
@@ -135,18 +132,15 @@ const Checklist = observer(() => {
         </Collapse>
 
         <Row gutter={[40, 16]} justify="left">
-          {isLoadind ? (
-            <Spin size="large" style={{ marginTop: "20px" }} />
-          ) : (
-            <>
-              <Checklists checklists={data} />
-              <div
-                ref={lastElement}
-                style={{ height: "1px", width: "100%" }}
-              ></div>
-            </>
-          )}
+          <Checklists checklists={data} isLoading={isLoading} />
+          <div ref={lastElement} style={{ height: "1px", width: "100%" }}></div>
         </Row>
+
+        {isLoading ? (
+          <Row gutter={[40, 16]} justify="center">
+            <Spin size="large" style={{ marginTop: "20px" }} />
+          </Row>
+        ) : null}
 
         <Modal
           title="Выбор версии"

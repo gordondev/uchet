@@ -12,48 +12,44 @@ const { Panel } = Collapse;
 const { Option } = Select;
 
 const VersionChecklist = () => {
-  const [versionIsLoadind, setVersionIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [actualKey, setActualKey] = useState("");
 
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   const currentPage = useRef(1);
   const lastElement = useRef();
-
   const navigate = useNavigate();
 
-  useObserver(lastElement, data.length < totalCount, versionIsLoadind, () => {
-    setVersionIsLoading(true);
+  useObserver(lastElement, data.length < totalCount, isLoading, () => {
+    setIsLoading(true);
     currentPage.current += 1;
     fetchVersionChecklist(16, currentPage.current, actualKey, searchQuery).then(
       (response) => {
         setData([...data, ...response.rows]);
         setTotalCount(response.count);
       }
-    );
-    setVersionIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   });
 
   useEffect(() => {
-    setVersionIsLoading(true);
+    setIsLoading(true);
     currentPage.current = 1;
     fetchVersionChecklist(16, currentPage.current, actualKey, searchQuery).then(
       (response) => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-
-    setVersionIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   const searchData = async (value) => {
-    setVersionIsLoading(true);
+    setIsLoading(true);
     currentPage.current = 1;
     setSearchQuery(value);
     fetchVersionChecklist(16, currentPage.current, actualKey, value).then(
@@ -61,13 +57,13 @@ const VersionChecklist = () => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setVersionIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const actulKeyFilter = async (value) => {
-    setVersionIsLoading(true);
+    setIsLoading(true);
     currentPage.current = 1;
     setActualKey(value);
     fetchVersionChecklist(16, currentPage.current, value, searchQuery).then(
@@ -75,9 +71,9 @@ const VersionChecklist = () => {
         setData(response.rows);
         setTotalCount(response.count);
       }
-    );
-    await sleep(1 * 50);
-    setVersionIsLoading(false);
+    ).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   return (
@@ -112,19 +108,17 @@ const VersionChecklist = () => {
             </Select>
           </Panel>
         </Collapse>
+        
         <Row gutter={[40, 16]} justify="left">
-          {versionIsLoadind ? (
-            <Spin size="large" style={{ marginTop: "20px" }} />
-          ) : (
-            <>
-              <VersionsList versions={data} />
-              <div
-                ref={lastElement}
-                style={{ height: "1px", width: "100%" }}
-              ></div>
-            </>
-          )}
+          <VersionsList versions={data} isLoading={isLoading}/>
+          <div ref={lastElement} style={{ height: "1px", width: "100%" }}></div>
         </Row>
+
+        {isLoading ? (
+          <Row gutter={[40, 16]} justify="center">
+            <Spin size="large" style={{ marginTop: "20px" }} />
+          </Row>
+        ) : null}
 
         <FloatButton
           tooltip={<div>Создать версию чек-листа</div>}

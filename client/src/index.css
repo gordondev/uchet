@@ -122,6 +122,14 @@ body {
   margin-top: 20px;
 }
 
+.chartForm {
+  width: 1200px;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 16px rgba(197, 197, 197, 0.15);
+  margin-top: 20px;
+}
+
 .userForm {
   width: 600px;
   padding: 20px;
@@ -367,4 +375,11 @@ ul {
 
 .editButtonsGroup {
   display: flex;
+}
+
+.spinContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 84px);
 }

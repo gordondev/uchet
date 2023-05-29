@@ -45,8 +45,9 @@ const VersionChecklistPage = observer(() => {
       setHeaderFile(data?.header_files[0]?.id);
       setCommentFile(data?.comment_files[0]?.id);
       setVersion(data);
+    }).finally(() => {
+      setIsLoading(false);
     });
-    setIsLoading(false);
   }, [commentFile, headerFile]);
 
   const data = [

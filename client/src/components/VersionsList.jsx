@@ -10,10 +10,10 @@ import versionImage from "../images/version.png";
 
 const { Meta } = Card;
 
-const VersionsList = ({ versions }) => {
+const VersionsList = ({ versions, isLoading }) => {
   const navigate = useNavigate();
 
-  if (!versions.length) {
+  if (!versions.length && !isLoading) {
     return <Empty style={{ marginTop: "20px" }} />;
   }
 

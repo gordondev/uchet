@@ -28,8 +28,9 @@ const ChecklistPage = observer(() => {
     fetchOneChecklist(id).then((data) => {
       setChecklist(data);
       setFile(data?.checklist_files[0]?.id);
+    }).finally(() => {
+      setIsLoading(false);
     });
-    setIsLoading(false);
   }, [file]);
 
   const data = [
@@ -143,7 +144,7 @@ const ChecklistPage = observer(() => {
 
               <Button
                 type="primary"
-                style={{ width: "100%", marginTop: "20px" }}
+                style={{ marginTop: "20px" }}
                 icon={<PrinterOutlined />}
                 onClick={() => {
                   window.print();

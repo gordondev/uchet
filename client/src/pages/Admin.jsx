@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, Select, message } from "antd";
-import { getAllUsers, updateProfile, blockUser, deleteAccount, createUser } from "../http/userAPI";
+import { getAllUsers, updateProfile, blockUser, createUser } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { DeleteOutlined, LockOutlined, EditOutlined, UnlockOutlined } from "@ant-design/icons";
 import { debounce } from 'lodash';
@@ -210,16 +210,6 @@ const Admin = observer(() => {
               >
                 
               </Button>
-              <Button
-                type="primary"
-                danger
-                onClick={() => deleteUser(record.id)}
-                disabled={isEditing}
-                icon={<DeleteOutlined />}
-                style={{ marginLeft: 8 }}
-              >
-                
-              </Button>
             </span>
           )}
         </span>
@@ -245,17 +235,6 @@ const Admin = observer(() => {
       loadData();
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const deleteUser = async (id) => {
-    try {
-      await deleteAccount(id);
-      message.success("Пользователь успешно удален.");
-      loadData();
-    } catch (error) {
-      console.log(error);
-      message.error("Ошибка при удалении пользователя.");
     }
   };
 

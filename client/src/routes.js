@@ -16,6 +16,7 @@ import ResultCreate from "./pages/ResultCreate";
 import ResultPage from "./pages/ResultPage";
 import AccountLock from "./pages/AccountLock";
 import Chart from "./pages/Chart";
+import ResultEdit from "./pages/ResultEdit";
 
 import {
   LOGIN_ROUTE,
@@ -31,6 +32,7 @@ import {
   CHECKLIST_CREATE_ROUTE,
   CHECKLIST_EDIT_ROUTE,
   RESULT_CREATE_ROUTE,
+  RESULT_EDIT_ROUTE,
   ACCOUNT_LOCK_ROUTE,
   CHART_ROUTE,
 } from "./utils/consts";
@@ -93,6 +95,10 @@ export const adminRoutes = [
     Component: ResultPage
   },
   {
+    path: RESULT_EDIT_ROUTE + "/:id",
+    Component: ResultEdit
+  },
+  {
     path: CHART_ROUTE,
     Component: Chart
   },
@@ -118,6 +124,10 @@ export const userRoutes = [
   {
     path: RESULT_ROUTE + "/:id",
     Component: ResultPage
+  },
+  {
+    path: RESULT_EDIT_ROUTE + "/:id",
+    Component: ResultEdit
   },
   {
     path: CHART_ROUTE,

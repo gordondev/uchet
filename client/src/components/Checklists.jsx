@@ -5,10 +5,10 @@ import { CHECKLIST_ROUTE, CHECKLIST_EDIT_ROUTE } from "../utils/consts";
 import { useNavigate } from "react-router-dom";
 import checklistImage from "../images/checklist.png";
 
-const Checklists = ({ checklists }) => {
+const Checklists = ({ checklists, isLoading }) => {
   const navigate = useNavigate();
 
-  if (!checklists.length) {
+  if (!checklists.length && !isLoading) {
     return <Empty style={{ marginTop: "20px" }} />;
   }
 

@@ -36,11 +36,11 @@ const ResultPage = observer(() => {
 	useEffect(() => {
 	    setIsLoading(true);
 	    fetchOneResult(id).then((data) => {
-	    	console.log(data);
 	      setThemes(data);
 	      setFile(data?.observation_results_files[0]?.id);
+	    }).finally(() => {
+	      setIsLoading(false);
 	    });
-	    setIsLoading(false);
 	}, [file, dataIsSent]);
 
 	const data = [
